@@ -1,36 +1,9 @@
 # Docs 📘
 
-## Frontend (Browser)
+## Network related
 
-Source code location : [/frontend/](../frontend)
-
-WebRTC code: [/frontend/src/lib/webrtc/](../frontend/src/lib/webrtc)
-
-### [Frontend Docs](./FRONTEND.md)
-
-### Stack:
-
-- 💻 Sveltekit  (UI Framework)
-- ✨ Tailwind  (CSS Framework)
-- 💅 DaisyUI  (Tailwind Framework)
-- 🔢 WASM (for Go compatibility) 
-- 🔠 Svelte i18n (Translations) 
-- 📦 Wails (Golang bindings for desktop)
-
-## Backend (Dekstop APP Logic)
-
-Source code location: [/main.go](../main.go) + [/src/](../src)
-
-WebRTC code: [/src/net/](../src/net) + [/src/streaming_signal/](../src/streaming_signal/)
-
-### [Backend Docs](./BACKEND.md)
-
-### Stack:
-
-- 💻 Go
-- 📦 Wails (Desktop APP)
-- 🌐 Pion/Webrtc
-- 🎮 ViGEm (binary & dll for gamepad virtualization)
+![Network exaplanation](./network_explanation_diagram.svg)
+[Link to the image](./network_explanation_diagram.svg)
 
 ## General 
 
@@ -109,3 +82,36 @@ This division of logic is because we need:
   - Go: A WebRTC connection that goes directly to the ViGEm driver (which is loaded as a DLL in Go) to insert the gamepad data or a similar situation with keyboard.
 
   - JS/TS: We need to send the Screen + Audio stream to the client. To do that we need the WebRTC stream in the "Browser", one way of achieve this could have been doing a rtp stream proxy and use the Go WebRTC connection but that would have add latency and use of more resources. Because of that it is created a new WebRTC connection only for the stream on the "Browser", this connection is auto created and uses as signaling service the normal WebRTC connection used for Gamepad data.
+
+
+## Frontend (Browser)
+
+Source code location : [/frontend/](../frontend)
+
+WebRTC code: [/frontend/src/lib/webrtc/](../frontend/src/lib/webrtc)
+
+### [Frontend Docs](./FRONTEND.md)
+
+### Stack:
+
+- 💻 Sveltekit  (UI Framework)
+- ✨ Tailwind  (CSS Framework)
+- 💅 DaisyUI  (Tailwind Framework)
+- 🔢 WASM (for Go compatibility) 
+- 🔠 Svelte i18n (Translations) 
+- 📦 Wails (Golang bindings for desktop)
+
+## Backend (Dekstop APP Logic)
+
+Source code location: [/main.go](../main.go) + [/src/](../src)
+
+WebRTC code: [/src/net/](../src/net) + [/src/streaming_signal/](../src/streaming_signal/)
+
+### [Backend Docs](./BACKEND.md)
+
+### Stack:
+
+- 💻 Go
+- 📦 Wails (Desktop APP)
+- 🌐 Pion/Webrtc
+- 🎮 ViGEm (binary & dll for gamepad virtualization)
