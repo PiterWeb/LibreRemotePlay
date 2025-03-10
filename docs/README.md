@@ -3,7 +3,6 @@
 ## Network related
 
 ![Network exaplanation](./network_explanation_diagram.svg)
-[Link to the image](./network_explanation_diagram.svg)
 
 ## General 
 
