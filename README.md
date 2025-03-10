@@ -5,7 +5,7 @@
 
 > [!Note]
 > Website: 
-> https://remote-controller.vercel.app/ 
+> https://libreremoteplay.vercel.app/ 
 
 ## Use cases ✨
 
@@ -17,13 +17,13 @@
 
 ## Download 📦
 
-- (Website) https://remote-controller.vercel.app/download/
+- (Website) https://libreremoteplay.vercel.app/download/
 - (Github) https://github.com/PiterWeb/LibreRemotePlay/releases/latest
 
 ## Guides 📘
 
-- [Instalation guide](https://remote-controller.vercel.app/info/guides/installation/)
-- [How to use](https://remote-controller.vercel.app/info/guides/how-to-use/)
+- [Instalation guide](https://libreremoteplay.vercel.app/info/guides/installation/)
+- [How to use](https://libreremoteplay.vercel.app/info/guides/how-to-use/)
 
 ## Resources 📚
 
@@ -52,7 +52,7 @@
 
 | Windows 	| Linux 	| MacOS 	| Browser (Only Client) 	|
 |---------	|-------	|-------	|---------	|
-| ✔       	| ✔ Gamepad support (❌ Keyboard/Streaming for the moment)     	| ❌ (No MacOS to test)     	| ✔ (Known Issues with Safari)       	|
+| ✔       	| ✔ Gamepad/Streaming support (❌ Keyboard for the moment)     	| ❌ (No MacOS to test)     	| ✔ (Known Issues with Safari)       	|
 
 ### Native Gamepad Support 🎮
 
