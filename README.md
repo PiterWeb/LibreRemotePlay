@@ -13,7 +13,7 @@
 - Enjoy videogames from other devices using your gamepad
 ### The limit is in your imagination ... 
 
-![Example Image from the Desktop APP](./assets/example.png)
+![Landing page screenshoot](./assets/example.png)
 
 ## Download 📦
 
@@ -32,9 +32,12 @@
 - [FAQ](https://remote-controller.vercel.app/info/resources/faq/) 💬
 - [Security](https://remote-controller.vercel.app/info/resources/security/) 🔐
 
-- https://github.com/user-attachments/assets/f4a412fa-f403-4429-85fb-9c1e74bff458
+### Videos 📹
+(Note that videos may show older/beta versions of the APP and could have bugs that are already fixed in the latest version)
 
-(Note that videos may show beta versions of the APP and could have bugs)
+#### How to use
+
+https://github.com/user-attachments/assets/f4a412fa-f403-4429-85fb-9c1e74bff458
 
 ## Features 🧩
 
@@ -122,6 +125,8 @@ finally go to the build/bin folder and your executables will be there.
 ## Contributting 🤝
 
 If you are interested to contribute to this project you can follow this [guide](./CONTRIBUTING.md)
+
+Also 
 
 ## Acknowledgements
 
