@@ -24,6 +24,10 @@ async function CreateClientStream(
 
 	if (!videoElement || !peerConnection) throw new Error('Error creating stream');
 
+	const transceiver = peerConnection.addTransceiver("video", { direction: "recvonly" });
+
+	transceiver.setCodecPreferences(getSortedVideoCodecs());
+
 	peerConnection.onconnectionstatechange = () => {
 		if (!peerConnection) return;
 
@@ -47,11 +51,7 @@ async function CreateClientStream(
 	};
 
 	peerConnection.ontrack = (ev) => {
-		try {
-				ev.transceiver.setCodecPreferences(getSortedVideoCodecs())
-		} catch {
-			console.error("Error setting codec preferences")
-		}
+
 		if (ev.streams && ev.streams[0]) {
 			ev.streams[0].getTracks().forEach(t => t.addEventListener("ended", () => {CloseStreamClientConnection()}, true) )
 			videoElement.srcObject = ev.streams[0];
@@ -71,7 +71,8 @@ async function CreateClientStream(
 
 	const offer = await peerConnection.createOffer({
 		offerToReceiveAudio: true,
-		offerToReceiveVideo: true
+		offerToReceiveVideo: true,
+		iceRestart: true
 	});
 
 	await peerConnection.setLocalDescription(offer);
