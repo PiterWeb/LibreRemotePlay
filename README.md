@@ -5,7 +5,10 @@
 
 > [!Note]
 > Website: 
-> https://libreremoteplay.vercel.app/ 
+> https://libreremoteplay.vercel.app/
+>
+> Wiki:
+> https://github.com/PiterWeb/LibreRemotePlay/wiki
 
 ## Use cases ✨
 
@@ -17,20 +20,13 @@
 
 ## Download 📦
 
-- (Website) https://libreremoteplay.vercel.app/download/
-- (Github) https://github.com/PiterWeb/LibreRemotePlay/releases/latest
-
-## Guides 📘
-
-- [Instalation guide](https://libreremoteplay.vercel.app/info/guides/installation/)
-- [How to use](https://libreremoteplay.vercel.app/info/guides/how-to-use/)
+- https://github.com/PiterWeb/LibreRemotePlay/releases/latest
 
 ## Resources 📚
 
 - [Docs](./docs/) 📘
 - [Linux Docs](./docs/LINUX.md) 📘
-- [FAQ](https://remote-controller.vercel.app/info/resources/faq/) 💬
-- [Security](https://remote-controller.vercel.app/info/resources/security/) 🔐
+- [Wiki](https://github.com/PiterWeb/LibreRemotePlay/wiki) (Guides, FAQ, ...)
 
 ### Videos 📹
 (Note that videos may show older/beta versions of the APP and could have bugs that are already fixed in the latest version)
