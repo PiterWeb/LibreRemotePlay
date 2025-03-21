@@ -1,3 +1,5 @@
+import { browser } from '$app/environment'
+
 export enum FIXED_RESOLUTIONS {
 	resolution1080p = "1080",
 	resolution720p = "720",
@@ -15,7 +17,34 @@ RESOLUTIONS.set(FIXED_RESOLUTIONS.resolution360p, {width: 640, height:360})
 export const DEFAULT_MAX_FRAMERATE = 60
 export const DEFAULT_IDEAL_FRAMERATE = 30
 
-const PREFERED_CODECS_ORDERED = ["video/VP9","video/AV1","video/H264", "video/VP8"]
+const DEFAULT_PREFERED_CODECS = ["video/VP9","video/AV1","video/H264", "video/VP8"]
+
+export const preferedCodecsOrdered = $state({value: getStoredPreferedCodecsOrdered()})
+
+export const usePreferedCodecsOrderedStorage = () => {
+	$effect(() => {
+		localStorage.setItem("codecs-list", JSON.stringify(preferedCodecsOrdered.value))
+	})
+} 
+
+export function restoreDefaultCodecs() {
+    preferedCodecsOrdered.value = DEFAULT_PREFERED_CODECS;
+}
+
+function getStoredPreferedCodecsOrdered() {
+
+	if (browser) {
+		const stored: string[] = JSON.parse(localStorage.getItem("codecs-list") ?? '[]')
+
+		if (stored && stored.length > 0) {
+			return stored
+		}
+
+	}
+
+	return DEFAULT_PREFERED_CODECS
+
+}
 
 getSortedVideoCodecs().forEach(codec => {
 	console.log(codec.mimeType);
@@ -27,9 +56,11 @@ export function getSortedVideoCodecs() {
 
 	if (!codecs) return [];
 
+	console.log(preferedCodecsOrdered.value)
+
 	return codecs.sort((a, b) => {
-	  const indexA = PREFERED_CODECS_ORDERED.indexOf(a.mimeType);
-	  const indexB = PREFERED_CODECS_ORDERED.indexOf(b.mimeType);
+	  const indexA = preferedCodecsOrdered.value.indexOf(a.mimeType);
+	  const indexB = preferedCodecsOrdered.value.indexOf(b.mimeType);
 	  const orderA = indexA >= 0 ? indexA : Number.MAX_VALUE;
 	  const orderB = indexB >= 0 ? indexB : Number.MAX_VALUE;
 	  return orderA - orderB;

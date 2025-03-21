@@ -5,7 +5,7 @@ import { _ } from 'svelte-i18n';
 import { exportStunServers } from '../stun_servers';
 import { exportTurnServers } from '../turn_servers';
 import { IS_RUNNING_EXTERNAL } from '$lib/detection/onwebsite';
-import { DEFAULT_IDEAL_FRAMERATE, DEFAULT_MAX_FRAMERATE, FIXED_RESOLUTIONS, RESOLUTIONS } from './stream_config';
+import { DEFAULT_IDEAL_FRAMERATE, DEFAULT_MAX_FRAMERATE, FIXED_RESOLUTIONS, RESOLUTIONS } from './stream_config.svelte';
 import ws from '$lib/websocket/ws';
 
 let peerConnection: RTCPeerConnection | undefined;

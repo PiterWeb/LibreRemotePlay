@@ -14,6 +14,9 @@ dependencies:
   player.style:
     specifier: ^0.1.5
     version: 0.1.5(react@19.0.0)
+  sortablejs:
+    specifier: ^1.15.6
+    version: 1.15.6
   svelte-i18n:
     specifier: ^4.0.1
     version: 4.0.1(svelte@5.22.6)
@@ -34,6 +37,9 @@ devDependencies:
   '@sveltejs/vite-plugin-svelte':
     specifier: ^4.0.0
     version: 4.0.4(svelte@5.22.6)(vite@5.4.14)
+  '@types/sortablejs':
+    specifier: ^1.15.8
+    version: 1.15.8
   '@typescript-eslint/eslint-plugin':
     specifier: ^6.21.0
     version: 6.21.0(@typescript-eslint/parser@6.21.0)(eslint@8.57.1)(typescript@5.8.2)
@@ -1370,6 +1376,10 @@ packages:
 
   /@types/sizzle@2.3.9:
     resolution: {integrity: sha512-xzLEyKB50yqCUPUJkIsrVvoWNfFUbIZI+RspLWt8u+tIW/BetMBZtgV2LY/2o+tYH8dRvQ+eoPf3NdhQCcLE2w==}
+    dev: true
+
+  /@types/sortablejs@1.15.8:
+    resolution: {integrity: sha512-b79830lW+RZfwaztgs1aVPgbasJ8e7AXtZYHTELNXZPsERt4ymJdjV4OccDbHQAvHrCcFpbF78jkm0R6h/pZVg==}
     dev: true
 
   /@types/ws@8.18.0:
@@ -4918,6 +4928,10 @@ packages:
       ip-address: 9.0.5
       smart-buffer: 4.2.0
     dev: true
+
+  /sortablejs@1.15.6:
+    resolution: {integrity: sha512-aNfiuwMEpfBM/CN6LY0ibyhxPfPbyFeBTYJKCvzkJ2GkUpazIt3H+QIPAMHwqQ7tMKaHz1Qj+rJJCqljnf4p3A==}
+    dev: false
 
   /source-map-js@1.2.1:
     resolution: {integrity: sha512-UXWMKhLOwVKb728IUtQPXxfYU+usdybtUrK/8uGE8CQMvrhOpwvzDBwj0QhSL7MQc7vIsISBG8VQ8+IDQxpfQA==}

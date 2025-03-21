@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { CreateHostStream } from '$lib/webrtc/stream/host_stream_hook';
-	import { DEFAULT_IDEAL_FRAMERATE, DEFAULT_MAX_FRAMERATE, FIXED_RESOLUTIONS } from '$lib/webrtc/stream/stream_config';
+	import { DEFAULT_IDEAL_FRAMERATE, DEFAULT_MAX_FRAMERATE, FIXED_RESOLUTIONS } from '$lib/webrtc/stream/stream_config.svelte';
 	import { _ } from 'svelte-i18n';
 	import { streaming } from '$lib/webrtc/stream/stream_signal_hook.svelte';
 	import { ListenForConnectionChanges } from '$lib/webrtc/host_webrtc_hook';

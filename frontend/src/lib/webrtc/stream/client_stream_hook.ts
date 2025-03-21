@@ -1,7 +1,7 @@
 import { exportStunServers } from '$lib/webrtc/stun_servers';
 import { setConsumingStream, type SignalingData } from '$lib/webrtc/stream/stream_signal_hook.svelte';
 import { exportTurnServers } from '$lib/webrtc/turn_servers';
-import { getSortedVideoCodecs} from './stream_config';
+import { getSortedVideoCodecs} from './stream_config.svelte';
 
 let peerConnection: RTCPeerConnection | undefined;
 let inboundStream: MediaStream | null = null;
