@@ -4,6 +4,10 @@
 
 ![Network exaplanation](./network_explanation_diagram.svg)
 
+## APP Architecture
+
+![APP Architecture](./app_explanation_diagram.svg)
+
 ## General 
 
 LibreRemotePlay uses web technologies like WebRTC and MediaDevices (displayMedia).
