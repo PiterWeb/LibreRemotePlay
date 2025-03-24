@@ -1,4 +1,6 @@
-# ![Gamepad](./frontend/src/lib/assets/gamepad.svg) LibreRemotePlay
+![LibreRemotePlay logo banner](https://github.com/user-attachments/assets/9173246d-1d65-4f29-bd79-0206250c538c)
+
+# LibreRemotePlay
 ### An open source & decentralized alternative to Steam remote play (No need to self host)
 
 ⌛ Looking for contributions 👈
@@ -12,11 +14,8 @@
 
 ## Use cases ✨
 
-- Play with friends online
-- Enjoy videogames from other devices using your gamepad
-### The limit is in your imagination ... 
-
-![Landing page screenshoot](./assets/example.png)
+- Share your local co-op games online with friends (as [Steam Remote Play Anywhere](https://store.steampowered.com/remoteplay?l=english#anywhere))
+- Stream your games from your PC to other devices (as [Steam Remote Play Together](https://store.steampowered.com/remoteplay?l=english#together))
 
 ## Download 📦
 
