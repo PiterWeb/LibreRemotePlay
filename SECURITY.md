@@ -2,10 +2,11 @@
 
 ## Supported Versions
 
-Due to a full rework of the APP only 2.x will have security updates
+Due to a full rework of the APP only 2.x and newer are considered to be secure
 
 | Version | Supported          |
 | ------- | ------------------ |
+| 3.x     | :white_check_mark: |
 | 2.x   | :white_check_mark: |
 | 1.x   | :x:                |
 
