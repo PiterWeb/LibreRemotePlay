@@ -1,7 +1,7 @@
 ![LibreRemotePlay logo banner](https://github.com/user-attachments/assets/9173246d-1d65-4f29-bd79-0206250c538c)
 
 # LibreRemotePlay
-### An open source & decentralized alternative to Steam remote play (No need to self host)
+### An open source & P2P alternative to Steam remote play (No need to self host)
 
 ⌛ Looking for contributions 👈
 
