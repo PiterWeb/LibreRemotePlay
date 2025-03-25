@@ -11,6 +11,7 @@ import (
 	"runtime"
 
 	"github.com/PiterWeb/RemoteController/src/devices/gamepad"
+	"github.com/PiterWeb/RemoteController/src/devices/keyboard"
 	net "github.com/PiterWeb/RemoteController/src/net/webrtc"
 	"github.com/pion/webrtc/v3"
 	wailsRuntime "github.com/wailsapp/wails/v2/pkg/runtime"
@@ -152,6 +153,18 @@ func (a *App) TryClosePeerConnection() bool {
 
 func (a *App) ToogleGamepad() {
 	gamepad.GamepadEnabled.Toogle()
+}
+
+func (a *App) IsGamepadEnabled() bool {
+	return gamepad.GamepadEnabled.IsEnabled()
+}
+
+func (a *App) ToogleKeyboard() {
+	keyboard.KeyboardEnabled.Toogle()
+}
+
+func (a *App) IsKeyboardEnabled() bool {
+	return keyboard.KeyboardEnabled.IsEnabled()
 }
 
 func (a *App) GetCurrentOS() string {
