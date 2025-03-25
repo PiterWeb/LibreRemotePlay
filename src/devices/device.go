@@ -10,24 +10,24 @@ type DeviceEnabledI interface {
 }
 
 type DeviceEnabled struct {
-	enabled int32
+	enabled atomic.Int32
 	DeviceEnabledI
 }
 
 func (d *DeviceEnabled) Toogle() {
-	atomic.StoreInt32(&d.enabled, 1-atomic.LoadInt32(&d.enabled))
+	d.enabled.Store(1 - d.enabled.Load())
 }
 
 func (d *DeviceEnabled) IsEnabled() bool {
-	return atomic.LoadInt32(&d.enabled) == 1
+	return d.enabled.Load() == 1
 }
 
 func (d *DeviceEnabled) Enable() *DeviceEnabled {
-	atomic.StoreInt32(&d.enabled, 1)
+	d.enabled.Store(1)
 	return d
 }
 
 func (d *DeviceEnabled) Disable() *DeviceEnabled {
-	atomic.StoreInt32(&d.enabled, 0)
+	d.enabled.Store(0)
 	return d
 }
