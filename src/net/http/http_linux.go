@@ -1,4 +1,5 @@
-package http_assets
+// HTTP server
+package http
 
 import (
 	"embed"
@@ -48,6 +49,10 @@ func FileMiddleware(staticFS fs.FS, next http.Handler) http.Handler {
 		}
 
 		w.WriteHeader(200)
-		w.Write(data)
+		_, err = w.Write(data)
+
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+		}
 	})
 }

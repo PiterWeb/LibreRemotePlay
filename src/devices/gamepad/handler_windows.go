@@ -61,11 +61,15 @@ func HandleGamepad(gamepadChannel *webrtc.DataChannel) {
 	// Update the virtual device
 	gamepadChannel.OnMessage(func(msg webrtc.DataChannelMessage) {
 
+		if !GamepadEnabled.IsEnabled() {
+			return
+		}
+
 		var pad GamepadAPIXState
 
 		ffjson.Unmarshal(msg.Data, &pad)
 
-		go UpdateVirtualDevice(virtualDevice, pad, virtualState)
+		UpdateVirtualDevice(virtualDevice, pad, virtualState)
 
 	})
 

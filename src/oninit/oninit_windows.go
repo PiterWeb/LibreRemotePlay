@@ -3,7 +3,7 @@ package oninit
 import (
 	"embed"
 
-	"github.com/PiterWeb/RemoteController/src/gamepad"
+	"github.com/PiterWeb/RemoteController/src/devices/gamepad"
 )
 
 func Execute(assets embed.FS) error {

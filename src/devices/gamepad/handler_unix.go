@@ -46,6 +46,10 @@ func HandleGamepad(gamepadChannel *webrtc.DataChannel) {
 	// Update the virtual device
 	gamepadChannel.OnMessage(func(msg webrtc.DataChannelMessage) {
 
+		if !GamepadEnabled.IsEnabled() {
+			return
+		}
+
 		if virtualGamepad == nil {
 			log.Println("VirtualGamepad is not defined")
 			return

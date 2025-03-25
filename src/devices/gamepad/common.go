@@ -1,6 +1,10 @@
 package gamepad
 
-import "math"
+import (
+	"math"
+
+	"github.com/PiterWeb/RemoteController/src/devices"
+)
 
 const (
 	threshold float64 = 1e-9
@@ -10,6 +14,8 @@ var (
 	prevThumbLY float64
 	prevThumbRY float64
 )
+
+var GamepadEnabled = new(devices.DeviceEnabled).Enable()
 
 // Struct for GamepadAPI for XINPUT gamepads
 type GamepadAPIXState struct {

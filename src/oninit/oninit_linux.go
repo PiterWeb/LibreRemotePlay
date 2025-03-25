@@ -3,7 +3,7 @@ package oninit
 import (
 	"embed"
 
-	"github.com/PiterWeb/RemoteController/src/net/http_assets"
+	"github.com/PiterWeb/RemoteController/src/net/http"
 	"github.com/PiterWeb/RemoteController/src/net/websocket"
 )
 
@@ -13,7 +13,7 @@ func Execute(assets embed.FS) error {
 
 	websocket.SetupWebsocketHandler()
 
-	err := http_assets.InitHTTPAssets(serverPort, assets)
+	err := http.InitHTTPAssets(serverPort, assets)
 
 	if err != nil {
 		return err

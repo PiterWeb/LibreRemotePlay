@@ -4,7 +4,7 @@ import (
 	"embed"
 	"log"
 
-	"github.com/PiterWeb/RemoteController/src/desktop"
+	"github.com/PiterWeb/RemoteController/src/bindings"
 	"github.com/PiterWeb/RemoteController/src/oninit"
 	"github.com/wailsapp/wails/v2"
 	"github.com/wailsapp/wails/v2/pkg/logger"
@@ -29,7 +29,7 @@ func main() {
 	}()
 
 	// Create an instance of the app structure
-	app := desktop.NewApp()
+	app := bindings.NewApp()
 
 	// Create application with options
 	// Create application with options

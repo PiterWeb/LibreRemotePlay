@@ -1,3 +1,4 @@
+// Websocket server
 package websocket
 
 import (

@@ -1,4 +1,5 @@
-package net
+// Package webrtc provides all the related functions for WebRTC communication
+package webrtc
 
 import (
 	"context"
@@ -6,9 +7,9 @@ import (
 	"strings"
 
 	// "github.com/PiterWeb/RemoteController/src/plugins"
-	"github.com/PiterWeb/RemoteController/src/gamepad"
-	"github.com/PiterWeb/RemoteController/src/keyboard"
-	"github.com/PiterWeb/RemoteController/src/streaming_signal"
+	"github.com/PiterWeb/RemoteController/src/devices/gamepad"
+	"github.com/PiterWeb/RemoteController/src/devices/keyboard"
+	"github.com/PiterWeb/RemoteController/src/net/webrtc/streaming_signal"
 	"github.com/pion/webrtc/v3"
 	"github.com/wailsapp/wails/v2/pkg/runtime"
 )

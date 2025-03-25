@@ -1,18 +1,25 @@
-package desktop
+// Binding for JS to Go
+// This package is responsible for the communication between the JS and Go code.
+package bindings
 
 import (
 	"context"
 	"log"
 	"strings"
+	"sync"
 
 	"runtime"
 
+	"github.com/PiterWeb/RemoteController/src/devices/gamepad"
+	net "github.com/PiterWeb/RemoteController/src/net/webrtc"
 	"github.com/pion/webrtc/v3"
-	wRuntime "github.com/wailsapp/wails/v2/pkg/runtime"
+	wailsRuntime "github.com/wailsapp/wails/v2/pkg/runtime"
 )
 
 var triggerEnd chan struct{} = make(chan struct{})
+
 var openPeer bool = false
+var openPeerMutex sync.Mutex
 
 // App struct
 type App struct {
@@ -35,13 +42,17 @@ func (a *App) Startup(ctx context.Context) {
 // Returning true will cause the application to continue, false will continue shutdown as normal.
 func (a *App) BeforeClose(ctx context.Context) (prevent bool) {
 
+	openPeerMutex.Lock()
+	defer openPeerMutex.Unlock()
+
 	if !openPeer {
-		return false
+		prevent = false
+		return prevent
 	}
 
 	// Show a dialog to confirm the user wants to quit
-	option, err := wRuntime.MessageDialog(ctx, wRuntime.MessageDialogOptions{
-		Type:          wRuntime.QuestionDialog,
+	option, err := wailsRuntime.MessageDialog(ctx, wailsRuntime.MessageDialogOptions{
+		Type:          wailsRuntime.QuestionDialog,
 		Title:         "Quit",
 		Message:       "Are you sure you want to quit?",
 		Buttons:       []string{"Yes", "No"},
@@ -54,10 +65,12 @@ func (a *App) BeforeClose(ctx context.Context) (prevent bool) {
 	}
 
 	if option == "Yes" {
-		return false
+		prevent = false
+		return prevent
 	}
 
-	return true
+	prevent = true
+	return prevent
 }
 
 // Shutdown is called at application termination
@@ -68,17 +81,28 @@ func (a *App) Shutdown(ctx context.Context) {
 }
 
 func (a *App) NotifyCreateClient() {
+
+	openPeerMutex.Lock()
+	defer openPeerMutex.Unlock()
+
 	openPeer = true
 	println("NotifyCreateClient")
 }
 
 func (a *App) NotifyCloseClient() {
+
+	openPeerMutex.Lock()
+	defer openPeerMutex.Unlock()
+
 	openPeer = false
 	println("NotifyCloseClient")
 }
 
 // Create a Host Peer, it receives the offer encoded and returns the encoded answer response
 func (a *App) TryCreateHost(ICEServers []webrtc.ICEServer, offerEncoded string) (value string) {
+
+	openPeerMutex.Lock()
+	defer openPeerMutex.Unlock()
 
 	if openPeer {
 		triggerEnd <- struct{}{}
@@ -92,19 +116,27 @@ func (a *App) TryCreateHost(ICEServers []webrtc.ICEServer, offerEncoded string) 
 
 			log.Println(err)
 
+			openPeerMutex.Lock()
+			defer openPeerMutex.Unlock()
 			openPeer = false
 			value = "ERROR"
 		}
 
 	}()
 
-	value = createHost(a.ctx, ICEServers, offerEncoded, triggerEnd)
+	answerResponse := make(chan string)
 
-	return value
+	go net.InitHost(a.ctx, ICEServers, offerEncoded, answerResponse, triggerEnd)
+
+	return <-answerResponse
+
 }
 
 // Closes the peer connection and returns a boolean indication if a connection existed and was closed or not
 func (a *App) TryClosePeerConnection() bool {
+
+	openPeerMutex.Lock()
+	defer openPeerMutex.Unlock()
 
 	if !openPeer {
 		return false
@@ -116,6 +148,10 @@ func (a *App) TryClosePeerConnection() bool {
 
 	return true
 
+}
+
+func (a *App) ToogleGamepad() {
+	gamepad.GamepadEnabled.Toogle()
 }
 
 func (a *App) GetCurrentOS() string {
