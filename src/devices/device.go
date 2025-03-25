@@ -1,6 +1,8 @@
 package devices
 
-import "sync"
+import (
+	"sync/atomic"
+)
 
 type DeviceEnabledI interface {
 	Toogle()
@@ -8,33 +10,24 @@ type DeviceEnabledI interface {
 }
 
 type DeviceEnabled struct {
-	enabled bool
-	m       sync.Mutex
+	enabled int32
 	DeviceEnabledI
 }
 
 func (d *DeviceEnabled) Toogle() {
-	d.m.Lock()
-	defer d.m.Unlock()
-	d.enabled = !d.enabled
+	atomic.StoreInt32(&d.enabled, 1-atomic.LoadInt32(&d.enabled))
 }
 
 func (d *DeviceEnabled) IsEnabled() bool {
-	d.m.Lock()
-	defer d.m.Unlock()
-	return d.enabled
+	return atomic.LoadInt32(&d.enabled) == 1
 }
 
 func (d *DeviceEnabled) Enable() *DeviceEnabled {
-	d.m.Lock()
-	defer d.m.Unlock()
-	d.enabled = true
+	atomic.StoreInt32(&d.enabled, 1)
 	return d
 }
 
 func (d *DeviceEnabled) Disable() *DeviceEnabled {
-	d.m.Lock()
-	defer d.m.Unlock()
-	d.enabled = false
+	atomic.StoreInt32(&d.enabled, 0)
 	return d
 }
