@@ -36,6 +36,10 @@ func HandleKeyboard(d *webrtc.DataChannel) error {
 
 	d.OnMessage(func(msg webrtc.DataChannelMessage) {
 
+		if !KeyboardEnabled.IsEnabled() {
+			return
+		}
+
 		log.Println("keyboard message: ", msg.Data)
 
 		if !msg.IsString || msg.Data == nil {
