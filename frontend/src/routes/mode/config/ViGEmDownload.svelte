@@ -1,7 +1,7 @@
 <script lang="ts">
 	import '$lib/detection/IsWindows.svelte';
 
-	import { OpenViGEmWizard } from '$lib/wailsjs/go/desktop/App';
+	import { OpenViGEmWizard } from '$lib/wailsjs/go/bindings/App';
 </script>
 
 <section

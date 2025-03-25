@@ -1,7 +1,7 @@
 import {
 	TryCreateHost as createHostFn,
 	TryClosePeerConnection as closeConnectionFn
-} from '$lib/wailsjs/go/desktop/App';
+} from '$lib/wailsjs/go/bindings/App';
 
 import { _ } from 'svelte-i18n'
 import { get } from 'svelte/store';

@@ -10,6 +10,8 @@ export function NotifyCreateClient():Promise<void>;
 
 export function OpenViGEmWizard():Promise<string>;
 
+export function ToogleGamepad():Promise<void>;
+
 export function TryClosePeerConnection():Promise<boolean>;
 
 export function TryCreateHost(arg1:Array<webrtc.ICEServer>,arg2:string):Promise<string>;
