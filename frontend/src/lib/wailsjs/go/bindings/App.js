@@ -6,6 +6,14 @@ export function GetCurrentOS() {
   return window['go']['bindings']['App']['GetCurrentOS']();
 }
 
+export function IsGamepadEnabled() {
+  return window['go']['bindings']['App']['IsGamepadEnabled']();
+}
+
+export function IsKeyboardEnabled() {
+  return window['go']['bindings']['App']['IsKeyboardEnabled']();
+}
+
 export function NotifyCloseClient() {
   return window['go']['bindings']['App']['NotifyCloseClient']();
 }
@@ -20,6 +28,10 @@ export function OpenViGEmWizard() {
 
 export function ToogleGamepad() {
   return window['go']['bindings']['App']['ToogleGamepad']();
+}
+
+export function ToogleKeyboard() {
+  return window['go']['bindings']['App']['ToogleKeyboard']();
 }
 
 export function TryClosePeerConnection() {

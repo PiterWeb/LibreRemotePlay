@@ -4,6 +4,10 @@ import {webrtc} from '../models';
 
 export function GetCurrentOS():Promise<string>;
 
+export function IsGamepadEnabled():Promise<boolean>;
+
+export function IsKeyboardEnabled():Promise<boolean>;
+
 export function NotifyCloseClient():Promise<void>;
 
 export function NotifyCreateClient():Promise<void>;
@@ -11,6 +15,8 @@ export function NotifyCreateClient():Promise<void>;
 export function OpenViGEmWizard():Promise<string>;
 
 export function ToogleGamepad():Promise<void>;
+
+export function ToogleKeyboard():Promise<void>;
 
 export function TryClosePeerConnection():Promise<boolean>;
 

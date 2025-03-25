@@ -7,21 +7,56 @@
 
 	import { onMount } from 'svelte';
 	import IsLinux from '$lib/detection/IsLinux.svelte';
+	import KeyboardIcon from '$lib/layout/icons/KeyboardIcon.svelte';
+	import GamepadIcon from '$lib/layout/icons/GamepadIcon.svelte';
 
 	let selected_resolution = $state(FIXED_RESOLUTIONS.resolution720p);
 
 	let idealFramerate = $state(DEFAULT_IDEAL_FRAMERATE);
 	let maxFramerate = $state(DEFAULT_MAX_FRAMERATE);
 
+	let keyboardEnabled = $state(false);
+	let gamepadEnabled = $state(true);
+
 	function createStream() {
 		CreateHostStream(selected_resolution, idealFramerate, maxFramerate);
 		streaming.value = true;
+	}
+
+	async function toogleKeyboard() {
+
+		const { IsKeyboardEnabled,  ToogleKeyboard } = await import('$lib/wailsjs/go/bindings/App')
+
+		await ToogleKeyboard()
+		keyboardEnabled = await IsKeyboardEnabled()
+	}
+
+	async function toogleGamepad() {
+
+		const { IsGamepadEnabled,  ToogleGamepad } = await import('$lib/wailsjs/go/bindings/App')
+
+		await ToogleGamepad()
+		gamepadEnabled = await IsGamepadEnabled()
 	}
 
 	onMount(() => {
 		ListenForConnectionChanges();
 	});
 </script>
+
+<section class="w-full h-full">
+	<h3 class="text-3xl">
+		{$_('toogle_devices')}
+	</h3>
+	<div class="flex flex-row gap-3 mt-6">
+		<button onclick={toogleKeyboard} class:btn-primary={keyboardEnabled} class:btn-neutral={!keyboardEnabled} class="btn">
+			<KeyboardIcon/>
+		</button>
+		<button onclick={toogleGamepad} class:btn-primary={gamepadEnabled}  class:btn-neutral={!gamepadEnabled} class="btn">
+			<GamepadIcon/>
+		</button>
+	</div>
+</section>
 
 <IsLinux>
 	<div class="w-full h-full">
@@ -33,7 +68,7 @@
 
 <IsLinux not>
 	<div class:hidden={streaming.value} class="w-full h-full grid grid-rows-2 grid-cols-1 gap-2">
-		<div class="w-full h-full">
+		<section class="w-full h-full">
 			<h3 class="text-3xl">{$_('resolutions')}</h3>
 			<select
 				class="select select-primary w-full max-w-xs mt-6"
@@ -47,8 +82,8 @@
 					>
 				{/each}
 			</select>
-		</div>
-		<div class="w-full h-full">
+		</section>
+		<section class="w-full h-full">
 			<h3 class="text-3xl">{$_('framerate')}</h3>
 			<div class="flex flex-row gap-10 h-full w-full mt-6">
 				<div class="w-full h-full flex flex-col">
@@ -92,7 +127,7 @@
 					/>
 				</div>
 			</div>
-		</div>
+		</section>
 	</div>
 
 	<button onclick={createStream} disabled={streaming.value} class="btn btn-primary"
