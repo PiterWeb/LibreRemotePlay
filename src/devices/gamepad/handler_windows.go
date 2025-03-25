@@ -69,7 +69,7 @@ func HandleGamepad(gamepadChannel *webrtc.DataChannel) {
 
 		ffjson.Unmarshal(msg.Data, &pad)
 
-		UpdateVirtualDevice(virtualDevice, pad, virtualState)
+		go UpdateVirtualDevice(virtualDevice, pad, virtualState)
 
 	})
 
