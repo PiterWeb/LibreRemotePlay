@@ -3,11 +3,7 @@ type keyHandler = (keycode: string) => void
 export function handleKeyDown(callback: keyHandler) {
 	
 	const handler = (event: KeyboardEvent) => {
-		const key = event.code.toUpperCase();
-
-		if (specialKeys.has(key)) return callback(key + '_1');
-
-		callback(key);
+		return callback(event.code + '_1');
 	}
 
 	document.addEventListener('keydown', handler);
@@ -22,11 +18,7 @@ export function unhandleKeyDown(callback: ReturnType<typeof handleKeyDown>) {
 export function handleKeyUp(callback: keyHandler) {
 
 	const handler = (event: KeyboardEvent) => {
-		const key = event.code.toUpperCase();
-
-		if (!specialKeys.has(key)) return;
-
-		callback(key + '_0');
+		return callback(event.code + '_0');
 	}
 
 	document.addEventListener('keyup', handler);

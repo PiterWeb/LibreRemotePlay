@@ -1,16 +1,15 @@
-//go:build !darwin
-
 package keyboard
 
 import (
 	"log"
-	"runtime"
 	"strings"
-	"time"
 
-	"github.com/micmonay/keybd_event"
+	"github.com/PiterWeb/RemoteController/src/devices"
+	"github.com/go-vgo/robotgo"
 	"github.com/pion/webrtc/v3"
 )
+
+var KeyboardEnabled = new(devices.DeviceEnabled).Disable()
 
 func HandleKeyboard(d *webrtc.DataChannel) error {
 
@@ -18,21 +17,9 @@ func HandleKeyboard(d *webrtc.DataChannel) error {
 		return nil
 	}
 
-	kb, err := keybd_event.NewKeyBonding()
-	if err != nil {
-		return err
-	}
-
-	// For linux, it is very important to wait 2 seconds
-	if runtime.GOOS == "linux" {
-		time.Sleep(2 * time.Second)
-	}
-
 	d.OnOpen(func() {
 		log.Println("keyboard data channel is open")
 	})
-
-	var SHIFT_KEY_PRESSED, CTRL_KEY_PRESSED, ALT_KEY_PRESSED bool
 
 	d.OnMessage(func(msg webrtc.DataChannelMessage) {
 
@@ -40,46 +27,31 @@ func HandleKeyboard(d *webrtc.DataChannel) error {
 			return
 		}
 
-		log.Println("keyboard message: ", msg.Data)
-
 		if !msg.IsString || msg.Data == nil {
 			return
 		}
 
 		log.Println("keyboard message: ", string(msg.Data))
 
-		keyJS := strings.ToUpper(string(msg.Data))
+		keyParts := strings.Split(string(msg.Data), "_")
 
-		switch keyJS {
-		case "SHIFTLEFT_1":
-			SHIFT_KEY_PRESSED = true
+		if len(keyParts) < 2 {
 			return
-		case "SHIFTLEFT_0":
-			SHIFT_KEY_PRESSED = false
-		case "CTRLLEFT_1":
-			CTRL_KEY_PRESSED = true
-			return
-		case "CTRLLEFT_0":
-			CTRL_KEY_PRESSED = false
-		case "ALTLEFT_1":
-			ALT_KEY_PRESSED = true
-			return
-		case "ALTLEFT_0":
-			ALT_KEY_PRESSED = false
-			return
-		default:
-			if key, ok := keyBoardJSToGolang[keyJS]; ok {
-				kb.SetKeys(key)
+		}
 
-				kb.HasALT(ALT_KEY_PRESSED)
-				kb.HasCTRL(CTRL_KEY_PRESSED)
-				kb.HasSHIFTR(SHIFT_KEY_PRESSED)
+		key := mapJSKeyToRobotGo(keyParts[0])
 
-				kb.Press()
-				// This sleep is arbitrary, it may be necessary to adjust it
-				time.Sleep(10 * time.Millisecond)
-				kb.Release()
-			}
+		if key == "" {
+			log.Println("keyboard key not found: ", keyParts[0])
+			return
+		}
+
+		if keyParts[1] == "1" {
+			_ = robotgo.KeyDown(key)
+			return
+		} else {
+			_ = robotgo.KeyUp(key)
+			return
 		}
 
 	})
