@@ -7,11 +7,12 @@ import (
 type DeviceEnabledI interface {
 	Toogle()
 	IsEnabled() bool
+	Enable() *DeviceEnabled
+	Disable() *DeviceEnabled
 }
 
 type DeviceEnabled struct {
 	enabled atomic.Int32
-	DeviceEnabledI
 }
 
 func (d *DeviceEnabled) Toogle() {
