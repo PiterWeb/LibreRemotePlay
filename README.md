@@ -11,6 +11,9 @@
 >
 > Wiki:
 > https://github.com/PiterWeb/LibreRemotePlay/wiki
+>
+> Discord:
+> https://discord.gg/UBzpCDPxFd
 
 ## Use cases ✨
 
@@ -26,6 +29,7 @@
 - [Docs](./docs/) 📘
 - [Linux Docs](./docs/LINUX.md) 📘
 - [Wiki](https://github.com/PiterWeb/LibreRemotePlay/wiki) (Guides, FAQ, ...)
+- [Discord Community](https://discord.gg/UBzpCDPxFd)
 
 ### Videos 📹
 (Note that videos may show older/beta versions of the APP and could have bugs that are already fixed in the latest version)
