@@ -3,11 +3,11 @@
 # LibreRemotePlay
 ### An open source & P2P alternative to Steam remote play (No need to self host)
 
-Website 🌐: https://libreremoteplay.vercel.app/
-<br/>
-Wiki 📖: https://github.com/PiterWeb/LibreRemotePlay/wiki
-<br/>
-Discord Community 👥: https://discord.gg/UBzpCDPxFd
+- Website 🌐: https://libreremoteplay.vercel.app/
+
+- Wiki 📖: https://github.com/PiterWeb/LibreRemotePlay/wiki
+
+- Discord Community 👥: https://discord.gg/UBzpCDPxFd
 
 ## Use cases ✨
 
