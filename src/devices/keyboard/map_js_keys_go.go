@@ -17,12 +17,6 @@ func mapJSKeyToRobotGo(jsKey string) string {
 		"Control":    "ctrl",
 		"Alt":        "alt",
 		"CapsLock":   "capslock",
-		"Insert":     "insert",
-		"Delete":     "delete",
-		"Home":       "home",
-		"End":        "end",
-		"PageUp":     "pageup",
-		"PageDown":   "pagedown",
 	}
 
 	// Map (F1 - F12) keys
@@ -33,5 +27,10 @@ func mapJSKeyToRobotGo(jsKey string) string {
 	if val, exists := keyMap[jsKey]; exists {
 		return val
 	}
+
+	if len(jsKey) == 1 {
+		return jsKey
+	}
+
 	return ""
 }

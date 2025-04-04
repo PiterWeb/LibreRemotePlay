@@ -3,7 +3,7 @@ type keyHandler = (keycode: string) => void
 export function handleKeyDown(callback: keyHandler) {
 	
 	const handler = (event: KeyboardEvent) => {
-		return callback(event.code + '_1');
+		return callback(event.key + '_1');
 	}
 
 	document.addEventListener('keydown', handler);
@@ -18,7 +18,7 @@ export function unhandleKeyDown(callback: ReturnType<typeof handleKeyDown>) {
 export function handleKeyUp(callback: keyHandler) {
 
 	const handler = (event: KeyboardEvent) => {
-		return callback(event.code + '_0');
+		return callback(event.key + '_0');
 	}
 
 	document.addEventListener('keyup', handler);
@@ -29,12 +29,3 @@ export function handleKeyUp(callback: keyHandler) {
 export function unhandleKeyUp(callback: ReturnType<typeof handleKeyUp>) {
 	document.removeEventListener("keyup", callback)
 }
-
-const specialKeys = new Set([
-	'SHIFTLEFT',
-	'SHIFTRIGHT',
-	'CONTROLLEFT',
-	'CONTROLRIGHT',
-	'ALTLEFT',
-	'ALTRIGHT'
-]);

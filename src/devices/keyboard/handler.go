@@ -21,6 +21,8 @@ func HandleKeyboard(d *webrtc.DataChannel) error {
 		log.Println("keyboard data channel is open")
 	})
 
+	keyState := make(map[string]bool)
+
 	d.OnMessage(func(msg webrtc.DataChannelMessage) {
 
 		if !KeyboardEnabled.IsEnabled() {
@@ -30,8 +32,6 @@ func HandleKeyboard(d *webrtc.DataChannel) error {
 		if !msg.IsString || msg.Data == nil {
 			return
 		}
-
-		log.Println("keyboard message: ", string(msg.Data))
 
 		keyParts := strings.Split(string(msg.Data), "_")
 
@@ -47,9 +47,17 @@ func HandleKeyboard(d *webrtc.DataChannel) error {
 		}
 
 		if keyParts[1] == "1" {
+			if keyState[key] {
+				return
+			}
+			keyState[key] = true
 			_ = robotgo.KeyDown(key)
 			return
 		} else {
+			if !keyState[key] {
+				return
+			}
+			keyState[key] = false
 			_ = robotgo.KeyUp(key)
 			return
 		}

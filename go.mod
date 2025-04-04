@@ -2,13 +2,12 @@ module github.com/PiterWeb/RemoteController
 
 go 1.23.0
 
-toolchain go1.24.0
+toolchain go1.24.1
 
 require (
 	github.com/coder/websocket v1.8.12
-	github.com/go-vgo/robotgo v0.110.6
 	github.com/jbdemonte/virtual-device v1.1.0
-	github.com/pion/webrtc/v3 v3.3.4
+	github.com/pion/webrtc/v3 v3.3.5
 )
 
 require (
@@ -62,6 +61,7 @@ require (
 
 require (
 	github.com/davecgh/go-spew v1.1.1 // indirect
+	github.com/go-vgo/robotgo v0.110.6
 	github.com/google/uuid v1.6.0 // indirect
 	github.com/pion/datachannel v1.5.9 // indirect
 	github.com/pion/dtls/v2 v2.2.12 // indirect
