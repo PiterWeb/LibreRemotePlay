@@ -7,7 +7,7 @@
 
 - Wiki 📖: https://github.com/PiterWeb/LibreRemotePlay/wiki
 
-- Discord Community 👥: https://discord.gg/UBzpCDPxFd
+- Discord Community 👥: https://discord.gg/v7qd7nU3fJ
 
 ## Use cases ✨
 
