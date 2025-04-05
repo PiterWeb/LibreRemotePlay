@@ -36,31 +36,33 @@ https://github.com/user-attachments/assets/f4a412fa-f403-4429-85fb-9c1e74bff458
 
 - [x] Portable
 - [x] Simple & Modern UI
+- [x] Interactive Tutorial
 - [x] P2P "Decentralized" (WebRTC)
-- [x] Remote Streaming
+- [x] Remote Video Streaming
+  - [ ] Video Quality Config 
 - [x] Browser Client
-- [x] Support for keyboard (very experimental)
-- [x] ViGEmBus Setup (Windows)
 - [x] Localization (translation to multiple languages)
-- [x] Support for STUN & TURN
+- [x] Support for custom STUN & TURN servers
+- [ ] Keyboard
+- [ ] Toogle Devices
 
 ### OS Support 💻
 
 | Windows 	| Linux 	| MacOS 	| Browser (Only Client) 	|
 |---------	|-------	|-------	|---------	|
-| ✔       	| ✔ Gamepad/Streaming support (❌ Keyboard for the moment)     	| ❌ (No MacOS to test)     	| ✔ (Known Issues with Safari)       	|
+| ✔       	| ✔     	| ❌ (No MacOS to test/develop)     	| ✔ (Known Issues with Safari)       	|
 
-### Native Gamepad Support 🎮
+### Gamepad Support 🎮
 
 | PC Controller (XInput/DirectInput) 	| Xbox Controller (XInput) 	| PlayStation Controler
 |---------	|-------	|-------	|
 | ✔       	| ✔     	| ❌ (But you can achieve [emulating a Xbox Controller](https://github.com/Ryochan7/DS4Windows))     	|
 
-### Translations 🔠
+### Available Languages 🔠
 
 | English 	| Spanish 	| Galician | Russian | French |Other languages |
 |---------	|-------	|-------	| ------- | ------- | ------- |
-| 100% ✔     	| 100% ✔      	| 100% ✔      	| 100% ✔ | 100% ✔ (@Zorkyx22) |⌛ Looking for contributions
+| ✔     	| ✔      	| ✔      	| ✔ | ✔ (@Zorkyx22) |⌛ Looking for contributions
 
 ## Self Hosting ☁
 
