@@ -9,10 +9,12 @@
 
 - Discord Community 👥: https://discord.gg/v7qd7nU3fJ
 
+- Series of WebRTC Articles 👨‍💻: https://dev.to/piterweb/series/30718
+
 ## Use cases ✨
 
-- Share your local co-op games online with friends (as [Steam Remote Play Anywhere](https://store.steampowered.com/remoteplay?l=english#anywhere))
-- Stream your games from your PC to other devices (as [Steam Remote Play Together](https://store.steampowered.com/remoteplay?l=english#together))
+- Share your local co-op games online with friends (as [Steam Remote Play Together](https://store.steampowered.com/remoteplay?l=english#together))
+- Stream your games from your PC to other devices (as [Steam Remote Play Anywhere](https://store.steampowered.com/remoteplay?l=english#anywhere))
 
 ## Download 📦
 
