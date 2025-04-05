@@ -37,7 +37,7 @@ https://github.com/user-attachments/assets/f4a412fa-f403-4429-85fb-9c1e74bff458
 - [x] Portable
 - [x] Simple & Modern UI
 - [x] Interactive Tutorial
-- [x] P2P "Decentralized" (WebRTC)
+- [x] Peer-to-Peer (WebRTC)
 - [x] Remote Video Streaming
   - [ ] Video Quality Config 
 - [x] Browser Client
