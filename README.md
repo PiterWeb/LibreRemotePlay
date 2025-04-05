@@ -38,6 +38,7 @@ https://github.com/user-attachments/assets/f4a412fa-f403-4429-85fb-9c1e74bff458
 - [x] Simple & Modern UI
 - [x] Interactive Tutorial
 - [x] Peer-to-Peer (WebRTC)
+- [ ] Groups
 - [x] Remote Video Streaming
   - [ ] Video Quality Config 
 - [x] Browser Client
