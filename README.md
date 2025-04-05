@@ -124,19 +124,25 @@ finally go to the build/bin folder and your executables will be there.
 
 If you are interested to contribute to this project you can follow this [guide](./CONTRIBUTING.md)
 
-Also 
+## Acknowledgements ❤
+These projects are making LibreRemotePlay a reality.
 
-## Acknowledgements
+### Thanks to jbdemonte/virtual-device
+[jbdemonte/virtual-device](https://github.com/jbdemonte/virtual-device) is the source of magic that enables LibreRemotePlay to generate virtual gamepads on Linux, is very fast and made in pure Go.
+### Thanks to the ViGEm project
+[ViGEmBus](https://github.com/nefarius/ViGEmBus) is the source of magic that enables LibreRemotePlay to generate virtual gamepads on Windows. We embed ViGEmBus Installation Wizard and ViGEmBus Client DLLS within the executable for Windows
 
-### Thanks to jbdemonte/virtual-device ❤
-[jbdemonte/virtual-device](https://github.com/jbdemonte/virtual-device) is making this project a reality. This is the source of magic that enables LibreRemotePlay to generate virtual gamepads on Linux, is very fast and made in pure Go.
-### Thanks to the ViGEm project  ❤
-[ViGEmBus](https://github.com/nefarius/ViGEmBus) is making this project a reallity. This is the source of magic that enables LibreRemotePlay to generate virtual gamepads on Windows. We embed ViGEmBus Installation Wizard and ViGEmBus Client DLLS within the executable for Windows
+### Thanks to Wails
+[Wails](https://github.com/wailsapp/wails) makes easy creating desktop experiences using Go and Web tecnologies.
+
+### Thanks to pion/webrtc
+[Pion/Webrtc](https://github.com/pion/webrtc) is a implementation of WebRTC made in pure Go, it enables LibreRemotePlay to use WebRTC in a crossplatform way.
+
+### Thanks to robotgo
+[robotgo](https://github.com/go-vgo/robotgo) makes easy controling/simulating a keyboard (and anything related to desktop) using a simple syntax in Go.
 
 ## Did you like the project 👍 ?
-You can give a star and review us on Product Hunt
-
-<a href="https://www.producthunt.com/products/remote-controller/reviews?utm_source=badge-product_review&utm_medium=badge&utm_souce=badge-remote&#0045;controller" target="_blank"><img src="https://api.producthunt.com/widgets/embed-image/v1/product_review.svg?product_id=565186&theme=light" alt="LibreRemotePlay - Play&#0032;LOCAL&#0032;co&#0045;op&#0032;games&#0032;ONLINE | Product Hunt" style="width: 250px; height: 54px;" width="250" height="54" /></a>
+You can give us a star and join our [Discord Community](https://discord.gg/v7qd7nU3fJ), the project is always looking for feedback :)
 
 ## Star History
 Here you can see how fast the community is growing
