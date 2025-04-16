@@ -1,8 +1,6 @@
 module github.com/PiterWeb/RemoteController
 
-go 1.23.0
-
-toolchain go1.24.1
+go 1.24.2
 
 require (
 	github.com/coder/websocket v1.8.12
@@ -11,6 +9,7 @@ require (
 )
 
 require (
+	github.com/PiterWeb/LibreRemotePlaySignals v1.0.0 // indirect
 	github.com/bep/debounce v1.2.1 // indirect
 	github.com/dblohm7/wingoes v0.0.0-20240820181039-f2b84150679e // indirect
 	github.com/ebitengine/purego v0.8.2 // indirect
