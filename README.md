@@ -1,7 +1,7 @@
 ![LibreRemotePlay logo banner](https://github.com/user-attachments/assets/9173246d-1d65-4f29-bd79-0206250c538c)
 
 # LibreRemotePlay
-### An open source & P2P alternative to Steam remote play (No need to self host)
+### An open source, free (as in freedom) and P2P alternative to Steam Remote Play
 
 - Website 🌐: https://libreremoteplay.vercel.app/
 
@@ -9,10 +9,12 @@
 
 - Discord Community 👥: https://discord.gg/v7qd7nU3fJ
 
+- Series of WebRTC Articles 👨‍💻: https://dev.to/piterweb/series/30718
+
 ## Use cases ✨
 
-- Share your local co-op games online with friends (as [Steam Remote Play Anywhere](https://store.steampowered.com/remoteplay?l=english#anywhere))
-- Stream your games from your PC to other devices (as [Steam Remote Play Together](https://store.steampowered.com/remoteplay?l=english#together))
+- Share your local co-op games online with friends (as [Steam Remote Play Together](https://store.steampowered.com/remoteplay?l=english#together))
+- Stream your games from your PC to other devices (as [Steam Remote Play Anywhere](https://store.steampowered.com/remoteplay?l=english#anywhere))
 
 ## Download 📦
 
@@ -36,31 +38,34 @@ https://github.com/user-attachments/assets/f4a412fa-f403-4429-85fb-9c1e74bff458
 
 - [x] Portable
 - [x] Simple & Modern UI
-- [x] P2P "Decentralized" (WebRTC)
-- [x] Remote Streaming
+- [x] Interactive Tutorial
+- [x] Peer-to-Peer (WebRTC)
+- [ ] Groups
+- [x] Remote Video Streaming
+  - [ ] Video Quality Config 
 - [x] Browser Client
-- [x] Support for keyboard (very experimental)
-- [x] ViGEmBus Setup (Windows)
 - [x] Localization (translation to multiple languages)
-- [x] Support for STUN & TURN
+- [x] Support for custom STUN & TURN servers
+- [ ] Keyboard
+- [ ] Toogle Devices
 
 ### OS Support 💻
 
 | Windows 	| Linux 	| MacOS 	| Browser (Only Client) 	|
 |---------	|-------	|-------	|---------	|
-| ✔       	| ✔ Gamepad/Streaming support (❌ Keyboard for the moment)     	| ❌ (No MacOS to test)     	| ✔ (Known Issues with Safari)       	|
+| ✔       	| ✔     	| ❌ (No MacOS to test/develop)     	| ✔ (Known Issues with Safari)       	|
 
-### Native Gamepad Support 🎮
+### Gamepad Support 🎮
 
 | PC Controller (XInput/DirectInput) 	| Xbox Controller (XInput) 	| PlayStation Controler
 |---------	|-------	|-------	|
 | ✔       	| ✔     	| ❌ (But you can achieve [emulating a Xbox Controller](https://github.com/Ryochan7/DS4Windows))     	|
 
-### Translations 🔠
+### Available Languages 🔠
 
 | English 	| Spanish 	| Galician | Russian | French |Other languages |
 |---------	|-------	|-------	| ------- | ------- | ------- |
-| 100% ✔     	| 100% ✔      	| 100% ✔      	| 100% ✔ | 100% ✔ (@Zorkyx22) |⌛ Looking for contributions
+| ✔     	| ✔      	| ✔      	| ✔ | ✔ (@Zorkyx22) |⌛ Looking for contributions
 
 ## Self Hosting ☁
 
@@ -119,19 +124,25 @@ finally go to the build/bin folder and your executables will be there.
 
 If you are interested to contribute to this project you can follow this [guide](./CONTRIBUTING.md)
 
-Also 
+## Acknowledgements ❤
+These projects are making LibreRemotePlay a reality.
 
-## Acknowledgements
+### Thanks to jbdemonte/virtual-device
+[jbdemonte/virtual-device](https://github.com/jbdemonte/virtual-device) is the source of magic that enables LibreRemotePlay to generate virtual gamepads on Linux, is very fast and made in pure Go.
+### Thanks to the ViGEm project
+[ViGEmBus](https://github.com/nefarius/ViGEmBus) is the source of magic that enables LibreRemotePlay to generate virtual gamepads on Windows. We embed ViGEmBus Installation Wizard and ViGEmBus Client DLLS within the executable for Windows
 
-### Thanks to jbdemonte/virtual-device ❤
-[jbdemonte/virtual-device](https://github.com/jbdemonte/virtual-device) is making this project a reality. This is the source of magic that enables LibreRemotePlay to generate virtual gamepads on Linux, is very fast and made in pure Go.
-### Thanks to the ViGEm project  ❤
-[ViGEmBus](https://github.com/nefarius/ViGEmBus) is making this project a reallity. This is the source of magic that enables LibreRemotePlay to generate virtual gamepads on Windows. We embed ViGEmBus Installation Wizard and ViGEmBus Client DLLS within the executable for Windows
+### Thanks to Wails
+[Wails](https://github.com/wailsapp/wails) makes easy creating desktop experiences using Go and Web tecnologies.
+
+### Thanks to pion/webrtc
+[Pion/Webrtc](https://github.com/pion/webrtc) is a implementation of WebRTC made in pure Go, it enables LibreRemotePlay to use WebRTC in a crossplatform way.
+
+### Thanks to robotgo
+[robotgo](https://github.com/go-vgo/robotgo) makes easy controling/simulating a keyboard (and anything related to desktop) using a simple syntax in Go.
 
 ## Did you like the project 👍 ?
-You can give a star and review us on Product Hunt
-
-<a href="https://www.producthunt.com/products/remote-controller/reviews?utm_source=badge-product_review&utm_medium=badge&utm_souce=badge-remote&#0045;controller" target="_blank"><img src="https://api.producthunt.com/widgets/embed-image/v1/product_review.svg?product_id=565186&theme=light" alt="LibreRemotePlay - Play&#0032;LOCAL&#0032;co&#0045;op&#0032;games&#0032;ONLINE | Product Hunt" style="width: 250px; height: 54px;" width="250" height="54" /></a>
+You can give us a star and join our [Discord Community](https://discord.gg/v7qd7nU3fJ), the project is always looking for feedback :)
 
 ## Star History
 Here you can see how fast the community is growing
