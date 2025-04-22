@@ -46,9 +46,13 @@ function getStoredPreferedCodecsOrdered() {
 
 }
 
-getSortedVideoCodecs().forEach(codec => {
-	console.log(codec.mimeType);
-})
+try {
+	getSortedVideoCodecs().forEach(codec => {
+		console.log(codec.mimeType);
+	})
+} catch (e) {
+	console.error("Error getting codecs", e);
+}
 
 export function getSortedVideoCodecs() {
 

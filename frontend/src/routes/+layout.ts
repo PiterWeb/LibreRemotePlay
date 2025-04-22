@@ -1,5 +1,6 @@
 export const ssr = false;
 export const prerender = true;
+export const trailingSlash = 'always';
 
 import { browser } from '$app/environment'
 import '$lib/i18n/i18n' // Import to initialize. Important :)

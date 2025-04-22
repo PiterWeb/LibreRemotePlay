@@ -1,5 +1,6 @@
 <script>
 	import '../app.css';
+	import { onMount } from 'svelte';
 
 	import { page } from '$app/stores';
 
@@ -11,6 +12,14 @@
 
 	/** @type {{children?: import('svelte').Snippet}} */
 	let { children } = $props();
+
+	onMount(() => {
+		if ('serviceWorker' in navigator && import.meta.env.VITE_ON_WEBSITE === "true") {
+			addEventListener('load', function () {
+				navigator.serviceWorker.register('../service-worker.js');
+			});
+		}
+	})
 
 </script>
 
