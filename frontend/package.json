@@ -13,7 +13,7 @@
 		"cy:open": "cypress open --e2e",
 		"test": "cypress run --e2e",
 		"cy:parallel": "cypress-parallel -s cy:open -t 2 -m false",
-		"prebuild": "pnpm -v && corepack enable && corepack prepare pnpm@8.14.1 --activate"
+		"prebuild": "pnpm -v && corepack enable && corepack prepare pnpm@10.9.0 --activate"
 	},
 	"devDependencies": {
 		"@rollup/plugin-json": "^6.1.0",
