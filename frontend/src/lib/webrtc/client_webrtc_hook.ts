@@ -142,7 +142,10 @@ async function CreateClientWeb() {
 				const engine = browser.getEngine();
 				const gecko = 'Gecko';
 				const clipboardClick = () => {
-					navigator.clipboard.writeText(copiedCode).catch(() => {
+
+					navigator.clipboard.writeText(copiedCode).then(() => {
+						showToast(get(_)('client-code-copied-to-clipboard'), ToastType.SUCCESS);
+					}).catch(() => {
 						showToast(get(_)('error-copying-client-code-to-clipboard'), ToastType.ERROR);
 					});
 
@@ -155,15 +158,18 @@ async function CreateClientWeb() {
 				if (navigator && navigator.clipboard && navigator.clipboard.writeText) {
 					if (engine.name === gecko) {
 						// Browsers that use gecko engine aka Firefox require user interaction
-						alert('Click ok to copy the client code to your clipboard.');
+						alert('Click ok and then click on the website to copy the client code to your clipboard.');
 						document.addEventListener('click', clipboardClick);
 					} else {
-						navigator.clipboard.writeText(copiedCode).catch(() => {
+					
+						navigator.clipboard.writeText(copiedCode).then(() => {
+							showToast(get(_)('client-code-copied-to-clipboard'), ToastType.SUCCESS);
+						}).catch(() => {
 							showToast(get(_)('error-copying-client-code-to-clipboard'), ToastType.ERROR);
 						});
+
 					}
 					
-					showToast(get(_)('client-code-copied-to-clipboard'), ToastType.SUCCESS);
 				} else {
 					showToast(get(_)('error-copying-client-code-to-clipboard'), ToastType.ERROR);
 				}
