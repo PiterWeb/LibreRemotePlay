@@ -10,6 +10,7 @@ import { _ } from 'svelte-i18n';
 import { exportStunServers } from './stun_servers';
 import { exportTurnServers } from './turn_servers';
 import { getConsumingStream, setConsumingStream } from './stream/stream_signal_hook.svelte';
+import Bowser from "bowser";
 
 enum DataChannelLabel {
 	StreamingSignal = 'streaming-signal',
@@ -137,17 +138,36 @@ async function CreateClientWeb() {
 				// Disable spinner
 				toogleLoading();
 
-				copiedCode =
-					signalEncode(peerConnection?.localDescription) + ';' + signalEncode(candidates);
-
-				if (navigator && navigator.clipboard && navigator.clipboard.writeText) {
+				const browser = Bowser.getParser(window.navigator.userAgent);
+				const engine = browser.getEngine();
+				const gecko = 'Gecko';
+				const clipboardClick = () => {
 					navigator.clipboard.writeText(copiedCode).catch(() => {
 						showToast(get(_)('error-copying-client-code-to-clipboard'), ToastType.ERROR);
 					});
+
+					document.removeEventListener('click', clipboardClick);
+				};
+
+				copiedCode =
+					signalEncode(peerConnection?.localDescription) + ';' + signalEncode(candidates);
+				
+				if (navigator && navigator.clipboard && navigator.clipboard.writeText) {
+					if (engine.name === gecko) {
+						// Browsers that use gecko engine aka Firefox require user interaction
+						alert('Click ok to copy the client code to your clipboard.');
+						document.addEventListener('click', clipboardClick);
+					} else {
+						navigator.clipboard.writeText(copiedCode).catch(() => {
+							showToast(get(_)('error-copying-client-code-to-clipboard'), ToastType.ERROR);
+						});
+					}
+					
 					showToast(get(_)('client-code-copied-to-clipboard'), ToastType.SUCCESS);
 				} else {
 					showToast(get(_)('error-copying-client-code-to-clipboard'), ToastType.ERROR);
 				}
+
 				return;
 			}
 
