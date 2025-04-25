@@ -8,8 +8,10 @@ require (
 	github.com/pion/webrtc/v3 v3.3.5
 )
 
+require github.com/gorilla/websocket v1.5.3 // indirect
+
 require (
-	github.com/PiterWeb/LibreRemotePlaySignals v1.0.0 // indirect
+	github.com/PiterWeb/LibreRemotePlaySignals v1.0.0
 	github.com/bep/debounce v1.2.1 // indirect
 	github.com/dblohm7/wingoes v0.0.0-20240820181039-f2b84150679e // indirect
 	github.com/ebitengine/purego v0.8.2 // indirect
