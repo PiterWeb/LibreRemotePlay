@@ -5,6 +5,7 @@ import (
 	"log"
 
 	"github.com/PiterWeb/RemoteController/src/bindings"
+	appLogger "github.com/PiterWeb/RemoteController/src/logger"
 	"github.com/PiterWeb/RemoteController/src/oninit"
 	"github.com/wailsapp/wails/v2"
 	"github.com/wailsapp/wails/v2/pkg/logger"
@@ -27,6 +28,12 @@ func main() {
 		}
 
 	}()
+
+	logFile := appLogger.InitLogger()
+
+	defer logFile.Close()
+
+	log.Println("LibreRemotePlay Starting app")
 
 	// Create an instance of the app structure
 	app := bindings.NewApp()
