@@ -5,13 +5,17 @@ const audioVolumeStore = writable(defaultVolume);
 
 function playAudio(name: string) {
 
-    const basePath = '/sounds/';
-
-    const audio = new Audio(basePath + name + ".mp3");
-
-    audio.volume = get(audioVolumeStore);
-
-    navigator.userActivation.isActive && audio.play();
+    try {
+        const basePath = '/sounds/';
+        
+        const audio = new Audio(basePath + name + ".mp3");
+        
+        audio.volume = get(audioVolumeStore);
+        
+        navigator.userActivation.isActive && audio.play();
+    } catch (error) {
+        console.error("Error playing audio:", error);
+    }
 
 }
 
