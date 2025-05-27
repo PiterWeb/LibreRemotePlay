@@ -2,7 +2,7 @@
 const onwebsite = import.meta.env?.VITE_ON_WEBSITE === 'true';
 
 // This will be true if using the linux client when browser opens
-const IS_RUNNING_EXTERNAL = window && window.location.port === "8080";
+const IS_RUNNING_EXTERNAL = window && window?.location?.port === "8080";
 
 export {IS_RUNNING_EXTERNAL}
 
