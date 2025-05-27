@@ -221,7 +221,7 @@ function handleConnectionState() {
 			showToast(get(_)('connection-established-successfully'), ToastType.SUCCESS);
 			goto('/mode/client/connection');
 			// Inside try-catch cause in browser will not work
-			import('$lib/wailsjs/go/bindings/App').then(obj => obj.NotifyCreateClient()).catch();
+			import('$lib/wailsjs/go/bindings/App').then(obj => obj.NotifyCreateClient).catch();
 			break;
 		case 'disconnected':
 			showToast(get(_)('connection-lost'), ToastType.ERROR);
