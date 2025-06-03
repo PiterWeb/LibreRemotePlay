@@ -2,7 +2,7 @@
 	import '../app.css';
 	import { onMount } from 'svelte';
 
-	import { page } from '$app/stores';
+	import { page } from '$app/state';
 
 	import PageTransition from '$lib/layout/PageTransition.svelte';
 	import Toast from '$lib/toast/Toast.svelte';
@@ -16,7 +16,11 @@
 	onMount(() => {
 		if ('serviceWorker' in navigator && import.meta.env.VITE_ON_WEBSITE === "true") {
 			addEventListener('load', function () {
-				navigator.serviceWorker.register('../service-worker.js');
+				try {
+					navigator.serviceWorker.register('../service-worker.js');
+				} catch (e) {
+					console.error('Service Worker registration failed:', e);
+				}
 			});
 		}
 	})
@@ -60,7 +64,7 @@
 	</div>
 </nav>
 
-<PageTransition key={$page.url.toString()} duration={750}>
+<PageTransition key={page.url.toString()} duration={750}>
 	<div class="hero min-h-[calc(100vh-4rem)] bg-base-200">
 		<div class="hero-content flex-col">
 			{@render children?.()}
