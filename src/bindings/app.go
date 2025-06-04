@@ -170,3 +170,7 @@ func (a *App) IsKeyboardEnabled() bool {
 func (a *App) GetCurrentOS() string {
 	return strings.ToUpper(runtime.GOOS)
 }
+
+func (a *App) LogPrintln(info string) {
+	log.Println(info)
+}
