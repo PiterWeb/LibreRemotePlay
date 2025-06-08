@@ -2,7 +2,7 @@ import { ConnectToHostWeb, CreateClientWeb } from "$lib/webrtc/client_webrtc_hoo
 import {SendClientCode, server} from "@libreremoteplay/signals"
 import { _ } from 'svelte-i18n'
 
-export const easyConnectServerIpDomain = $state({value: ""})
+export const easyConnectServerIpDomain = $state({value: "localhost:80"})
 export const easyConnectID = $state({value: 0})
 
 export async function handleEasyConnectClient() {
