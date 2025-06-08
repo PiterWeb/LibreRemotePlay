@@ -22,7 +22,7 @@ export async function handleEasyConnectClient() {
 
     const serverInstance = server(easyConnectServerUrl)
 
-    const clientCode = await CreateClientWeb(false)
+    const clientCode = await CreateClientWeb()
 
     console.log("Client Code:", clientCode);
 
@@ -38,6 +38,6 @@ export async function handleEasyConnectClient() {
 		throw new Error("Failed to send client code to host");
 	}
 
-    await ConnectToHostWeb(hostCode.data, false)
+    await ConnectToHostWeb(hostCode.data)
 
 } 
