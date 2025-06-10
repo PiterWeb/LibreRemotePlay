@@ -1,21 +1,34 @@
 import { showToast, ToastType } from '$lib/toast/toast_hook';
 import { goto } from '$app/navigation';
 import { handleGamepad } from '$lib/gamepad/gamepad_hook';
-import { handleKeyDown, handleKeyUp, unhandleKeyDown, unhandleKeyUp } from '$lib/keyboard/keyboard_hook';
+import {
+	handleKeyDown,
+	handleKeyUp,
+	unhandleKeyDown,
+	unhandleKeyUp
+} from '$lib/keyboard/keyboard_hook';
 import { toogleLoading } from '$lib/loading/loading_hook';
 import { CreateClientStream } from '$lib/webrtc/stream/client_stream_hook';
 import { get } from 'svelte/store';
-import { CloseStreamClientConnection} from '$lib/webrtc/stream/client_stream_hook';
+import { CloseStreamClientConnection } from '$lib/webrtc/stream/client_stream_hook';
 import { _ } from 'svelte-i18n';
 import { exportStunServers } from './stun_servers';
 import { exportTurnServers } from './turn_servers';
 import { getConsumingStream, setConsumingStream } from './stream/stream_signal_hook.svelte';
-import Bowser from "bowser";
+import Bowser from 'bowser';
 
 enum DataChannelLabel {
 	StreamingSignal = 'streaming-signal',
 	Controller = 'controller',
-	Keyboard = 'keyboard',
+	Keyboard = 'keyboard'
+}
+
+interface CreateClientWebOptions {
+	easyConnect: boolean;
+}
+
+interface createClientCodeOptions {
+	clipboard: boolean;
 }
 
 let peerConnection: RTCPeerConnection | undefined;
@@ -37,7 +50,87 @@ function CloseClientConnection(fn?: () => void) {
 	peerConnection = undefined;
 }
 
-async function CreateClientWeb() {
+function createClientCode(options: createClientCodeOptions) {
+	const { clipboard } = options;
+
+	return new Promise<string>((resolve, reject) => {
+		(async () => {
+			let clientCode: string = '';
+
+			if (!peerConnection) return reject('No peerConnection defined');
+
+			try {
+				const offer = await peerConnection.createOffer();
+
+				await peerConnection.setLocalDescription(offer);
+
+				// Show spinner while waiting for connection
+				toogleLoading();
+
+				const candidates: RTCIceCandidateInit[] = [];
+
+				peerConnection.onicecandidate = (ev) => {
+					if (ev.candidate === null) {
+						// Disable spinner
+						toogleLoading();
+
+						const browser = Bowser.getParser(window.navigator.userAgent);
+						const engine = browser.getEngine();
+						const gecko = 'Gecko';
+						const clipboardClick = () => {
+							navigator.clipboard
+								.writeText(clientCode)
+								.then(() => {
+									showToast(get(_)('client-code-copied-to-clipboard'), ToastType.SUCCESS);
+								})
+								.catch(() => {
+									showToast(get(_)('error-copying-client-code-to-clipboard'), ToastType.ERROR);
+								});
+
+							document.removeEventListener('click', clipboardClick);
+						};
+
+						clientCode =
+							signalEncode(peerConnection?.localDescription) + ';' + signalEncode(candidates);
+
+						if (clipboard && navigator && navigator.clipboard && navigator.clipboard.writeText) {
+							if (engine.name === gecko) {
+								// Browsers that use gecko engine aka Firefox require user interaction
+								alert(
+									'Click ok and then click on the website to copy the client code to your clipboard.'
+								);
+								document.addEventListener('click', clipboardClick);
+							} else {
+								navigator.clipboard
+									.writeText(clientCode)
+									.then(() => {
+										showToast(get(_)('client-code-copied-to-clipboard'), ToastType.SUCCESS);
+									})
+									.catch(() => {
+										showToast(get(_)('error-copying-client-code-to-clipboard'), ToastType.ERROR);
+									});
+							}
+						} else if (clipboard) {
+							showToast(get(_)('error-copying-client-code-to-clipboard'), ToastType.ERROR);
+						}
+
+						return resolve(clientCode);
+					}
+
+					candidates.push(ev.candidate.toJSON());
+				};
+			} catch (error) {
+				console.error(error);
+				showToast(get(_)('error-creating-client'), ToastType.ERROR);
+				return reject(error);
+			}
+		})();
+	});
+}
+
+async function CreateClientWeb(options: CreateClientWebOptions) {
+	const { easyConnect } = options;
+
 	initPeerConnection();
 
 	if (!peerConnection) {
@@ -65,8 +158,8 @@ async function CreateClientWeb() {
 		};
 	};
 
-	let keyDownHandler: ReturnType<typeof handleKeyDown>
-	let keyUpHandler: ReturnType<typeof handleKeyUp>
+	let keyDownHandler: ReturnType<typeof handleKeyDown>;
+	let keyUpHandler: ReturnType<typeof handleKeyUp>;
 
 	keyboardChannel.onopen = () => {
 		const sendKeyboardData = (keycode: string) => {
@@ -80,111 +173,44 @@ async function CreateClientWeb() {
 	};
 
 	keyboardChannel.onclose = () => {
-		unhandleKeyDown(keyDownHandler)
-		unhandleKeyUp(keyUpHandler)
-	}
+		unhandleKeyDown(keyDownHandler);
+		unhandleKeyUp(keyUpHandler);
+	};
 
 	controllerChannel.onopen = () => {
-		handleGamepad(controllerChannel)
+		handleGamepad(controllerChannel);
 	};
 
 	streamingSignalChannel.onopen = () => {
-
-		let activeStream = false
+		let activeStream = false;
 
 		setInterval(() => {
-
 			if (!getConsumingStream() && activeStream) {
-				activeStream = false
-				CloseStreamClientConnection()
-			};
-			if (getConsumingStream() == activeStream) return
-
-			activeStream = true
-			CloseStreamClientConnection()
-			
-			const videoElement = document.getElementById("stream-video") as HTMLVideoElement
-			
-			if (!videoElement) {
-				console.error("video element not found")
-				return
+				activeStream = false;
+				CloseStreamClientConnection();
 			}
-			
-			setConsumingStream(true)
-			CreateClientStream(streamingSignalChannel, videoElement);
+			if (getConsumingStream() == activeStream) return;
 
-		}, 500)
+			activeStream = true;
+			CloseStreamClientConnection();
 
-	};
+			const videoElement = document.getElementById('stream-video') as HTMLVideoElement;
 
-	streamingSignalChannel.onclose = () => {
-		CloseStreamClientConnection()
-	}
-
-	let copiedCode: string = '';
-
-	try {
-		const offer = await peerConnection.createOffer();
-
-		await peerConnection.setLocalDescription(offer);
-
-		// Show spinner while waiting for connection
-		toogleLoading();
-
-		const candidates: RTCIceCandidateInit[] = [];
-
-		peerConnection.onicecandidate = (ev) => {
-			if (ev.candidate === null) {
-				// Disable spinner
-				toogleLoading();
-
-				const browser = Bowser.getParser(window.navigator.userAgent);
-				const engine = browser.getEngine();
-				const gecko = 'Gecko';
-				const clipboardClick = () => {
-
-					navigator.clipboard.writeText(copiedCode).then(() => {
-						showToast(get(_)('client-code-copied-to-clipboard'), ToastType.SUCCESS);
-					}).catch(() => {
-						showToast(get(_)('error-copying-client-code-to-clipboard'), ToastType.ERROR);
-					});
-
-					document.removeEventListener('click', clipboardClick);
-				};
-
-				copiedCode =
-					signalEncode(peerConnection?.localDescription) + ';' + signalEncode(candidates);
-				
-				if (navigator && navigator.clipboard && navigator.clipboard.writeText) {
-					if (engine.name === gecko) {
-						// Browsers that use gecko engine aka Firefox require user interaction
-						alert('Click ok and then click on the website to copy the client code to your clipboard.');
-						document.addEventListener('click', clipboardClick);
-					} else {
-					
-						navigator.clipboard.writeText(copiedCode).then(() => {
-							showToast(get(_)('client-code-copied-to-clipboard'), ToastType.SUCCESS);
-						}).catch(() => {
-							showToast(get(_)('error-copying-client-code-to-clipboard'), ToastType.ERROR);
-						});
-
-					}
-					
-				} else {
-					showToast(get(_)('error-copying-client-code-to-clipboard'), ToastType.ERROR);
-				}
-
+			if (!videoElement) {
+				console.error('video element not found');
 				return;
 			}
 
-			candidates.push(ev.candidate.toJSON());
-		};
-	} catch (error) {
-		console.error(error);
-		showToast(get(_)('error-creating-client'), ToastType.ERROR);
-	}
+			setConsumingStream(true);
+			CreateClientStream(streamingSignalChannel, videoElement);
+		}, 500);
+	};
 
-	return copiedCode;
+	streamingSignalChannel.onclose = () => {
+		CloseStreamClientConnection();
+	};
+
+	return await createClientCode({ clipboard: !easyConnect });
 }
 
 async function ConnectToHostWeb(hostAndCandidatesCode: string) {
@@ -221,31 +247,31 @@ function handleConnectionState() {
 			showToast(get(_)('connection-established-successfully'), ToastType.SUCCESS);
 			goto('/mode/client/connection');
 			// Inside try-catch cause in browser will not work
-			import('$lib/wailsjs/go/bindings/App').then(obj => obj.NotifyCreateClient).catch();
+			import('$lib/wailsjs/go/bindings/App').then((obj) => obj.NotifyCreateClient).catch();
 			break;
 		case 'disconnected':
 			showToast(get(_)('connection-lost'), ToastType.ERROR);
 			CloseClientConnection();
-			CloseStreamClientConnection()
+			CloseStreamClientConnection();
 			goto('/');
 			// Inside try-catch cause in browser will not work
-			import('$lib/wailsjs/go/bindings/App').then(obj => obj.NotifyCloseClient).catch();
+			import('$lib/wailsjs/go/bindings/App').then((obj) => obj.NotifyCloseClient).catch();
 			break;
 		case 'failed':
 			showToast(get(_)('connection-failed'), ToastType.ERROR);
 			CloseClientConnection();
-			CloseStreamClientConnection()
+			CloseStreamClientConnection();
 			goto('/');
-			// Inside try-catch cause in browser will not work
-			import('$lib/wailsjs/go/bindings/App').then(obj => obj.NotifyCloseClient).catch();
+			// Inside try-catch cause in
+			import('$lib/wailsjs/go/bindings/App').then((obj) => obj.NotifyCloseClient).catch();
 			break;
 		case 'closed':
 			showToast(get(_)('connection-closed'), ToastType.ERROR);
 			CloseClientConnection();
-			CloseStreamClientConnection()
+			CloseStreamClientConnection();
 			goto('/');
 			// Inside try-catch cause in browser will not work
-			import('$lib/wailsjs/go/bindings/App').then(obj => obj.NotifyCloseClient).catch();
+			import('$lib/wailsjs/go/bindings/App').then((obj) => obj.NotifyCloseClient).catch();
 			break;
 	}
 }

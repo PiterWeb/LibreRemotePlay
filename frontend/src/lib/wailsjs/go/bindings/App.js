@@ -14,6 +14,10 @@ export function IsKeyboardEnabled() {
   return window['go']['bindings']['App']['IsKeyboardEnabled']();
 }
 
+export function LogPrintln(arg1) {
+  return window['go']['bindings']['App']['LogPrintln'](arg1);
+}
+
 export function NotifyCloseClient() {
   return window['go']['bindings']['App']['NotifyCloseClient']();
 }

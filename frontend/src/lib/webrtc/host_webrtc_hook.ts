@@ -3,7 +3,7 @@ import {
 	TryClosePeerConnection as closeConnectionFn
 } from '$lib/wailsjs/go/bindings/App';
 
-import { _ } from 'svelte-i18n'
+import { _ } from 'svelte-i18n';
 import { get } from 'svelte/store';
 import { showToast, ToastType } from '$lib/toast/toast_hook';
 import { goto } from '$app/navigation';
@@ -15,7 +15,7 @@ import { exportTurnServers } from './turn_servers';
 import { isLinux } from '$lib/detection/detect_os';
 import { IS_RUNNING_EXTERNAL } from '$lib/detection/onwebsite';
 
-const BROWSER_BASE_URL = "http://localhost:8080/mode/host/connection";
+const BROWSER_BASE_URL = 'http://localhost:8080/mode/host/connection';
 
 let host: boolean = false;
 
@@ -25,60 +25,69 @@ enum ConnectionState {
 	Disconnected = 'DISCONNECTED'
 }
 
-export async function CreateHost(client: string) {
-	try {
+interface CreateHostOptions {
+	easyConnect: boolean;
+	clientCode: string;
+}
 
-		const ICEServers: ICEServer[] = [
-			...exportStunServers(),
-			...exportTurnServers()
-		]
+export function CreateHost(options: CreateHostOptions) {
+	return new Promise<string>((resolve, reject) => {
+		(async () => {
+			try {
+				const { clientCode: client, easyConnect } = options;
 
-		const hostCode = await createHostFn(ICEServers, client);
+				const ICEServers: ICEServer[] = [...exportStunServers(), ...exportTurnServers()];
 
-		if (isError(hostCode)) {
-			throw new Error(hostCode);
-		}
+				const hostCode = await createHostFn(ICEServers, client);
 
-		if (navigator && navigator.clipboard && navigator.clipboard.writeText) {
-			navigator.clipboard.writeText(hostCode).catch(() => {
-				showToast(get(_)('error-copying-host-code-to-clipboard'), ToastType.ERROR);
-			});
-			showToast(get(_)('host-code-copied-to-clipboard'), ToastType.SUCCESS);
-		} else {
-			showToast(get(_)('error-copying-host-code-to-clipboard'), ToastType.ERROR);
-		}
+				if (isError(hostCode)) {
+					reject(hostCode);
+				}
 
-		toogleLoading();
-		setLoadingMessage(get(_)('waiting-for-client-to-connect'));
-		setLoadingTitle(get(_)('make-sure-to-pass-the-code-to-the-client'));
+				resolve(hostCode);
 
-		const {EventsOnce} = await import("$lib/wailsjs/runtime/runtime")
+				if (!easyConnect && navigator && navigator.clipboard && navigator.clipboard.writeText) {
+					navigator.clipboard.writeText(hostCode).catch(() => {
+						showToast(get(_)('error-copying-host-code-to-clipboard'), ToastType.ERROR);
+					});
+					showToast(get(_)('host-code-copied-to-clipboard'), ToastType.SUCCESS);
+				} else if (!easyConnect) {
+					showToast(get(_)('error-copying-host-code-to-clipboard'), ToastType.ERROR);
+				}
 
-		EventsOnce('connection_state', async (state: ConnectionState) => {
-			toogleLoading();
+				toogleLoading();
+				setLoadingMessage(get(_)('waiting-for-client-to-connect'));
+				setLoadingTitle(get(_)('make-sure-to-pass-the-code-to-the-client'));
 
-			switch (state.toUpperCase()) {
-				case ConnectionState.Connected:
-					showToast(get(_)('connected'), ToastType.SUCCESS);
-					host = true;
-					if (await isLinux()) {
-						const {BrowserOpenURL} = await import("$lib/wailsjs/runtime/runtime")
-						BrowserOpenURL(BROWSER_BASE_URL);
-					} 
-					goto('/mode/host/connection');
-					break;
-				case ConnectionState.Failed:
-					showToast(get(_)('connection-failed'), ToastType.ERROR);
-					goto('/');
-					break;
-				default:
-					showToast(get(_)('unknown-connection-state'), ToastType.ERROR);
-					break;
+				const { EventsOnce } = await import('$lib/wailsjs/runtime/runtime');
+
+				EventsOnce('connection_state', async (state: ConnectionState) => {
+					toogleLoading();
+
+					switch (state.toUpperCase()) {
+						case ConnectionState.Connected:
+							showToast(get(_)('connected'), ToastType.SUCCESS);
+							host = true;
+							if (await isLinux()) {
+								const { BrowserOpenURL } = await import('$lib/wailsjs/runtime/runtime');
+								BrowserOpenURL(BROWSER_BASE_URL);
+							}
+							goto('/mode/host/connection');
+							break;
+						case ConnectionState.Failed:
+							showToast(get(_)('connection-failed'), ToastType.ERROR);
+							goto('/');
+							break;
+						default:
+							showToast(get(_)('unknown-connection-state'), ToastType.ERROR);
+							break;
+					}
+				});
+			} catch (e) {
+				showToast(get(_)('error-creating-host'), ToastType.ERROR);
 			}
-		});
-	} catch (e) {
-		showToast(get(_)('error-creating-host'), ToastType.ERROR);
-	}
+		})();
+	});
 }
 
 function isError(err: string) {
@@ -94,10 +103,9 @@ export function CloseHostConnection(fn?: () => void) {
 }
 
 export async function ListenForConnectionChanges() {
-
 	if (IS_RUNNING_EXTERNAL) return;
 
-	const {EventsOn, EventsOff} = await import("$lib/wailsjs/runtime/runtime")
+	const { EventsOn, EventsOff } = await import('$lib/wailsjs/runtime/runtime');
 
 	const connectionStateCancelEventListener = EventsOn(
 		'connection_state',
@@ -117,7 +125,7 @@ export async function ListenForConnectionChanges() {
 					host = false;
 					goto('/');
 					connectionStateCancelEventListener();
-					EventsOff("connection_state")
+					EventsOff('connection_state');
 					break;
 			}
 		}

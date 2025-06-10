@@ -2,9 +2,16 @@
 	import { CreateHost } from '$lib/webrtc/host_webrtc_hook';
 	import { showToast, ToastType } from '$lib/toast/toast_hook';
 	import { _ } from 'svelte-i18n';
+	import { DEFAULT_EASY_CONNECT_ID, DEFAULT_EASY_CONNECT_SERVER_IP_DOMAIN, easyConnectID, easyConnectServerIpDomain, handleEasyConnectHost } from '$lib/easy_connect/easy_connect.svelte';
+	import { onMount } from 'svelte';
 
 	let code = $state('');
 	let generatedCode = $state(false);
+
+	onMount(() => {
+     	easyConnectID.value = DEFAULT_EASY_CONNECT_ID;
+     	easyConnectServerIpDomain.value = DEFAULT_EASY_CONNECT_SERVER_IP_DOMAIN;
+	});
 
 	async function handleConnectToClient() {
 		if (code.length < 1) {
@@ -13,7 +20,7 @@
 		}
 
 		try {
-			await CreateHost(code);
+			await CreateHost({clientCode: code, easyConnect:false});
 			generatedCode = true;
 		} catch {
 			generatedCode = false;
@@ -31,7 +38,60 @@
 <div
 	class="mt-12 card bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700"
 >
-	<div class="card-body">
+	<div class="card-body flex flex-col md:flex-row [&>ol]:px-4">
+		<ol>
+			<li class="mb-10 me-4">
+				<h3 class="text-2xl font-semibold text-gray-900 dark:text-white">
+					{$_('easy-connect')}
+				</h3>
+				<p class="text-sm text-gray-400 dark:text-gray-500 mb-4">
+					{$_('easy-connect-description')}
+				</p>
+
+				<section class="flex flex-col gap-4">
+					<div>
+						<label
+							for="ip-domain-easy-connect"
+							class="mb-1 text-md font-normal leading-none text-gray-400 dark:text-gray-500"
+							>{$_('ip-domain-easy-connect')}</label
+						>
+
+						<input
+							id="ip-domain-easy-connect"
+							type="text"
+							placeholder={$_('ip-domain-easy-connect')}
+							class="input input-bordered w-full"
+							bind:value={easyConnectServerIpDomain.value}
+						/>
+					</div>
+
+					<div class="flex flex-col">
+						<label
+							for="id-easy-connect"
+							class="mb-1 text-md font-normal leading-none text-gray-400 dark:text-gray-500"
+							>{$_('id-easy-connect')}</label
+						>
+
+						<input
+							id="id-easy-connect"
+							type="number"
+							placeholder={$_('id-easy-connect')}
+							class="input input-bordered w-28"
+							min="0000"
+							max="9999"
+							bind:value={easyConnectID.value}
+						/>
+					</div>
+
+					<button id="connect-to-client" onclick={handleEasyConnectHost} class="btn btn-primary"
+						>{$_('connect-to-client')}</button
+					>
+				</section>
+			</li>
+			<li class="block md:hidden">
+				<hr class="border-gray-200 dark:border-gray-700" />
+			</li>
+		</ol>
 		<ol class="relative border-s border-gray-200 dark:border-gray-700">
 			<li class="mb-10 ms-4">
 				{#if !generatedCode}

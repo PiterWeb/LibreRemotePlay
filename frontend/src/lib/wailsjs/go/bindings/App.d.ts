@@ -8,6 +8,8 @@ export function IsGamepadEnabled():Promise<boolean>;
 
 export function IsKeyboardEnabled():Promise<boolean>;
 
+export function LogPrintln(arg1:string):Promise<void>;
+
 export function NotifyCloseClient():Promise<void>;
 
 export function NotifyCreateClient():Promise<void>;

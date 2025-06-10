@@ -1,12 +1,24 @@
 <script>
 	import { CreateClientWeb, ConnectToHostWeb } from '$lib/webrtc/client_webrtc_hook';
 
-	import { easyConnectServerIpDomain, easyConnectID, handleEasyConnectClient } from '$lib/easy_connect/easy_connect.svelte';
+	import {
+		easyConnectServerIpDomain,
+		easyConnectID,
+		handleEasyConnectClient,
+		DEFAULT_EASY_CONNECT_ID,
+		DEFAULT_EASY_CONNECT_SERVER_IP_DOMAIN
+	} from '$lib/easy_connect/easy_connect.svelte';
 	import { showToast, ToastType } from '$lib/toast/toast_hook';
-	import { _ } from 'svelte-i18n'
+	import { _ } from 'svelte-i18n';
+	import { onMount } from 'svelte';
 
 	let code = $state('');
 	let clientCreated = $state(false);
+
+	onMount(() => {
+		easyConnectID.value = DEFAULT_EASY_CONNECT_ID;
+		easyConnectServerIpDomain.value = DEFAULT_EASY_CONNECT_SERVER_IP_DOMAIN;
+	});
 
 	function handleConnectToHost() {
 		if (code.length < 1) {
@@ -18,10 +30,9 @@
 	}
 
 	async function handleCreateClient() {
-		await CreateClientWeb();
+		await CreateClientWeb({ easyConnect: false });
 		clientCreated = true;
 	}
-
 </script>
 
 <h2 class="text-center text-[clamp(2rem,6vw,4.2rem)] font-black leading-[1.1] xl:text-left">
@@ -47,20 +58,36 @@
 				<section class="flex flex-col gap-4">
 					<div>
 						<label
-						for="ip-domain-easy-connect"
-						class="mb-1 text-md font-normal leading-none text-gray-400 dark:text-gray-500"
-						>{$_('ip-domain-easy-connect')}</label>
-						
-						<input id="ip-domain-easy-connect" type="text" placeholder={$_('ip-domain-easy-connect')} class="input input-bordered w-full" bind:value={easyConnectServerIpDomain.value} />
+							for="ip-domain-easy-connect"
+							class="mb-1 text-md font-normal leading-none text-gray-400 dark:text-gray-500"
+							>{$_('ip-domain-easy-connect')}</label
+						>
+
+						<input
+							id="ip-domain-easy-connect"
+							type="text"
+							placeholder={$_('ip-domain-easy-connect')}
+							class="input input-bordered w-full"
+							bind:value={easyConnectServerIpDomain.value}
+						/>
 					</div>
-				
-					<div class="flex flex-col">	
+
+					<div class="flex flex-col">
 						<label
-						for="id-easy-connect"
-						class="mb-1 text-md font-normal leading-none text-gray-400 dark:text-gray-500"
-						>{$_('id-easy-connect')}</label>
-						
-						<input id="id-easy-connect" type="number" placeholder={$_('id-easy-connect')} class="input input-bordered w-28" min="0000" max="9999" bind:value={easyConnectID.value} />
+							for="id-easy-connect"
+							class="mb-1 text-md font-normal leading-none text-gray-400 dark:text-gray-500"
+							>{$_('id-easy-connect')}</label
+						>
+
+						<input
+							id="id-easy-connect"
+							type="number"
+							placeholder={$_('id-easy-connect')}
+							class="input input-bordered w-28"
+							min="0000"
+							max="9999"
+							bind:value={easyConnectID.value}
+						/>
 					</div>
 
 					<button id="connect-to-host" onclick={handleEasyConnectClient} class="btn btn-primary"
