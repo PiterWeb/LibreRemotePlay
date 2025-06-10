@@ -1,9 +1,5 @@
 github.com/BurntSushi/freetype-go v0.0.0-20160129220410-b763ddbfe298/go.mod h1:D+QujdIlUNfa0igpNMk6UIvlb6C252URs4yupRUV4lQ=
 github.com/BurntSushi/graphics-go v0.0.0-20160129215708-b43f31a4a966/go.mod h1:Mid70uvE93zn9wgF92A/r5ixgnvX8Lh68fxp9KQBaI0=
-github.com/PiterWeb/LibreRemotePlaySignals v1.0.0 h1:1AXN7LmhwwErDrITgh+hSOJTV1CM675UObNH7EJHJFs=
-github.com/PiterWeb/LibreRemotePlaySignals v1.0.0/go.mod h1:V4EBcKDDq+tPdMaWZ4KWXW7RyuYtaZfWKknVje8Od4Q=
-github.com/PiterWeb/LibreRemotePlaySignals v1.1.0 h1:haBITtJ2q7KdPjxI21iFQy7Tynb/XvaE2SdNr2qN5AE=
-github.com/PiterWeb/LibreRemotePlaySignals v1.1.0/go.mod h1:2X/rLrGkztUwKox0R1lE5lC4puUpjMLbjO4DK6f9Xic=
 github.com/PiterWeb/LibreRemotePlaySignals v1.1.1 h1:PXUDuyfdrwHhlQrlBM7pzDF06jftQY2+o19RbUL6Vz4=
 github.com/PiterWeb/LibreRemotePlaySignals v1.1.1/go.mod h1:2X/rLrGkztUwKox0R1lE5lC4puUpjMLbjO4DK6f9Xic=
 github.com/bep/debounce v1.2.1 h1:v67fRdBA9UQu2NhLFXrSg0Brw7CexQekrBwDMM8bzeY=
