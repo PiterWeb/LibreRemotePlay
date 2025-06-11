@@ -10,10 +10,9 @@ func Execute(assets embed.FS) error {
 
 	easyConnectPort := uint16(8081)
 	ips_channel := make(chan []string)
+	defer close(ips_channel)
 
 	err := LRPSignals.InitServer(easyConnectPort, ips_channel)
-
-	defer close(ips_channel)
 
 	return err
 
