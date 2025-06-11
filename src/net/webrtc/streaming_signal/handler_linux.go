@@ -36,7 +36,7 @@ func HandleStreamingSignal(ctx context.Context, streamingSignalChannel *webrtc.D
 
 			if err != nil {
 				log.Println(err)
-				continue
+				return
 			}
 
 			if t != websocket.MessageText {
