@@ -2,9 +2,10 @@ package oninit
 
 import (
 	"embed"
-
+	"net/http"
+	
 	LRPSignals "github.com/PiterWeb/LibreRemotePlaySignals/v1"
-	"github.com/PiterWeb/RemoteController/src/net/http"
+	net_http "github.com/PiterWeb/RemoteController/src/net/http"
 	"github.com/PiterWeb/RemoteController/src/net/websocket"
 )
 
@@ -12,21 +13,35 @@ func Execute(assets embed.FS) error {
 
 	serverPort := 8080
 
-	websocket.SetupWebsocketHandler()
+	httpServerMux := http.NewServeMux()
+	
+	websocket.SetupWebsocketHandler(httpServerMux)
 
-	err := http.InitHTTPAssets(serverPort, assets)
+	errChan := make(chan error)
+	defer close(errChan)
 
-	if err != nil {
-		return err
-	}
+	go func() {
+		err := net_http.InitHTTPAssets(httpServerMux, serverPort, assets)
+
+		errChan <- err
+	}()
 
 	easyConnectPort := uint16(8081)
-	ips_channel := make(chan []string)
 
-	err = LRPSignals.InitServer(easyConnectPort, ips_channel)
+	go func() {
+		ips_channel := make(chan []string)
+		defer close(ips_channel)
 
-	defer close(ips_channel)
+		err := LRPSignals.InitServer(easyConnectPort, ips_channel)
+		errChan <- err
+	}()
 
-	return err
+	for err := range errChan {
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
 
 }

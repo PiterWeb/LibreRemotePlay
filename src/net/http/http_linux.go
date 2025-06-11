@@ -9,7 +9,7 @@ import (
 	"strings"
 )
 
-func InitHTTPAssets(clientPort int, assets embed.FS) error {
+func InitHTTPAssets(serverMux *http.ServeMux, clientPort int, assets embed.FS) error {
 
 	staticFS, err := fs.Sub(assets, "frontend/build")
 
@@ -17,15 +17,16 @@ func InitHTTPAssets(clientPort int, assets embed.FS) error {
 		return err
 	}
 
-	http.Handle("GET /", FileMiddleware(staticFS, http.FileServer(http.FS(staticFS))))
+	serverMux.Handle("GET /", FileMiddleware(staticFS, http.FileServer(http.FS(staticFS))))
 
-	err = http.ListenAndServe(fmt.Sprintf(":%d", clientPort), nil)
-
-	if err != nil {
-		return err
+	httpServer := &http.Server{
+		Handler: serverMux,
+		Addr:    fmt.Sprintf("127.0.0.1:%d", clientPort),
 	}
 
-	return nil
+	err = httpServer.ListenAndServe()
+
+	return err
 
 }
 
