@@ -27,6 +27,8 @@ func HandleGamepad(gamepadChannel *webrtc.DataChannel) {
 
 		if err != nil {
 			log.Println(err)
+			log.Println("VirtualGamepad is not defined, gamepad disabled by default")
+			GamepadEnabled.Disable()
 		}
 
 	})
@@ -51,7 +53,6 @@ func HandleGamepad(gamepadChannel *webrtc.DataChannel) {
 		}
 
 		if virtualGamepad == nil {
-			log.Println("VirtualGamepad is not defined")
 			return
 		}
 

@@ -1,6 +1,7 @@
 package gamepad
 
 import (
+	"log"
 	"time"
 
 	"github.com/pion/webrtc/v3"
@@ -41,7 +42,9 @@ func HandleGamepad(gamepadChannel *webrtc.DataChannel) {
 		virtualDevice, err = GenerateVirtualDevice()
 
 		if err != nil {
-			panic(err)
+			log.Println(err)
+			log.Println("virtualDevice is not defined, gamepad disabled by default")
+			GamepadEnabled.Disable()
 		}
 
 	})
