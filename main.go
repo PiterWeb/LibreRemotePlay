@@ -19,6 +19,10 @@ var assets embed.FS
 
 func main() {
 
+	logFile := appLogger.InitLogger()
+
+	defer logFile.Close()
+	
 	go func() {
 
 		err := oninit.Execute(assets)
@@ -28,10 +32,6 @@ func main() {
 		}
 
 	}()
-
-	logFile := appLogger.InitLogger()
-
-	defer logFile.Close()
 
 	log.Println("LibreRemotePlay Starting app")
 

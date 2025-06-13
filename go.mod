@@ -11,7 +11,7 @@ require (
 require github.com/gorilla/websocket v1.5.3 // indirect
 
 require (
-	github.com/PiterWeb/LibreRemotePlaySignals v1.1.1
+	github.com/PiterWeb/LibreRemotePlaySignals v1.2.0
 	github.com/bep/debounce v1.2.1 // indirect
 	github.com/dblohm7/wingoes v0.0.0-20240820181039-f2b84150679e // indirect
 	github.com/ebitengine/purego v0.8.2 // indirect
@@ -57,7 +57,7 @@ require (
 	github.com/yusufpapurcu/wmi v1.2.4 // indirect
 	golang.org/x/exp v0.0.0-20250215185904-eff6e970281f // indirect
 	golang.org/x/image v0.24.0 // indirect
-	golang.org/x/text v0.22.0 // indirect
+	golang.org/x/text v0.26.0 // indirect
 )
 
 require (
@@ -83,8 +83,8 @@ require (
 	github.com/pquerna/ffjson v0.0.0-20190930134022-aa0246cd15f7
 	github.com/stretchr/testify v1.10.0 // indirect
 	github.com/wailsapp/wails/v2 v2.10.1
-	golang.org/x/crypto v0.33.0 // indirect
+	golang.org/x/crypto v0.39.0 // indirect
 	golang.org/x/net v0.35.0 // indirect
-	golang.org/x/sys v0.30.0 // indirect
+	golang.org/x/sys v0.33.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
