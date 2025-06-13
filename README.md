@@ -1,5 +1,7 @@
 ![LibreRemotePlay logo banner](https://github.com/user-attachments/assets/9173246d-1d65-4f29-bd79-0206250c538c)
 
+[![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/PiterWeb/LibreRemotePlay)
+
 # LibreRemotePlay
 ### An open source, free (as in freedom) and P2P alternative to Steam Remote Play
 
