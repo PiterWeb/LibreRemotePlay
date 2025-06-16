@@ -81,7 +81,7 @@ There is no way to self-host the infrastructure of LibreRemotePlay because it ha
 
 ### Prerequisites
 
-You must have [Task CLI](https://taskfile.dev/installation/), [Wails CLI](https://wails.io/docs/gettingstarted/installation#installing-wails), [NodeJS (~v20.x.x)](https://nodejs.org/en/download), [pnpm](https://pnpm.io/es/installation) and [Golang (min v1.22.4)](https://go.dev/doc/install) installed.
+You must have [Task CLI](https://taskfile.dev/installation/), [Wails CLI](https://wails.io/docs/gettingstarted/installation#installing-wails), [NodeJS (~v20.x.x)](https://nodejs.org/en/download), [pnpm](https://pnpm.io/en/installation) and [Golang (min v1.22.4)](https://go.dev/doc/install) installed.
 
 ### How to
 
