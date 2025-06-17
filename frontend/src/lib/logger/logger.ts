@@ -4,7 +4,7 @@ export default async function log(info: unknown, { err } = { err: false }) {
 	try {
 		const { LogPrintln } = await import("$lib/wailsjs/go/bindings/App");
 		await LogPrintln(`Browser - ${JSON.stringify(info)}\n`);
-	} finally {
+  } catch {/* */} finally {
 		if (err) console.error(err);
 		else console.log(info);
 	}
