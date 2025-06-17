@@ -1,10 +1,11 @@
-export default async function log(info: string) {
 
-    try {
-        // const { LogPrint } = await import("$lib/wailsjs/runtime/runtime") 
-        // LogPrint(info + '\n')        
-    } finally {
-        console.log(info)
-    }
 
+export default async function log(info: unknown, { err } = { err: false }) {
+	try {
+		const { LogPrintln } = await import("$lib/wailsjs/go/bindings/App");
+		await LogPrintln(`Browser - ${JSON.stringify(info)}\n`);
+	} finally {
+		if (err) console.error(err);
+		else console.log(info);
+	}
 }
