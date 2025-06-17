@@ -2,6 +2,7 @@ import { exportStunServers } from '$lib/webrtc/stun_servers';
 import { setConsumingStream, type SignalingData } from '$lib/webrtc/stream/stream_signal_hook.svelte';
 import { exportTurnServers } from '$lib/webrtc/turn_servers';
 import { getSortedVideoCodecs} from './stream_config.svelte';
+import LANMode from '$lib/webrtc/lan_mode.svelte';
 
 let peerConnection: RTCPeerConnection | undefined;
 let inboundStream: MediaStream | null = null;
@@ -12,7 +13,7 @@ function initStreamingPeerConnection() {
 	}
 
 	peerConnection = new RTCPeerConnection({
-		iceServers: [...exportStunServers(), ...exportTurnServers()]
+		iceServers: LANMode.enabled ? [] : [...exportStunServers(), ...exportTurnServers()]
 	});
 }
 

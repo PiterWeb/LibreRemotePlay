@@ -17,6 +17,7 @@ import { exportTurnServers } from './turn_servers';
 import { getConsumingStream, setConsumingStream } from './stream/stream_signal_hook.svelte';
 import Bowser from 'bowser';
 import log from '$lib/logger/logger';
+import LANMode from './lan_mode.svelte';
 
 enum DataChannelLabel {
 	StreamingSignal = 'streaming-signal',
@@ -40,7 +41,7 @@ function initPeerConnection() {
 	}
 
 	peerConnection = new RTCPeerConnection({
-		iceServers: [...exportStunServers(), ...exportTurnServers()]
+		iceServers: LANMode.enabled ? [] : [...exportStunServers(), ...exportTurnServers()],
 	});
 }
 

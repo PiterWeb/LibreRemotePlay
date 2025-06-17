@@ -15,6 +15,7 @@ import { exportTurnServers } from './turn_servers';
 import { isLinux } from '$lib/detection/detect_os';
 import { IS_RUNNING_EXTERNAL } from '$lib/detection/onwebsite';
 import log from '$lib/logger/logger';
+import LANMode from './lan_mode.svelte';
 
 const BROWSER_BASE_URL = 'http://localhost:8080/mode/host/connection';
 
@@ -35,7 +36,7 @@ export async function CreateHost(options: CreateHostOptions) {
 	try {
 		const { clientCode: client, easyConnect } = options;
 
-		const ICEServers: ICEServer[] = [...exportStunServers(), ...exportTurnServers()];
+		const ICEServers: ICEServer[] = LANMode.enabled ? [] : [...exportStunServers(), ...exportTurnServers()];
 
 		const hostCode = await createHostFn(ICEServers, client);
 
