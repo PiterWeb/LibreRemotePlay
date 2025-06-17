@@ -91,7 +91,7 @@ export async function handleEasyConnectHost() {
 		const { CreateHost } = await import('$lib/webrtc/host_webrtc_hook');
 
 		// Pending to return hostCode from CreateHost
-		const hostCode = await CreateHost({ clientCode: clientCodeData, easyConnect: true }));
+		const hostCode = await CreateHost({ clientCode: clientCodeData, easyConnect: true });
 
 		if (!hostCode) throw new Error('Host code undefined')
 		
