@@ -28,6 +28,7 @@
 	} from './turn_servers';
 
 	import { _ } from 'svelte-i18n';
+	import log from '$lib/logger/logger';
 	interface Props {
 		type?: 'stun' | 'turn';
 	}
@@ -293,8 +294,8 @@
 								onchange={e => {
 									e.preventDefault()
 									const username = $servers[server_group]?.username;
-									console.log(username);
-									console.log(e.currentTarget.value);
+									log(username);
+									log(e.currentTarget.value);
 									modifyGroup(server_group, undefined, username, e.currentTarget.value);
 								}}
 							/>

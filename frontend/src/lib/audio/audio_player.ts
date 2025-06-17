@@ -1,3 +1,4 @@
+import log from "$lib/logger/logger";
 import { writable, get } from "svelte/store";
 
 const defaultVolume = 0.1;
@@ -14,7 +15,7 @@ function playAudio(name: string) {
         
         navigator.userActivation.isActive && audio.play();
     } catch (error) {
-        console.error("Error playing audio:", error);
+        log(`Error playing audio: ${error}`, {err: true});
     }
 
 }

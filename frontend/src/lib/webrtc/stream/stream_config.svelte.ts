@@ -1,4 +1,5 @@
 import { browser } from '$app/environment'
+import log from '$lib/logger/logger'
 
 export enum FIXED_RESOLUTIONS {
 	resolution1080p = "1080",
@@ -48,10 +49,10 @@ function getStoredPreferedCodecsOrdered() {
 
 try {
 	getSortedVideoCodecs().forEach(codec => {
-		console.log(codec.mimeType);
+		log(codec.mimeType);
 	})
 } catch (e) {
-	console.error("Error getting codecs", e);
+  log(`Error getting codecs ${e}`, {err: true});
 }
 
 export function getSortedVideoCodecs() {
@@ -60,7 +61,7 @@ export function getSortedVideoCodecs() {
 
 	if (!codecs) return [];
 
-	console.log(preferedCodecsOrdered.value)
+	log(preferedCodecsOrdered.value)
 
 	return codecs.sort((a, b) => {
 	  const indexA = preferedCodecsOrdered.value.indexOf(a.mimeType);

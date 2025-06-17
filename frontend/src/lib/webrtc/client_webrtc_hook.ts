@@ -16,6 +16,7 @@ import { exportStunServers } from './stun_servers';
 import { exportTurnServers } from './turn_servers';
 import { getConsumingStream, setConsumingStream } from './stream/stream_signal_hook.svelte';
 import Bowser from 'bowser';
+import log from '$lib/logger/logger';
 
 enum DataChannelLabel {
 	StreamingSignal = 'streaming-signal',
@@ -120,7 +121,7 @@ function createClientCode(options: createClientCodeOptions) {
 					candidates.push(ev.candidate.toJSON());
 				};
 			} catch (error) {
-				console.error(error);
+				log(error, {err: true});
 				showToast(get(_)('error-creating-client'), ToastType.ERROR);
 				return reject(error);
 			}
@@ -197,7 +198,7 @@ async function CreateClientWeb(options: CreateClientWebOptions) {
 			const videoElement = document.getElementById('stream-video') as HTMLVideoElement;
 
 			if (!videoElement) {
-				console.error('video element not found');
+				log('video element not found');
 				return;
 			}
 
@@ -232,7 +233,7 @@ async function ConnectToHostWeb(hostAndCandidatesCode: string) {
 			await peerConnection.addIceCandidate(candidate);
 		});
 	} catch (e) {
-		console.error(e);
+		log(e, {err: true});
 		showToast(get(_)('error-connecting-to-host'), ToastType.ERROR);
 	}
 }

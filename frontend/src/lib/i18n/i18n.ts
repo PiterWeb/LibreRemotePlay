@@ -1,4 +1,5 @@
 import { browser } from '$app/environment'
+import log from '$lib/logger/logger'
 import { init, register, getLocaleFromNavigator, locale} from 'svelte-i18n'
 
 const defaultLocale = 'en'
@@ -24,7 +25,7 @@ function saveLocaleToLocalStorage(locale: string) {
 }
 
 locale.subscribe((value) => {
-	console.log('locale changed to', value)
+  log(`locale changed to ${value}`)
 	saveLocaleToLocalStorage(value ?? defaultLocale)
 })
 

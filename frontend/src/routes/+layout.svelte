@@ -9,6 +9,7 @@
 
 	import GamepadSVG from '$lib/assets/gamepad.svg?raw';
 	import Loading from '$lib/loading/Loading.svelte';
+	import log from '$lib/logger/logger';
 
 	/** @type {{children?: import('svelte').Snippet}} */
 	let { children } = $props();
@@ -19,7 +20,7 @@
 				try {
 					navigator.serviceWorker.register('../service-worker.js');
 				} catch (e) {
-					console.error('Service Worker registration failed:', e);
+					log(`Service Worker registration failed: ${e}`, {err: true});
 				}
 			});
 		}

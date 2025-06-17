@@ -1,4 +1,5 @@
 import { toogleLoading } from '$lib/loading/loading_hook';
+import log from '$lib/logger/logger';
 import { showToast, ToastType } from '$lib/toast/toast_hook';
 import { ConnectToHostWeb, CreateClientWeb } from '$lib/webrtc/client_webrtc_hook';
 import { SendClientCode, server, ReceiveClientCode, SendHostCode } from '@libreremoteplay/signals';
@@ -19,7 +20,7 @@ export async function handleEasyConnectClient() {
 		return `ws://${easyConnectServerIpDomain.value}/ws`;
 	})();
 
-	console.log('Easy Connect Server URL:', easyConnectServerUrl);
+	log(`Easy Connect Server URL: ${easyConnectServerUrl}`);
 
 	if (!URL.canParse(easyConnectServerUrl)) {
 		throw new Error('Easy Connect Server URL is not set');
@@ -29,7 +30,7 @@ export async function handleEasyConnectClient() {
 
 	const clientCode = await CreateClientWeb({ easyConnect: true });
 
-	console.log('Client Code:', clientCode);
+	log(`Client Code: ${clientCode}`);
 
 	if (!clientCode) {
 		throw new Error('Failed to create client code');
@@ -44,7 +45,7 @@ export async function handleEasyConnectClient() {
 			easyConnectID.value
 		);
 
-		console.log('Host Code:', hostCode);
+		log(`Host Code: ${hostCode}`);
 
 		const { data: hostCodeStr } = hostCode;
 
@@ -67,7 +68,7 @@ export async function handleEasyConnectHost() {
 		return `ws://${easyConnectServerIpDomain.value}/ws`;
 	})();
 
-	console.log('Easy Connect Server URL:', easyConnectServerUrl);
+	log(`Easy Connect Server URL: ${easyConnectServerUrl}`);
 
 	if (!URL.canParse(easyConnectServerUrl)) {
 		throw new Error('Easy Connect Server URL is not set');
@@ -90,8 +91,10 @@ export async function handleEasyConnectHost() {
 		const { CreateHost } = await import('$lib/webrtc/host_webrtc_hook');
 
 		// Pending to return hostCode from CreateHost
-		const hostCode = await CreateHost({ clientCode: clientCodeData, easyConnect: true });
+		const hostCode = await CreateHost({ clientCode: clientCodeData, easyConnect: true }));
 
+		if (!hostCode) throw new Error('Host code undefined')
+		
 		await SendHostCode(serverInstance, { data: hostCode }, easyConnectID.value);
 	} finally {
 		toogleLoading();

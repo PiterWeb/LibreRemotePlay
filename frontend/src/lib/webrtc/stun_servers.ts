@@ -1,5 +1,6 @@
 import { get, writable } from 'svelte/store';
 import type { ServersConfig, ICEServer } from '$lib/webrtc/ice';
+import log from '$lib/logger/logger';
 
 const defaultStunServers = [
 	'stun:stun.l.google.com:19302',
@@ -30,7 +31,7 @@ function removeServerFromGroup(group: string, url: string) {
 
 function modifyGroup(name: string, newName?: string, username?: string, credential?: string) {
 
-	console.log({name, newName, username, credential});
+	log({name, newName, username, credential});
 	if (newName) {
 		stunServersStore.update((stunServers) => {
 			stunServers[newName] = stunServers[name];
