@@ -10,7 +10,7 @@
 		handleEasyConnectHost
 	} from '$lib/easy_connect/easy_connect.svelte';
 	import { onMount } from 'svelte';
-	import LANMode from '$lib/webrtc/lan_mode.svelte';
+	import ConnectionOptions from '$lib/webrtc/ConnectionOptions.svelte';
 
 	let code = $state('');
 	let generatedCode = $state(false);
@@ -46,17 +46,7 @@
 	class="mt-12 md:mt-4 card bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700"
 >
 	<div class="card-body">
-		<section class="flex flex-row-reverse items-center gap-2">
-			<label for="lan-mode-checkbox" class="font-semibold text-gray-900 dark:text-white"
-				>{$_('lan-mode')}</label
-			>
-			<input
-				id="lan-mode-checkbox"
-				type="checkbox"
-				class="checkbox checkbox-xs checkbox-primary"
-				bind:checked={LANMode.enabled}
-			/>
-		</section>
+		<ConnectionOptions/>
 		<section class="flex flex-col md:flex-row [&>ol]:px-4">
 			<ol>
 				<li class="mb-10 me-4">
