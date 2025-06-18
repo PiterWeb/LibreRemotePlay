@@ -51,6 +51,7 @@ export async function CreateHost(options: CreateHostOptions) {
 			showToast(get(_)('host-code-copied-to-clipboard'), ToastType.SUCCESS);
 		} else if (!easyConnect) {
 			showToast(get(_)('error-copying-host-code-to-clipboard'), ToastType.ERROR);
+			throw hostCode
 		}
 
 		toogleLoading();
@@ -62,23 +63,29 @@ export async function CreateHost(options: CreateHostOptions) {
 		EventsOnce('connection_state', async (state: ConnectionState) => {
 			toogleLoading();
 
-			switch (state.toUpperCase()) {
-				case ConnectionState.Connected:
-					showToast(get(_)('connected'), ToastType.SUCCESS);
-					host = true;
-					if (await isLinux()) {
-						const { BrowserOpenURL } = await import('$lib/wailsjs/runtime/runtime');
-						BrowserOpenURL(BROWSER_BASE_URL);
-					}
-					goto('/mode/host/connection');
-					break;
-				case ConnectionState.Failed:
-					showToast(get(_)('connection-failed'), ToastType.ERROR);
-					goto('/');
-					break;
-				default:
-					showToast(get(_)('unknown-connection-state'), ToastType.ERROR);
-					break;
+			try {
+  			switch (state.toUpperCase()) {
+  				case ConnectionState.Connected:
+  					showToast(get(_)('connected'), ToastType.SUCCESS);
+  					host = true;
+  					if (await isLinux()) {
+              log("Connection stablished and isLinux")
+  						const { BrowserOpenURL } = await import('$lib/wailsjs/runtime/runtime');
+  						BrowserOpenURL(BROWSER_BASE_URL);
+  					} else log("Connection stablished and not isLinux")
+  					goto('/mode/host/connection');
+  					break;
+  				case ConnectionState.Failed:
+  					showToast(get(_)('connection-failed'), ToastType.ERROR);
+  					goto('/');
+  					break;
+  				default:
+  					showToast(get(_)('unknown-connection-state'), ToastType.ERROR);
+  					break;
+  			}
+			
+			} catch(e) {
+			  log(e, {err: true})
 			}
 		});
 		
