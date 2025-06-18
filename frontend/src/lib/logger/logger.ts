@@ -6,6 +6,6 @@ export default async function log(info: unknown, { err } = { err: false }) {
 		await LogPrintln(`Browser - ${JSON.stringify(info)}\n`);
   } catch {/* */} finally {
 		if (err) console.error(err);
-		else console.log(info);
+		console.trace(info);
 	}
 }
