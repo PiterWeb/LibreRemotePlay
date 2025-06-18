@@ -1,15 +1,16 @@
 <script>
 	import '../app.css';
 	import { onMount } from 'svelte';
-
 	import { page } from '$app/state';
-
+	import { _ } from 'svelte-i18n';
+	
 	import PageTransition from '$lib/layout/PageTransition.svelte';
 	import Toast from '$lib/toast/Toast.svelte';
 
 	import GamepadSVG from '$lib/assets/gamepad.svg?raw';
 	import Loading from '$lib/loading/Loading.svelte';
 	import log from '$lib/logger/logger';
+	import Tooltip from '$lib/layout/Tooltip.svelte';
 
 	/** @type {{children?: import('svelte').Snippet}} */
 	let { children } = $props();
@@ -44,7 +45,7 @@
 		</h1>
 	</div>
 	<div class="flex-none">
-		<a aria-label="config" href="/mode/config" class="btn btn-ghost">
+		<a id="btn-config" aria-label="config" href="/mode/config" class="btn btn-ghost">
 			<svg
 				id="tutorial-config-btn"
 				xmlns="http://www.w3.org/2000/svg"
@@ -64,6 +65,10 @@
 		</a>
 	</div>
 </nav>
+
+<Tooltip ref="btn-config" placement="left">
+    <p>{$_('config_title')}</p>
+</Tooltip>
 
 <PageTransition key={page.url.toString()} duration={750}>
 	<div class="hero min-h-[calc(100vh-4rem)] bg-base-200">
