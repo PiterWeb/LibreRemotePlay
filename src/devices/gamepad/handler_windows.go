@@ -5,7 +5,7 @@ import (
 	"time"
 
 	"github.com/pion/webrtc/v3"
-	"github.com/pquerna/ffjson/ffjson"
+	"github.com/json-iterator/go"
 )
 
 var buttonValueToHexMap = map[int]uint16{
@@ -61,6 +61,8 @@ func HandleGamepad(gamepadChannel *webrtc.DataChannel) {
 
 	})
 
+	var pad GamepadAPIXState
+	
 	// Update the virtual device
 	gamepadChannel.OnMessage(func(msg webrtc.DataChannelMessage) {
 
@@ -68,9 +70,7 @@ func HandleGamepad(gamepadChannel *webrtc.DataChannel) {
 			return
 		}
 
-		var pad GamepadAPIXState
-
-		ffjson.Unmarshal(msg.Data, &pad)
+		jsoniter.ConfigFastest.Unmarshal(msg.Data, &pad)
 
 		go UpdateVirtualDevice(virtualDevice, pad, virtualState)
 

@@ -5,10 +5,15 @@ go 1.24.2
 require (
 	github.com/coder/websocket v1.8.12
 	github.com/jbdemonte/virtual-device v1.1.0
+	github.com/json-iterator/go v1.1.12
 	github.com/pion/webrtc/v3 v3.3.5
 )
 
-require github.com/gorilla/websocket v1.5.3 // indirect
+require (
+	github.com/gorilla/websocket v1.5.3 // indirect
+	github.com/modern-go/concurrent v0.0.0-20180228061459-e0a39a4cb421 // indirect
+	github.com/modern-go/reflect2 v1.0.2 // indirect
+)
 
 require (
 	github.com/PiterWeb/LibreRemotePlaySignals v1.2.0
@@ -80,7 +85,6 @@ require (
 	github.com/pion/transport/v2 v2.2.10 // indirect
 	github.com/pion/turn/v2 v2.1.6 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
-	github.com/pquerna/ffjson v0.0.0-20190930134022-aa0246cd15f7
 	github.com/stretchr/testify v1.10.0 // indirect
 	github.com/wailsapp/wails/v2 v2.10.1
 	golang.org/x/crypto v0.39.0 // indirect
