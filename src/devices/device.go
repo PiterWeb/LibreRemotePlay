@@ -12,23 +12,28 @@ type DeviceEnabledI interface {
 }
 
 type DeviceEnabled struct {
-	enabled atomic.Int32
+	enabled atomic.Bool
 }
 
 func (d *DeviceEnabled) Toogle() {
-	d.enabled.Store(1 - d.enabled.Load())
+	for {
+		old := d.enabled.Load()
+		if d.enabled.CompareAndSwap(old, !old) {
+			break
+		}
+	}
 }
 
 func (d *DeviceEnabled) IsEnabled() bool {
-	return d.enabled.Load() == 1
+	return d.enabled.Load()
 }
 
 func (d *DeviceEnabled) Enable() *DeviceEnabled {
-	d.enabled.Store(1)
+	d.enabled.Store(true)
 	return d
 }
 
 func (d *DeviceEnabled) Disable() *DeviceEnabled {
-	d.enabled.Store(0)
+	d.enabled.Store(false)
 	return d
 }
