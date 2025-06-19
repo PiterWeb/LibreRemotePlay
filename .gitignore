@@ -3,3 +3,6 @@ build/
 /*.dll
 .vigemsetup
 LibreRemotePlay.log
+linuxdeploy*
+*.AppImage
+AppDir/

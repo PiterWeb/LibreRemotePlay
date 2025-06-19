@@ -32,6 +32,14 @@ tasks:
     cmds:
       - wails build -debug -s -platform=linux/amd64,linux/arm64
     desc: Build the debug application for Linux
+  build-linux-appimage:
+    cmds:
+      - wget https://github.com/linuxdeploy/linuxdeploy/releases/download/continuous/linuxdeploy-x86_64.AppImage
+      - chmod +x linuxdeploy-x86_64.AppImage
+      - wget -c "https://raw.githubusercontent.com/linuxdeploy/linuxdeploy-plugin-gtk/master/linuxdeploy-plugin-gtk.sh"
+      - chmod +x linuxdeploy-plugin-gtk.sh
+      - ./linuxdeploy-x86_64.AppImage --appdir AppDir --desktop-file assets/LibreRemotePlay.desktop --executable build/bin/LibreRemotePlay-linux-amd64 --plugin gtk -i assets/remotecontroller.png -d assets/LibreRemotePlay.desktop --output appimage
+    desc: Build AppImage for Linux based on previously generated binaries 
   build-wasm-front-linux:
     dir: frontend/static/wasm
     cmds:
