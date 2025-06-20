@@ -18,6 +18,9 @@ RESOLUTIONS.set(FIXED_RESOLUTIONS.resolution360p, {width: 640, height:360})
 export const DEFAULT_MAX_FRAMERATE = 60
 export const DEFAULT_IDEAL_FRAMERATE = 30
 
+export const MIN_FRAMES = 25
+export const MAX_FRAMES = 145
+
 const DEFAULT_PREFERED_CODECS = ["video/VP9","video/AV1","video/H264", "video/VP8"]
 
 export const preferedCodecsOrdered = $state({value: getStoredPreferedCodecsOrdered()})

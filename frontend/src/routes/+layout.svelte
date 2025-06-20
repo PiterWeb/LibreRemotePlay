@@ -70,9 +70,9 @@
     <p>{$_('config_title')}</p>
 </Tooltip>
 
-<PageTransition key={page.url.toString()} duration={750}>
+<PageTransition key={page.url.toString()} duration={500}>
 	<div class="hero min-h-[calc(100vh-4rem)] bg-gray-900">
-		<div class="hero-content flex-col">
+		<div class="hero-content flex-col w-full">
 			{@render children?.()}
 		</div>
 	</div>

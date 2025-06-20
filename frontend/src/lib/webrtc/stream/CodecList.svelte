@@ -20,23 +20,23 @@
 
 <section class="md:col-span-2 flex flex-col items-center gap-4 w-full">
   
-  <div class="flex flex-col bg-white border w-full border-gray-200 shadow-2xs rounded-xl dark:bg-neutral-900 dark:border-neutral-700 dark:shadow-neutral-700/70">
+  <div class="flex flex-col border w-full shadow-2xs rounded-xl bg-neutral-900 border-neutral-700 shadow-neutral-700/70">
     <header class="p-4 md:p-5">
-      <h3 class="text-lg font-bold text-gray-800 dark:text-white">
+      <h3 class="text-lg font-bold text-white">
         {$_("codec-list")}
       </h3>
-      <p class="mt-2 text-gray-500 dark:text-neutral-400">
+      <p class="mt-2 text-neutral-400">
         {$_("codec-list-preference")}
       </p>
       
     </header>
-    <footer class="bg-gray-100 border-t border-gray-200 rounded-b-xl py-3 px-4 md:py-4 md:px-5 dark:bg-neutral-900 dark:border-neutral-700">
+    <footer class="border-t rounded-b-xl py-3 px-4 md:py-4 md:px-5 bg-neutral-900 border-neutral-700">
       <ul bind:this={sortable} class="max-w-xs flex flex-col">
         {#each preferedCodecsOrdered.value as codec}
           {#key codec}
-            <li data-id={codec} class="inline-flex items-center gap-x-3 py-3 px-4 cursor-grab text-sm font-medium bg-white border border-gray-200 text-gray-800 -mt-px first:rounded-t-lg first:mt-0 last:rounded-b-lg dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-200">
+            <li data-id={codec} class="inline-flex items-center gap-x-3 py-3 px-4 cursor-grab text-sm font-medium border -mt-px first:rounded-t-lg first:mt-0 last:rounded-b-lg bg-neutral-900 border-neutral-700 text-neutral-200">
               {codec}
-              <svg class="shrink-0 size-4 ms-auto text-gray-400 dark:text-neutral-500" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <svg class="shrink-0 size-4 ms-auto text-neutral-500" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <circle cx="9" cy="12" r="1"></circle>
                 <circle cx="9" cy="5" r="1"></circle>
                 <circle cx="9" cy="19" r="1"></circle>
@@ -52,7 +52,7 @@
   
   </div>
   
-  <button onclick={restoreDefaultCodecs} class="btn btn-neutral">
+  <button onclick={restoreDefaultCodecs} class="btn">
     {$_('restore-codecs')}
   </button>
 </section>

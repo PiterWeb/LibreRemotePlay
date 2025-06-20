@@ -19,9 +19,10 @@
     children: import('svelte').Snippet,
     ref: string,
     placement?: UseFloatingOptions["placement"]
+    dark?: boolean
   }
   
-  let { children, ref, placement }: TooltipProps = $props();
+  let { children, ref, placement, dark = true }: TooltipProps = $props();
   
   // State
   let open = $state(false);
@@ -76,7 +77,7 @@
 		class="floating popover-neutral"
 		transition:fade={{ duration: 200 }}
 	>
-        <div class="dark:bg-gray-800 dark:border-gray-700 border-2 rounded-lg p-4 text-white">
+        <div class:bg-white={dark} class:text-gray-800={dark} class:bg-gray-800={!dark} class:text-white={!dark} class="border-2 rounded-lg p-4">
             {@render children?.()}
         </div>
 		<FloatingArrow bind:ref={elemArrow} context={floating.context} fill="#575969" />

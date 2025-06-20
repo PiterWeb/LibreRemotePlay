@@ -12,7 +12,7 @@
 	<label
 		id="label-lan-mode-checkbox"
 		for="lan-mode-checkbox"
-		class="font-semibold text-gray-900 dark:text-white">{$_('lan-mode')}</label
+		class="font-semibold text-white">{$_('lan-mode')}</label
 	>
 	<input
 		id="lan-mode-checkbox"

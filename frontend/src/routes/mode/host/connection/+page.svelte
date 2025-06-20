@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { CreateHostStream } from '$lib/webrtc/stream/host_stream_hook';
-	import { DEFAULT_IDEAL_FRAMERATE, DEFAULT_MAX_FRAMERATE, FIXED_RESOLUTIONS } from '$lib/webrtc/stream/stream_config.svelte';
+	import { DEFAULT_IDEAL_FRAMERATE, DEFAULT_MAX_FRAMERATE, FIXED_RESOLUTIONS, MAX_FRAMES, MIN_FRAMES } from '$lib/webrtc/stream/stream_config.svelte';
 	import { _ } from 'svelte-i18n';
 	import { streaming } from '$lib/webrtc/stream/stream_signal_hook.svelte';
 	import { ListenForConnectionChanges } from '$lib/webrtc/host_webrtc_hook';
@@ -11,10 +11,20 @@
 	import GamepadIcon from '$lib/layout/icons/GamepadIcon.svelte';
 
 	let selected_resolution = $state(FIXED_RESOLUTIONS.resolution720p);
-
+	
 	let idealFramerate = $state(DEFAULT_IDEAL_FRAMERATE);
 	let maxFramerate = $state(DEFAULT_MAX_FRAMERATE);
 
+	$effect(() => {
+	    if (idealFramerate > maxFramerate) idealFramerate = maxFramerate
+		else if (idealFramerate < MIN_FRAMES) idealFramerate = MIN_FRAMES
+	})
+	
+	$effect(() => {
+	    if (maxFramerate > MAX_FRAMES) maxFramerate = MAX_FRAMES
+		else if (maxFramerate < MIN_FRAMES) maxFramerate = MIN_FRAMES
+	})
+	
 	let keyboardEnabled = $state(false);
 	let gamepadEnabled = $state(true);
 
@@ -44,15 +54,15 @@
 	});
 </script>
 
-<section class="w-full h-full">
-	<h3 class="text-3xl">
+<section class="w-full">
+	<h3 class="text-3xl text-white text-center">
 		{$_('toogle_devices')}
 	</h3>
-	<div class="flex flex-row gap-3 mt-6">
-		<button onclick={toogleKeyboard} class:btn-primary={keyboardEnabled} class:btn-neutral={!keyboardEnabled} class="btn">
+	<div class="flex flex-row justify-center gap-3 mt-6">
+		<button onclick={toogleKeyboard} class:btn-primary={keyboardEnabled} class:btn-neutral={!keyboardEnabled} class:border-gray-400={!keyboardEnabled} class="btn border">
 			<KeyboardIcon/>
 		</button>
-		<button onclick={toogleGamepad} class:btn-primary={gamepadEnabled}  class:btn-neutral={!gamepadEnabled} class="btn">
+		<button onclick={toogleGamepad} class:btn-primary={gamepadEnabled}  class:btn-neutral={!gamepadEnabled} class:border-gray-400={!gamepadEnabled} class="btn border">
 			<GamepadIcon/>
 		</button>
 	</div>
@@ -60,18 +70,19 @@
 
 <IsLinux>
 	<div class="w-full h-full">
-		<h3 class="text-4xl">{$_('relay-title')}</h3>
-		<p class="text-lg">{$_('go-browser')}</p>
+		<h3 class="text-4xl text-white">{$_('relay-title')}</h3>
+		<p class="text-gray-300">http://localhost:8080/mode/host/connection/</p>
+		<p class="text-lg text-gray-400">{$_('go-browser')}</p>
 		<p class="text-error">{$_('warning-go-browser')}</p>
 	</div>
 </IsLinux>
 
 <IsLinux not>
-	<div class:hidden={streaming.value} class="w-full h-full grid grid-rows-2 grid-cols-1 gap-2">
-		<section class="w-full h-full">
-			<h3 class="text-3xl">{$_('resolutions')}</h3>
+	<div class:hidden={streaming.value} class="w-2/3 flex flex-col md:flex-row gap-12 align-middle">
+		<section class="w-full">
+			<h3 class="text-3xl text-white text-center">{$_('resolutions')}</h3>
 			<select
-				class="select select-primary w-full max-w-xs mt-6"
+				class="select w-full mx-auto mt-6"
 				bind:value={selected_resolution}
 				id="resolution"
 				aria-label="resolution"
@@ -83,46 +94,46 @@
 				{/each}
 			</select>
 		</section>
-		<section class="w-full h-full">
-			<h3 class="text-3xl">{$_('framerate')}</h3>
-			<div class="flex flex-row gap-10 h-full w-full mt-6">
-				<div class="w-full h-full flex flex-col">
-					<h4 class="text-lg">{$_('ideal-framerate')}</h4>
+		<section class="w-full">
+			<h3 class="text-3xl text-white text-center">{$_('framerate')}</h3>
+			<div class="flex flex-row gap-10 w-full mt-6">
+				<div class="w-full flex flex-col">
+					<h4 class="text-lg text-gray-300">{$_('ideal-framerate')}</h4>
 						<input
 						type="number"
-						class="w-10 h-10 bg-neutral text-white text-center"
+						class="input w-14 h-10 bg-neutral border border-gray-400 text-white text-center"
 						bind:value={idealFramerate}
 						pattern="0|[1-9]\d*"
-						min="25"
-						max="145"
+						min={MIN_FRAMES}
+						max={maxFramerate}
 						step="5"
 						/>
 					<input
 						type="range"
-						min="25"
-						max="145"
+						min={MIN_FRAMES}
+						max={maxFramerate}
 						bind:value={idealFramerate}
-						class="range range-lg my-10"
+						class="range range-primary bg-white range-lg my-10"
 						step="5"
 					/>
 				</div>
-				<div class="w-full h-full flex flex-col">
-					<h4 class="text-lg">{$_('max-framerate')}</h4>
+				<div class="w-full flex flex-col">
+					<h4 class="text-lg text-gray-300">{$_('max-framerate')}</h4>
 					<input
 					type="number"
-					class="w-10 h-10 bg-neutral text-white text-center"
+					class="input w-14 h-10 bg-neutral border border-gray-400 text-white text-center"
 					bind:value={maxFramerate}
 					pattern="0|[1-9]\d*"
-					min="25"
-					max="145"
+					min={MIN_FRAMES}
+					max={MAX_FRAMES}
 					step="5"
 					/>
 					<input
 						type="range"
-						min="30"
-						max="145"
+						min={MIN_FRAMES}
+						max={MAX_FRAMES}
 						bind:value={maxFramerate}
-						class="range range-lg my-10"
+						class="range range-primary bg-white range-lg my-10"
 						step="5"
 					/>
 				</div>

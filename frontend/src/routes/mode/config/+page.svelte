@@ -7,7 +7,7 @@
 	import TurnServers from './TurnServers.svelte';
 </script>
 
-<h2 class="text-center text-primary text-[clamp(2rem,6vw,4.2rem)] font-black leading-[1.1] xl:text-left">
+<h2 class="text-center text-white text-[clamp(2rem,6vw,4.2rem)] font-black leading-[1.1] xl:text-left">
 		{$_('config_title')}
 </h2>
 

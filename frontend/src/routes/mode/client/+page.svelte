@@ -36,22 +36,22 @@
 	}
 </script>
 
-<h2 class="text-center text-primary text-[clamp(2rem,6vw,4.2rem)] font-black leading-[1.1] xl:text-left">
+<h2 class="text-center text-white text-[clamp(2rem,6vw,4.2rem)] font-black leading-[1.1] xl:text-left">
 		{$_('client_card_title')}
 </h2>
 
 <div
-	class="mt-12 md:mt-4 card bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700"
+	class="mt-12 md:mt-4 card border rounded-lg shadow-xl bg-gray-800 border-gray-700"
 >
 	<div class="card-body">
 		<ConnectionOptions/>
 		<section class="flex flex-col md:flex-row [&>ol]:px-4">
 			<ol>
 				<li class="mb-10 me-4">
-					<h3 class="text-2xl font-semibold text-gray-900 dark:text-white">
+					<h3 class="text-2xl font-semibold text-white">
 						{$_('easy-connect')}
 					</h3>
-					<p class="text-sm text-gray-400 dark:text-gray-500 mb-4">
+					<p class="text-sm text-gray-500 mb-4">
 						{$_('easy-connect-description')}
 					</p>
 
@@ -59,7 +59,7 @@
 						<div>
 							<label
 								for="ip-domain-easy-connect"
-								class="mb-1 text-md font-normal leading-none text-gray-400 dark:text-gray-500"
+								class="mb-1 text-md font-normal leading-none text-gray-500"
 								>{$_('ip-domain-easy-connect')}</label
 							>
 
@@ -75,7 +75,7 @@
 						<div class="flex flex-col">
 							<label
 								for="id-easy-connect"
-								class="mb-1 text-md font-normal leading-none text-gray-400 dark:text-gray-500"
+								class="mb-1 text-md font-normal leading-none text-gray-500"
 								>{$_('id-easy-connect')}</label
 							>
 
@@ -96,31 +96,31 @@
 					</section>
 				</li>
 				<li class="block md:hidden">
-					<hr class="border-gray-200 dark:border-gray-700" />
+					<hr class="border-gray-700" />
 				</li>
 			</ol>
 			<ol>
 				<li>
-					<h3 class="text-2xl font-semibold text-gray-900 dark:text-white">
+					<h3 class="text-2xl font-semibold text-white">
 						{$_('manual-connection')}
 					</h3>
-					<p class="text-sm text-gray-400 dark:text-gray-500 mb-4">
+					<p class="text-sm text-gray-500 mb-4">
 						{$_('manual-connection-description')}
 					</p>
 				</li>
 				<li>
-					<ol class="relative border-s border-gray-200 dark:border-gray-700">
+					<ol class="relative border-s border-gray-700">
 						<li class="mb-10 ms-4">
 							{#if !clientCreated}
 								<div
-									class="absolute w-3 h-3 bg-gray-200 rounded-full mt-1.5 -start-1.5 border border-white dark:border-gray-900 dark:bg-gray-700"
+									class="absolute w-3 h-3 rounded-full mt-1.5 -start-1.5 border border-gray-900 bg-gray-700"
 								></div>
 							{:else}
 								<span
-									class="absolute flex items-center justify-center rounded-full mt-1.5 w-3 h-3 -start-1.5 border border-white dark:border-gray-900"
+									class="absolute flex items-center justify-center rounded-full mt-1.5 w-3 h-3 -start-1.5 border border-gray-900"
 								>
 									<svg
-										class="w-2.5 h-2.5 text-green-500 dark:text-green-400 flex-shrink-0"
+										class="w-2.5 h-2.5 text-green-400 flex-shrink-0"
 										aria-hidden="true"
 										xmlns="http://www.w3.org/2000/svg"
 										fill="currentColor"
@@ -135,7 +135,7 @@
 
 							<label
 								for="create-client"
-								class="mb-1 text-sm font-normal leading-none text-gray-400 dark:text-gray-500"
+								class="mb-1 text-sm font-normal leading-none text-gray-500"
 								>{$_('first-step')}</label
 							>
 							<h3 class="text-lg font-semibold text-gray-900 dark:text-white">
