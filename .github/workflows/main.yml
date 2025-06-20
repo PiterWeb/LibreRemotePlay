@@ -4,6 +4,8 @@ on:
   push:
     tags:
       - '*' # Ejecuta en cualquier nuevo tag
+permissions:
+  contents: write
 
 jobs:
   build:
