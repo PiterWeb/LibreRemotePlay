@@ -35,9 +35,11 @@ jobs:
         uses: pnpm/action-setup@v4
         with:
           version: 10
-
       - name: Wails build
         uses: dAppServer/wails-build-action@main
         with:
           build-name: ${{ matrix.name }}
           build-platform: ${{ matrix.platform }}
+          package: true
+          # build: false
+          wails-version: "v2.9.0"
