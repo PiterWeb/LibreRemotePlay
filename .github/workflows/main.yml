@@ -37,7 +37,7 @@ jobs:
           version: 10
 
       - name: Wails build
-        uses: dAppServer/wails-build-action@v3
+        uses: dAppServer/wails-build-action@main
         with:
           build-name: ${{ matrix.name }}
           build-platform: ${{ matrix.platform }}
