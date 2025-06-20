@@ -3,6 +3,10 @@
 [![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/PiterWeb/LibreRemotePlay)
 
 # LibreRemotePlay
+
+> [!IMPORTANT]  
+> The software for the moment is very experimental, may not always work an all systems. If you find a bug you can report it on issues page or discord.
+
 ### An open source, free (as in freedom) and P2P alternative to Steam Remote Play
 
 - Website 🌐: https://libreremoteplay.vercel.app/
