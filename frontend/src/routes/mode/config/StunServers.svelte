@@ -17,7 +17,7 @@
 		<a
 			href="https://raw.githubusercontent.com/pradt2/always-online-stun/master/valid_hosts.txt"
 			target="_blank"
-			class="text-sm font-medium text-blue-600 hover:underline dark:text-blue-500"
+			class="text-sm font-medium hover:underline text-blue-500"
 			>{$_('server-list-link')}</a
 		>
 

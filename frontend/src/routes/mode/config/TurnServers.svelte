@@ -19,7 +19,7 @@
 		<a
 			href="https://github.com/coturn/coturn"
 			target="_blank"
-			class="text-sm font-medium text-blue-600 hover:underline dark:text-blue-500"
+			class="text-sm font-medium hover:underline text-blue-500"
 			>{$_('selfhost-turn-link')}</a
 		>
 
