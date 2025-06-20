@@ -14,16 +14,12 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - name: RemoteControllerLinux
+          - name: LibreRemotePlay-linux-amd64
             platform: linux/amd64
             os: ubuntu-latest
-          - name: RemoteControllerWindows
+          - name: LibreRemotePlay-amd64.exe
             platform: windows/amd64
             os: windows-latest
-          # Descomenta esto si puedes compilar en macOS GitHub runner
-          # - name: RemoteControllerDarwin
-          #   platform: darwin/universal
-          #   os: macos-latest
 
     runs-on: ${{ matrix.os }}
 
@@ -42,6 +38,10 @@ jobs:
         with:
           build-name: ${{ matrix.name }}
           build-platform: ${{ matrix.platform }}
-          package: true
+          package: false
           go-version: 1.24.2
-          # build: false
+      - name: Upload release
+        uses: softprops/action-gh-release@v1
+        with:
+          files:
+            build/bin/*
