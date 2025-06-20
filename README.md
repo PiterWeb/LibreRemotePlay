@@ -124,6 +124,12 @@ Go to the root project folder and run
 - For Linux builds:
 
     `$ task build-linux`
+    
+- For Linux AppImage builds (experimental):
+  
+    `$ task build-linux`
+    and then
+    `$ task build-linux-appimage`
 
 finally go to the build/bin folder and your executables will be there.
 
