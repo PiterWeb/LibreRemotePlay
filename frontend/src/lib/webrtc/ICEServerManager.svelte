@@ -102,16 +102,12 @@
 	let newserverToAdd: string | undefined = $state();
 </script>
 
-<h2 class="text-center text-[clamp(2rem,6vw,4.2rem)] font-black leading-[1.1] xl:text-left">
-	<span
-		class="[&amp;::selection]:text-base-content text-transparent relative col-start-1 row-start-1 bg-clip-text bg-gradient-to-r from-blue-700 via-blue-800 to-gray-900"
-	>
-		{#if type === 'stun'}
-			{$_('stun-servers-title')}
-		{:else}
-			{$_('turn-servers-title')}
-		{/if}
-	</span>
+<h2 class="text-center text-primary text-[clamp(2rem,6vw,4.2rem)] font-black leading-[1.1] xl:text-left">
+	{#if type === 'stun'}
+		{$_('stun-servers-title')}
+	{:else}
+		{$_('turn-servers-title')}
+	{/if}
 </h2>
 
 <section>
@@ -137,15 +133,15 @@
 			e.preventDefault()
 			groupToCreate = '';
 		}}
-		class="flex flex-col gap-4 items-center justify-center sm:w-[30vw] w-[75vw] p-4 my-4 bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700"
+		class="flex flex-col gap-4 items-center justify-center sm:w-[30vw] w-[75vw] p-4 my-4 bg-white border border-gray-200 rounded-lg shadow"
 	>
-		<label for="group" class="block mb-2 font-medium  text-gray-900 dark:text-white"
+		<label for="group" class="block mb-2 font-medium text-gray-900"
 			>{$_('create_group')}</label
 		>
 		<input
 			type="text"
 			id="group"
-			class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+			class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
 			placeholder="Group"
 			required
 			bind:value={groupToCreate}
@@ -164,7 +160,7 @@
 			</p>
 		{/if}
 		{#each Object.keys($servers) as server_group, i}
-			<li class="w-[75vw] p-4 my-4 border rounded-lg shadow sm:p-6 bg-white border-gray-200 dark:bg-gray-800 dark:border-gray-700">
+			<li class="w-[75vw] p-4 my-4 border rounded-lg shadow sm:p-6 bg-white border-gray-200">
 				<div class="flex justify-end h-0 mb-4 lg:mb-1">
 					<button
 						type="button"
@@ -187,7 +183,7 @@
 					</button>
 
 					<h4
-						class="w-11/12 text-lg font-medium text-gray-900 dark:text-white mb-2 focus"
+						class="w-11/12 text-lg font-medium text-gray-900 mb-2 focus"
 						contenteditable="false"
 						id="group-{server_group}-{i}"
 						oninput={(e) =>
@@ -205,13 +201,13 @@
 							newserverToAdd = '';
 						}}
 					>
-						<label for="domain" class="block mb-2 text-sm font-medium text-gray-400 dark:text-white"
+						<label for="domain" class="block mb-2 text-sm font-medium text-gray-600"
 							>{$_('new_server')}</label
 						>
 						<input
 							type="text"
 							id="domain"
-							class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg mb-2 focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+							class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg mb-2 focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
 							placeholder="domain:port // ip:port"
 							required
 							bind:value={newserverToAdd}
@@ -240,7 +236,7 @@
 							<li class="pb-3 sm:pb-4">
 								<div class="flex items-center space-x-4 rtl:space-x-reverse">
 									<div class="flex-1 min-w-0">
-										<p class="text-lg truncate text-gray-400 dark:text-white">
+										<p class="text-lg truncate text-gray-400">
 											{#if type === 'stun'}
 												{server.split('stun:')[1]}
 											{:else}
@@ -250,7 +246,7 @@
 									</div>
 									<button
 										onclick={() => removeServerFromGroup(server_group, server)}
-										class="h-5 w-5 mx-10 text-gray-400 cursor-pointer"
+										class="h-5 w-5 mx-10 text-gray-600 cursor-pointer"
 									>
 										<TrashIcon />
 									</button>
@@ -263,13 +259,13 @@
 						<form action="">
 							<label
 								for="user-{i}"
-								class="block mb-2 text-sm font-medium text-gray-400 dark:text-white"
+								class="block mb-2 text-sm font-medium text-gray-600"
 								>{$_('username')}</label
 							>
 							<input
 								type="text"
 								id="user-{i}"
-								class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+								class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
 								placeholder="username"
 								required
 								value={$servers[server_group]?.username ?? ''}
@@ -278,14 +274,14 @@
 
 							<label
 								for="password"
-								class="block mb-2 text-sm font-medium text-gray-400 dark:text-white"
+								class="block mb-2 text-sm font-medium text-gray-600"
 								>{$_('password')}</label
 							>
 
 							<input
 								type="password"
 								id="password"
-								class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+								class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
 								placeholder="•••••••••"
 								required
 								value={$servers[server_group]?.credential ?? ''}

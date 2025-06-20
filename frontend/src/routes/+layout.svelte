@@ -71,7 +71,7 @@
 </Tooltip>
 
 <PageTransition key={page.url.toString()} duration={750}>
-	<div class="hero min-h-[calc(100vh-4rem)] bg-base-200">
+	<div class="hero min-h-[calc(100vh-4rem)] bg-gray-900">
 		<div class="hero-content flex-col">
 			{@render children?.()}
 		</div>
