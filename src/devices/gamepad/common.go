@@ -21,14 +21,14 @@ var GamepadEnabled = new(devices.DeviceEnabled).Enable()
 type GamepadAPIXState struct {
 	Axes      [4]float64
 	Buttons   [16]gamepadButton
-	Connected bool
-	ID        string
+	// ID        string
 	Index     int
+	// Connected bool
 }
 
 type gamepadButton struct {
-	Pressed bool
 	Value   float64
+	Pressed bool
 }
 
 func fixLYAxis(value float64) float64 {

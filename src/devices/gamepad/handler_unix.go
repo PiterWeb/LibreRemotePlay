@@ -41,9 +41,7 @@ func HandleGamepad(gamepadChannel *webrtc.DataChannel) {
 		}
 	}()
 
-	lastPad := GamepadAPIXState{
-		Connected: false,
-	}
+	lastPad := GamepadAPIXState{}
 
 	var actualPad GamepadAPIXState
 	
