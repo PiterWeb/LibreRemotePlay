@@ -2,6 +2,7 @@
 	import onwebsite from '$lib/detection/onwebsite';
 	import { _ } from 'svelte-i18n';
 	import { StartTutorial } from '$lib/tutorial/driver';
+	import IsLinux from '$lib/detection/IsLinux.svelte';
 
 </script>
 
@@ -43,7 +44,15 @@
 		<div class="card-body">
 			<h2 class="card-title text-gray-800">{$_('client_card_title')}</h2>
 			<p class="text-gray-600">{$_('client_card_description')}</p>
+			<IsLinux>
+			    <button onclick={async () => {
+							const { BrowserOpenURL } = await import('$lib/wailsjs/runtime/runtime');
+							BrowserOpenURL("http://localhost:8080/mode/client")
+				}} class="btn btn-primary text-white">{$_('client_card_cta')}</button>
+			</IsLinux>
+			<IsLinux not>
 			<a href="/mode/client" class="btn btn-primary text-white">{$_('client_card_cta')}</a>
+			</IsLinux>
 		</div>
 	</div>
 </div>
