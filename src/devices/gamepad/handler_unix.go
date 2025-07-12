@@ -42,8 +42,6 @@ func HandleGamepad(gamepadChannel *webrtc.DataChannel) {
 	}()
 
 	var lastPad GamepadAPIXState
-
-	var actualPad GamepadAPIXState
 	
 	// Update the virtual device
 	gamepadChannel.OnMessage(func(msg webrtc.DataChannelMessage) {
@@ -52,6 +50,8 @@ func HandleGamepad(gamepadChannel *webrtc.DataChannel) {
 			return
 		}
 
+		var actualPad GamepadAPIXState
+		
 		err := jsoniter.ConfigFastest.Unmarshal(msg.Data, &actualPad)
 		
 		if err != nil {
