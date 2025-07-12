@@ -82,7 +82,8 @@ func gamepadAPIXToXInput(gms GamepadAPIXState) XInputState {
 
 	return XInputState{
 		ID:        ID(gms.Index),
-		Connected: gms.Connected,
+		// Connected: gms.Connected,
+		Connected: true,
 		Packet:    uint32(time.Now().Nanosecond()), // Different values trigger update
 		Raw: RawControls{
 			Buttons:      convertGamepadButtons(gms.Buttons),
