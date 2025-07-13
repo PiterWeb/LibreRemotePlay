@@ -1,84 +1,96 @@
-# ![Gamepad](./frontend/src/lib/assets/gamepad.svg) LibreRemotePlay
-### An open source & decentralized alternative to Steam remote play (No need to self host)
+![LibreRemotePlay logo banner](https://github.com/user-attachments/assets/9173246d-1d65-4f29-bd79-0206250c538c)
 
-⌛ Looking for contributions 👈
+[![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/PiterWeb/LibreRemotePlay)
 
-> [!Note]
-> Website: 
-> https://libreremoteplay.vercel.app/ 
+# LibreRemotePlay
+
+> [!IMPORTANT]  
+> The software for the moment is very experimental, may not always work an all systems. If you find a bug you can report it on issues page or discord.
+
+### An open source, free (as in freedom) and P2P alternative to Steam Remote Play
+
+- Website 🌐: https://libreremoteplay.vercel.app/
+
+- Wiki 📖: https://github.com/PiterWeb/LibreRemotePlay/wiki
+
+- Discord Community 👥: https://discord.gg/v7qd7nU3fJ
+
+- Series of WebRTC Articles 👨‍💻: https://dev.to/piterweb/series/30718
 
 ## Use cases ✨
 
-- Play with friends online
-- Enjoy videogames from other devices using your gamepad
-### The limit is in your imagination ... 
-
-![Example Image from the Desktop APP](./assets/example.png)
+- Share your local co-op games online with friends (as [Steam Remote Play Together](https://store.steampowered.com/remoteplay?l=english#together))
+- Stream your games from your PC to other devices (as [Steam Remote Play Anywhere](https://store.steampowered.com/remoteplay?l=english#anywhere))
 
 ## Download 📦
 
-- (Website) https://libreremoteplay.vercel.app/download/
-- (Github) https://github.com/PiterWeb/LibreRemotePlay/releases/latest
-
-## Guides 📘
-
-- [Instalation guide](https://libreremoteplay.vercel.app/info/guides/installation/)
-- [How to use](https://libreremoteplay.vercel.app/info/guides/how-to-use/)
+- https://github.com/PiterWeb/LibreRemotePlay/releases/latest
 
 ## Resources 📚
 
 - [Docs](./docs/) 📘
 - [Linux Docs](./docs/LINUX.md) 📘
-- [FAQ](https://remote-controller.vercel.app/info/resources/faq/) 💬
-- [Security](https://remote-controller.vercel.app/info/resources/security/) 🔐
+- [Wiki](https://github.com/PiterWeb/LibreRemotePlay/wiki) (Guides, FAQ, ...)
+- [Discord Community](https://discord.gg/v7qd7nU3fJ)
 
-- https://github.com/user-attachments/assets/f4a412fa-f403-4429-85fb-9c1e74bff458
+### Videos 📹
+(Note that videos may show older/beta versions of the APP and could have bugs that are already fixed in the latest version)
 
-(Note that videos may show beta versions of the APP and could have bugs)
+#### How to use
+
+https://github.com/user-attachments/assets/f4a412fa-f403-4429-85fb-9c1e74bff458
 
 ## Features 🧩
 
 - [x] Portable
 - [x] Simple & Modern UI
-- [x] P2P "Decentralized" (WebRTC)
-- [x] Remote Streaming
+- [x] Interactive Tutorial
+- [x] Peer-to-Peer (WebRTC)
+- [ ] Groups
+- [x] Remote Video Streaming
+  - [x] Video Quality Config 
 - [x] Browser Client
-- [x] Support for keyboard (very experimental)
-- [x] ViGEmBus Setup (Windows)
 - [x] Localization (translation to multiple languages)
-- [x] Support for STUN & TURN
+- [x] Support for custom STUN & TURN servers
+- [x] Keyboard (Experimental)
+- [x] Toogle Devices
+- [x] [EasyConnect](https://github.com/PiterWeb/LibreRemotePlayEasyConnectServer) 
 
 ### OS Support 💻
 
 | Windows 	| Linux 	| MacOS 	| Browser (Only Client) 	|
 |---------	|-------	|-------	|---------	|
-| ✔       	| ✔ Gamepad/Streaming support (❌ Keyboard for the moment)     	| ❌ (No MacOS to test)     	| ✔ (Known Issues with Safari)       	|
+| ✔       	| ✔     	| ❌ (No MacOS to test/develop)     	| ✔ (Known Issues with Safari)       	|
 
-### Native Gamepad Support 🎮
+### Gamepad Support 🎮
 
 | PC Controller (XInput/DirectInput) 	| Xbox Controller (XInput) 	| PlayStation Controler
 |---------	|-------	|-------	|
 | ✔       	| ✔     	| ❌ (But you can achieve [emulating a Xbox Controller](https://github.com/Ryochan7/DS4Windows))     	|
 
-### Translations 🔠
+### Available Languages 🔠
 
 | English 	| Spanish 	| Galician | Russian | French |Other languages |
 |---------	|-------	|-------	| ------- | ------- | ------- |
-| 100% ✔     	| 100% ✔      	| 100% ✔      	| 100% ✔ | 100% ✔ (@Zorkyx22) |⌛ Looking for contributions
+| ✔     	| ✔      	| ✔      	| ✔ | ✔ (@Zorkyx22) |⌛ Looking for contributions
 
 ## Self Hosting ☁
 
-There is no way to self-host the infrastructure of LibreRemotePlay because it has no backend. But instead you can self-host if you want the TURN & STUN servers and then add them to the config.
+There is no way to self-host the infrastructure of LibreRemotePlay because it has no backend. But instead you can self-host if you want the TURN & STUN servers and then add them to the config or the [EasyConnectServer](https://github.com/PiterWeb/LibreRemotePlayEasyConnectServer).
 
 - If you want to self-host a TURN/STUN server you can [try Coturn](https://github.com/coturn/coturn). (This is only an example, you can choose other STUN/TURN implementations)
 
 - Also you can host the Web version (but it is only frontend, so is not very usefull)
 
+- If you want to self-host an EasyConnectServer you can follow the docs of [EasyConnectServer repo](https://github.com/PiterWeb/LibreRemotePlayEasyConnectServer), this service is also packed in the desktop app and run in app startup but instead you can launch it along. EasyConnectServer is a signaling server that makes code passing in an automatic way.
+
 ## Run Dev
 
 ### Prerequisites
 
-You must have [Task CLI](https://taskfile.dev/installation/), [Wails CLI](https://wails.io/docs/gettingstarted/installation#installing-wails), [NodeJS (~v20.x.x)](https://nodejs.org/en/download), [pnpm](https://pnpm.io/es/installation) and [Golang (min v1.22.4)](https://go.dev/doc/install) installed.
+- You must have [Task CLI](https://taskfile.dev/installation/), [Wails CLI](https://wails.io/docs/gettingstarted/installation#installing-wails), [NodeJS (~v20.x.x)](https://nodejs.org/en/download), [pnpm](https://pnpm.io/en/installation) and [Golang (min v1.22.4)](https://go.dev/doc/install) installed.
+
+- Make sure to run `wails doctor` and [install all the required dependencies for your system](https://wails.io/docs/gettingstarted/installation#system-check), also take a look at [platform specific dependencies](https://wails.io/docs/gettingstarted/installation/#platform-specific-dependencies)
 
 ### How to
 
@@ -96,7 +108,9 @@ Go to the root project folder and run
 
 ### Prerequisites
 
-You must have [Task CLI](https://taskfile.dev/installation/), [Wails CLI](https://wails.io/docs/gettingstarted/installation#installing-wails), [NodeJS (~v20.x.x)](https://nodejs.org/en/download), [pnpm](https://pnpm.io/es/installation) and [Golang (min v1.22.4)](https://go.dev/doc/install) installed.
+- You must have [Task CLI](https://taskfile.dev/installation/), [Wails CLI](https://wails.io/docs/gettingstarted/installation#installing-wails), [NodeJS (~v20.x.x)](https://nodejs.org/en/download), [pnpm](https://pnpm.io/en/installation) and [Golang (min v1.22.4)](https://go.dev/doc/install) installed.
+
+- Make sure to run `wails doctor` and [install all the required dependencies for your system](https://wails.io/docs/gettingstarted/installation#system-check), also take a look at [platform specific dependencies](https://wails.io/docs/gettingstarted/installation/#platform-specific-dependencies)
 
 ### How to
 
@@ -113,6 +127,12 @@ Go to the root project folder and run
 - For Linux builds:
 
     `$ task build-linux`
+    
+- For Linux AppImage builds (experimental):
+  
+    `$ task build-linux`
+    and then
+    `$ task build-linux-appimage`
 
 finally go to the build/bin folder and your executables will be there.
 
@@ -123,17 +143,25 @@ finally go to the build/bin folder and your executables will be there.
 
 If you are interested to contribute to this project you can follow this [guide](./CONTRIBUTING.md)
 
-## Acknowledgements
+## Acknowledgements ❤
+These projects are making LibreRemotePlay a reality.
 
-### Thanks to jbdemonte/virtual-device ❤
-[jbdemonte/virtual-device](https://github.com/jbdemonte/virtual-device) is making this project a reality. This is the source of magic that enables LibreRemotePlay to generate virtual gamepads on Linux, is very fast and made in pure Go.
-### Thanks to the ViGEm project  ❤
-[ViGEmBus](https://github.com/nefarius/ViGEmBus) is making this project a reallity. This is the source of magic that enables LibreRemotePlay to generate virtual gamepads on Windows. We embed ViGEmBus Installation Wizard and ViGEmBus Client DLLS within the executable for Windows
+### Thanks to jbdemonte/virtual-device
+[jbdemonte/virtual-device](https://github.com/jbdemonte/virtual-device) is the source of magic that enables LibreRemotePlay to generate virtual gamepads on Linux, is very fast and made in pure Go.
+### Thanks to the ViGEm project
+[ViGEmBus](https://github.com/nefarius/ViGEmBus) is the source of magic that enables LibreRemotePlay to generate virtual gamepads on Windows. We embed ViGEmBus Installation Wizard and ViGEmBus Client DLLS within the executable for Windows
+
+### Thanks to Wails
+[Wails](https://github.com/wailsapp/wails) makes easy creating desktop experiences using Go and Web tecnologies.
+
+### Thanks to pion/webrtc
+[Pion/Webrtc](https://github.com/pion/webrtc) is a implementation of WebRTC made in pure Go, it enables LibreRemotePlay to use WebRTC in a crossplatform way.
+
+### Thanks to robotgo
+[robotgo](https://github.com/go-vgo/robotgo) makes easy controling/simulating a keyboard (and anything related to desktop) using a simple syntax in Go.
 
 ## Did you like the project 👍 ?
-You can give a star and review us on Product Hunt
-
-<a href="https://www.producthunt.com/products/remote-controller/reviews?utm_source=badge-product_review&utm_medium=badge&utm_souce=badge-remote&#0045;controller" target="_blank"><img src="https://api.producthunt.com/widgets/embed-image/v1/product_review.svg?product_id=565186&theme=light" alt="LibreRemotePlay - Play&#0032;LOCAL&#0032;co&#0045;op&#0032;games&#0032;ONLINE | Product Hunt" style="width: 250px; height: 54px;" width="250" height="54" /></a>
+You can give us a star and join our [Discord Community](https://discord.gg/v7qd7nU3fJ), the project is always looking for feedback :)
 
 ## Star History
 Here you can see how fast the community is growing

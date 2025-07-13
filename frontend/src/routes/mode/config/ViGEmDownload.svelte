@@ -1,26 +1,26 @@
 <script lang="ts">
 	import '$lib/detection/IsWindows.svelte';
 
-	import { OpenViGEmWizard } from '$lib/wailsjs/go/desktop/App';
+	import { OpenViGEmWizard } from '$lib/wailsjs/go/bindings/App';
 </script>
 
 <section
-	class="max-w-sm p-6 bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700"
+	class="max-w-sm p-6 bg-white border border-gray-200 rounded-lg shadow"
 >
-	<h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
+	<h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900">
 		ViGEmBus Driver
 	</h5>
 
-	<p class="mb-3 font-normal text-gray-700 dark:text-gray-400">
+	<p class="mb-3 font-normal text-gray-700">
 		You need to have installed to use the Host mode.
 	</p>
-	<p class="mb-3 font-normal text-gray-700 dark:text-gray-400">
+	<p class="mb-3 font-normal text-gray-700">
 		If you already have it installed, ignore this, but if you skipped the installation, you can
 		install it here.
 	</p>
 	<button
 		onclick={OpenViGEmWizard}
-		class="w-full justify-center inline-flex items-center px-3 py-2 text-sm font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+		class="w-full justify-center inline-flex items-center px-3 py-2 text-sm font-medium text-center text-white rounded-lg focus:ring-4 focus:outline-none bg-blue-600 hover:bg-blue-700 focus:ring-blue-800"
 	>
 		Install Now
 		<svg

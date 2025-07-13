@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { CloseStreamClientConnection } from '$lib/webrtc/stream/client_stream_hook';
+	import CodecList from '$lib/webrtc/stream/CodecList.svelte';
 	import {consumingStream } from '$lib/webrtc/stream/stream_signal_hook.svelte';
 	import { _ } from 'svelte-i18n';
 
@@ -13,9 +14,18 @@
 
 </script>
 
+<div class="grid md:grid-cols-4 grid-cols-1 gap-10">
+	{#if consumingStream.value}
+	<button class="md:col-span-4 btn btn-primary btn-outline" onclick={closeStream}>
+		{$_('close-stream')}</button>
 
-	<button class="btn btn-primary" class:hidden={consumingStream.value} onclick={connectToStream}>
+	{:else}
+
+	<CodecList/>
+
+	<button class="md:col-span-2 btn btn-primary" onclick={connectToStream}>
 		{$_('connect-to-stream')}</button>
+		
+	{/if}
+</div>
 
-<button class="btn btn-primary btn-outline" class:hidden={!consumingStream.value} onclick={closeStream}>
-	{$_('close-stream')}</button>

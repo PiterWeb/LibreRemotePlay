@@ -7,11 +7,17 @@
   - docs/ (All the development documentation)
   - frontend/src/lib/i18n (All the translations of the project)
 
-### Requisites
+## Requisites
   - If you want to contribute first you need to check the issues, them if you like any of the open issues work on it and merge it to the project (obviously you can open a new issue to enhance the features or correct any bug you found to work on it later)
   - Try to do self-explanatory code (if cannot be you can comment to enhance the comprehension)
 
-### How to
+## Resources of interest
+
+  - [LibreRemotePlay Docs](./docs/README.md)
+  - [How to run the project](./README.md#run-dev)
+  - [How to build the project](./README.md#build)
+
+## How to
 
   1. Fork this repository
   2. Clone it
@@ -20,11 +26,7 @@
   5. Wait for merge (maybe it will not be merged at first because of bad code)
   6. Done
 
-
-
-
-
-# Translations 🔠
+## Translations 🔠
 
 ### How to
 
@@ -38,4 +40,4 @@
   7. Done
 
 
-## Thank you for reading this & also for your interest on contributing
+## Thank you for reading this and also for your interest on contributing

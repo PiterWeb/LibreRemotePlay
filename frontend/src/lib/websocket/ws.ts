@@ -1,3 +1,5 @@
+import log from "$lib/logger/logger";
+
 class WS extends WebSocket {
 
     private static url = "ws://localhost:8080/ws"
@@ -5,7 +7,7 @@ class WS extends WebSocket {
     static #instance: WS | null;
     private constructor() {
         try {super(WS.url)} catch (e) {
-            console.error(e)
+            log(e, {err: true})
         }
     }
 

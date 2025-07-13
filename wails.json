@@ -1,6 +1,6 @@
 {
   "name": "RemoteController",
-  "outputfilename": "RemoteController",
+  "outputfilename": "LibreRemotePlay",
   "frontend:install": "pnpm install",
   "frontend:build": "pnpm run build",
   "frontend:dev:watcher": "pnpm run dev",

@@ -1,3 +1,4 @@
+// Websocket server
 package websocket
 
 import (
@@ -11,9 +12,9 @@ import (
 
 var conns = map[string]*websocket.Conn{}
 
-func SetupWebsocketHandler() {
+func SetupWebsocketHandler(serverMux *http.ServeMux) {
 
-	http.HandleFunc("GET /ws", func(w http.ResponseWriter, r *http.Request) {
+	serverMux.HandleFunc("GET /ws", func(w http.ResponseWriter, r *http.Request) {
 
 		c, err := websocket.Accept(w, r, nil)
 		if err != nil {

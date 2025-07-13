@@ -3,42 +3,45 @@ name: Wails build
 on:
   push:
     tags:
-    # Match any new tag
-      - '*'
-
-env:
-  # Necessary for most environments as build failure can occur due to OOM issues
-  NODE_OPTIONS: "--max-old-space-size=4096"
+      - '*' # Ejecuta en cualquier nuevo tag
+permissions:
+  contents: write
 
 jobs:
   build:
+    name: Build ${{ matrix.name }}
     strategy:
-    # Failure in one platform build won't impact the others
       fail-fast: false
       matrix:
-        build:
-          - name: 'RemoteControllerLinux'
-            platform:  'linux/amd64'
-            os: 'ubuntu-latest'
-          - name: 'RemoteControllerWindows'
-            platform:  'windows/amd64'
-            os: 'windows-latest'
-          - name: 'RemoteControllerDarwin'
-            platform:  'darwin/universal'
-            os: 'macos-latest'
+        include:
+          - name: LibreRemotePlay-linux-amd64
+            platform: linux/amd64
+            os: ubuntu-latest
+          - name: LibreRemotePlay-amd64.exe
+            platform: windows/amd64
+            os: windows-latest
 
-    runs-on: ${{ matrix.build.os }}
+    runs-on: ${{ matrix.os }}
+
     steps:
-      - name: Checkout
-        uses: actions/checkout@v2
+      - name: Checkout repository
+        uses: actions/checkout@v4
         with:
           submodules: recursive
 
-      - name: Build wails
-        uses: dAppServer/wails-build-action@v2.2
-        id: build
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
         with:
-          build-name: ${{ matrix.build.name }}
-          build-platform: ${{ matrix.build.platform }}
+          version: 10
+      - name: Wails build
+        uses: dAppServer/wails-build-action@main
+        with:
+          build-name: ${{ matrix.name }}
+          build-platform: ${{ matrix.platform }}
           package: false
-          go-version: '1.22'
+          go-version: 1.24.2
+      - name: Upload release
+        uses: softprops/action-gh-release@v1
+        with:
+          files:
+            build/bin/*

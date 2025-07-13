@@ -1,5 +1,5 @@
 import onwebsite from '$lib/detection/onwebsite';
-import { GetCurrentOS } from '$lib/wailsjs/go/desktop/App';
+import { GetCurrentOS } from '$lib/wailsjs/go/bindings/App';
 
 type OS = 'WINDOWS' | 'LINUX' | 'MACOS';
 

@@ -1,7 +1,8 @@
 import { exportStunServers } from '$lib/webrtc/stun_servers';
 import { setConsumingStream, type SignalingData } from '$lib/webrtc/stream/stream_signal_hook.svelte';
 import { exportTurnServers } from '$lib/webrtc/turn_servers';
-import { getSortedVideoCodecs} from './stream_config';
+import { getSortedVideoCodecs} from './stream_config.svelte';
+import LANMode from '$lib/webrtc/lan_mode.svelte';
 
 let peerConnection: RTCPeerConnection | undefined;
 let inboundStream: MediaStream | null = null;
@@ -12,7 +13,7 @@ function initStreamingPeerConnection() {
 	}
 
 	peerConnection = new RTCPeerConnection({
-		iceServers: [...exportStunServers(), ...exportTurnServers()]
+		iceServers: LANMode.enabled ? [] : [...exportStunServers(), ...exportTurnServers()]
 	});
 }
 
@@ -23,6 +24,10 @@ async function CreateClientStream(
 	initStreamingPeerConnection();
 
 	if (!videoElement || !peerConnection) throw new Error('Error creating stream');
+
+	const transceiver = peerConnection.addTransceiver("video", { direction: "recvonly" });
+
+	transceiver.setCodecPreferences(getSortedVideoCodecs());
 
 	peerConnection.onconnectionstatechange = () => {
 		if (!peerConnection) return;
@@ -47,11 +52,7 @@ async function CreateClientStream(
 	};
 
 	peerConnection.ontrack = (ev) => {
-		try {
-				ev.transceiver.setCodecPreferences(getSortedVideoCodecs())
-		} catch {
-			console.error("Error setting codec preferences")
-		}
+
 		if (ev.streams && ev.streams[0]) {
 			ev.streams[0].getTracks().forEach(t => t.addEventListener("ended", () => {CloseStreamClientConnection()}, true) )
 			videoElement.srcObject = ev.streams[0];
@@ -71,7 +72,8 @@ async function CreateClientStream(
 
 	const offer = await peerConnection.createOffer({
 		offerToReceiveAudio: true,
-		offerToReceiveVideo: true
+		offerToReceiveVideo: true,
+		iceRestart: true
 	});
 
 	await peerConnection.setLocalDescription(offer);

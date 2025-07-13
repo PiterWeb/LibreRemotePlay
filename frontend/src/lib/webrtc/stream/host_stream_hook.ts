@@ -5,8 +5,10 @@ import { _ } from 'svelte-i18n';
 import { exportStunServers } from '../stun_servers';
 import { exportTurnServers } from '../turn_servers';
 import { IS_RUNNING_EXTERNAL } from '$lib/detection/onwebsite';
-import { DEFAULT_IDEAL_FRAMERATE, DEFAULT_MAX_FRAMERATE, FIXED_RESOLUTIONS, RESOLUTIONS } from './stream_config';
+import { DEFAULT_IDEAL_FRAMERATE, DEFAULT_MAX_FRAMERATE, FIXED_RESOLUTIONS, RESOLUTIONS } from './stream_config.svelte';
 import ws from '$lib/websocket/ws';
+import log from '$lib/logger/logger';
+import LANMode from '$lib/webrtc/lan_mode.svelte';
 
 let peerConnection: RTCPeerConnection | undefined;
 
@@ -16,7 +18,7 @@ function initStreamingPeerConnection() {
 	}
 
 	peerConnection = new RTCPeerConnection({
-		iceServers: [...exportStunServers(), ...exportTurnServers()]
+		iceServers: LANMode.enabled ? [] : [...exportStunServers(), ...exportTurnServers()]
 	});
 }
 
@@ -98,7 +100,7 @@ export function CreateHostStream(resolution: FIXED_RESOLUTIONS = FIXED_RESOLUTIO
 			return;
 		}
 
-		console.log('ICE gathering complete');
+		log('ICE gathering complete');
 
 		const answer = peerConnection?.localDescription?.toJSON();
 		const data: SignalingData = {
@@ -139,7 +141,7 @@ export function CreateHostStream(resolution: FIXED_RESOLUTIONS = FIXED_RESOLUTIO
 
 		} catch (e) {
 			// TODO: manage error
-			console.error(e)
+			log(e, {err: true})
 			return
 		}
 		offerArrived = true;
@@ -163,7 +165,7 @@ export function CreateHostStream(resolution: FIXED_RESOLUTIONS = FIXED_RESOLUTIO
 			await peerConnection.setLocalDescription(await peerConnection.createAnswer());
 
 		} catch (e) {
-			console.error(e)
+			log(e, {err: true})
 			return
 		}
 		

@@ -1,8 +1,8 @@
 export type ClonedGamepad = {
 	axes: number[];
 	buttons: GamepadButton[];
-	connected: boolean;
-	id: string;
+	// connected: boolean;
+	// id: string;
 	index: number;
 };
 
@@ -10,7 +10,6 @@ type GamepadButton = {
 	pressed: boolean;
 	value: number;
 };
-
 
 export function cloneGamepad(gamepad: Gamepad): ClonedGamepad {
 
@@ -22,8 +21,8 @@ export function cloneGamepad(gamepad: Gamepad): ClonedGamepad {
 				value: button.value
 			};
 		}),
-		connected: gamepad.connected,
-		id: gamepad.id,
+		// connected: gamepad.connected,
+		// id: gamepad.id,
 		index: gamepad.index
 	};
 }
@@ -33,7 +32,7 @@ export function handleGamepad(controllerChannel: RTCDataChannel) {
 		const gamepadData = navigator.getGamepads();
 
 		gamepadData.forEach((gamepad) => {
-			if (!gamepad) return;
+			if (!gamepad || !gamepad.connected) return;
 
 			const serializedData = JSON.stringify(cloneGamepad(gamepad));
 			controllerChannel.send(serializedData);

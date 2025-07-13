@@ -14,16 +14,23 @@ describe('Basic connection', async () => {
 	const signalEncode = wasmModule.instance.exports.signalEncode as <T>(signal: T) => string;
 	const signalDecode = wasmModule.instance.exports.signalDecode as <T>(signal: string) => T;
 
-	await mockRTC.start();
+	beforeEach(() => mockRTC.start());
+    afterEach(() => mockRTC.stop());
 
 	it('load', async () => {
-		cy.visit('http://localhost:34115/');
-		cy.wait(1000);
-		cy.log('hello');
+		cy.visit('http://localhost:34115/').wait(1000).log('hello');
 
 		const mockPeer = await mockRTC.buildPeer().thenEcho();
 
 		const { offer: mockOffer, setAnswer } = await mockPeer.createOffer();
+
+		const mockOfferEncoded = signalEncode(mockOffer)
+
+		// const answerEncoded = ""
+
+		// const answer: RTCSessionDescriptionInit = signalDecode(answerEncoded)
+
+		// await setAnswer(answer)
 
 		// Start WebRTC connection from the CypressUI
 	});

@@ -4,7 +4,8 @@ import (
 	"embed"
 	"log"
 
-	"github.com/PiterWeb/RemoteController/src/desktop"
+	"github.com/PiterWeb/RemoteController/src/bindings"
+	appLogger "github.com/PiterWeb/RemoteController/src/logger"
 	"github.com/PiterWeb/RemoteController/src/oninit"
 	"github.com/wailsapp/wails/v2"
 	"github.com/wailsapp/wails/v2/pkg/logger"
@@ -18,6 +19,10 @@ var assets embed.FS
 
 func main() {
 
+	logFile := appLogger.InitLogger()
+
+	defer logFile.Close()
+	
 	go func() {
 
 		err := oninit.Execute(assets)
@@ -28,13 +33,15 @@ func main() {
 
 	}()
 
+	log.Println("LibreRemotePlay Starting app")
+
 	// Create an instance of the app structure
-	app := desktop.NewApp()
+	app := bindings.NewApp()
 
 	// Create application with options
 	// Create application with options
 	err := wails.Run(&options.App{
-		Title:             "Remote Controller",
+		Title:             "LibreRemotePlay",
 		Width:             1024,
 		Height:            768,
 		DisableResize:     false,
