@@ -54,6 +54,7 @@ https://github.com/user-attachments/assets/f4a412fa-f403-4429-85fb-9c1e74bff458
 - [x] Support for custom STUN & TURN servers
 - [x] Keyboard (Experimental)
 - [x] Toogle Devices
+- [x] [EasyConnect](https://github.com/PiterWeb/LibreRemotePlayEasyConnectServer) 
 
 ### OS Support 💻
 
@@ -75,11 +76,13 @@ https://github.com/user-attachments/assets/f4a412fa-f403-4429-85fb-9c1e74bff458
 
 ## Self Hosting ☁
 
-There is no way to self-host the infrastructure of LibreRemotePlay because it has no backend. But instead you can self-host if you want the TURN & STUN servers and then add them to the config.
+There is no way to self-host the infrastructure of LibreRemotePlay because it has no backend. But instead you can self-host if you want the TURN & STUN servers and then add them to the config or the [EasyConnectServer](https://github.com/PiterWeb/LibreRemotePlayEasyConnectServer).
 
 - If you want to self-host a TURN/STUN server you can [try Coturn](https://github.com/coturn/coturn). (This is only an example, you can choose other STUN/TURN implementations)
 
 - Also you can host the Web version (but it is only frontend, so is not very usefull)
+
+- If you want to self-host an EasyConnectServer you can follow the docs of [EasyConnectServer repo](https://github.com/PiterWeb/LibreRemotePlayEasyConnectServer), this service is also packed in the desktop app and run in app startup but instead you can launch it along. EasyConnectServer is a signaling server that makes code passing in an automatic way.
 
 ## Run Dev
 
