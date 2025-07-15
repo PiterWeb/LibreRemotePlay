@@ -29,7 +29,7 @@
 ## Resources 📚
 
 - [Docs](./docs/) 📘
-- [Linux Docs](./docs/LINUX.md) 📘
+- [Linux Docs](https://github.com/PiterWeb/LibreRemotePlay/wiki/installation-&-execution#execute-in-linux) 📘
 - [Wiki](https://github.com/PiterWeb/LibreRemotePlay/wiki) (Guides, FAQ, ...)
 - [Discord Community](https://discord.gg/v7qd7nU3fJ)
 
