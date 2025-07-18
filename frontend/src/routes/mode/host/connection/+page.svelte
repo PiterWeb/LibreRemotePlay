@@ -9,11 +9,34 @@
 	import IsLinux from '$lib/detection/IsLinux.svelte';
 	import KeyboardIcon from '$lib/layout/icons/KeyboardIcon.svelte';
 	import GamepadIcon from '$lib/layout/icons/GamepadIcon.svelte';
+	import IsWindows from '$lib/detection/IsWindows.svelte';
+	import type {audio} from "$lib/wailsjs/go/models"
+	import { GetAudioProcess, SetAudioPid } from '$lib/wailsjs/go/bindings/App';
+
+	let selected_audio_src = $state(0)
+	let audio_srcs = $state<audio.AudioProcess[]>([])
 
 	let selected_resolution = $state(FIXED_RESOLUTIONS.resolution720p);
 	
 	let idealFramerate = $state(DEFAULT_IDEAL_FRAMERATE);
 	let maxFramerate = $state(DEFAULT_MAX_FRAMERATE);
+
+	let timeoutSetAudioPid: NodeJS.Timeout;
+
+	$effect(() => {
+		// *** This is a hack needed to trigger the effect
+		selected_audio_src;
+		// ***
+		if (streaming.value) {
+			clearTimeout(timeoutSetAudioPid)
+			timeoutSetAudioPid = setTimeout(() => {
+				console.log("Selected audio :", selected_audio_src)
+				SetAudioPid(selected_audio_src)
+			}, 750)
+		} else {
+			SetAudioPid(0)
+		}
+	})
 
 	$effect(() => {
 	    if (idealFramerate > maxFramerate) idealFramerate = maxFramerate
@@ -49,8 +72,23 @@
 		gamepadEnabled = await IsGamepadEnabled()
 	}
 
+	function MapAudioSrcs (s: audio.AudioProcess) {
+		if (s.Name.length > 0) return s
+		else return {Name: `Unknow<${s.Pid}>`, Pid: s.Pid}
+	}
+
 	onMount(() => {
 		ListenForConnectionChanges();
+
+		(async () => {
+			audio_srcs = (await GetAudioProcess()).map(MapAudioSrcs)
+		})()
+
+		const interval = setInterval(async () => {
+			audio_srcs = (await GetAudioProcess()).map(MapAudioSrcs)
+		}, 5000)
+
+		return () => clearInterval(interval)
 	});
 </script>
 
@@ -67,6 +105,26 @@
 		</button>
 	</div>
 </section>
+
+<IsWindows>
+	<section class="w-1/3 mx-auto" class:hidden={!streaming.value}>
+		<h3 class="text-3xl text-white text-center">
+			{$_('audio_selector')}
+		</h3>
+		<select
+				class="select w-full mx-auto mt-6"
+				bind:value={selected_audio_src}
+				id="audio_srcs"
+				aria-label="audio_srcs"
+			>
+				{#each audio_srcs as src}
+					<option selected={src.Pid == selected_audio_src} value={src.Pid}
+						>{src.Name}</option
+					>
+				{/each}
+			</select>
+	</section>
+</IsWindows>
 
 <IsLinux>
 	<div class="w-full h-full">
