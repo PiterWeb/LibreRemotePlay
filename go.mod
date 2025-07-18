@@ -21,7 +21,7 @@ require (
 	github.com/dblohm7/wingoes v0.0.0-20240820181039-f2b84150679e // indirect
 	github.com/ebitengine/purego v0.8.2 // indirect
 	github.com/gen2brain/shm v0.1.1 // indirect
-	github.com/go-ole/go-ole v1.3.0 // indirect
+	github.com/go-ole/go-ole v1.3.0
 	github.com/godbus/dbus/v5 v5.1.0 // indirect
 	github.com/jchv/go-winloader v0.0.0-20210711035445-715c2860da7e // indirect
 	github.com/jezek/xgb v1.1.1 // indirect
@@ -70,6 +70,7 @@ require (
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/go-vgo/robotgo v0.110.6
 	github.com/google/uuid v1.6.0 // indirect
+	github.com/moutend/go-wca v0.3.0
 	github.com/pion/datachannel v1.5.9 // indirect
 	github.com/pion/dtls/v2 v2.2.12 // indirect
 	github.com/pion/ice/v2 v2.3.36 // indirect
