@@ -3,14 +3,15 @@ package audio
 import (
 	"context"
 	"fmt"
+	"log"
 	"time"
 
 	"github.com/PiterWeb/RemoteController/src/bin"
 	"github.com/amenzhinsky/go-memexec"
-	"github.com/pion/webrtc/v3"
-	"github.com/pion/webrtc/v3/pkg/media"
 	"github.com/go-ole/go-ole"
 	"github.com/moutend/go-wca/pkg/wca"
+	"github.com/pion/webrtc/v3"
+	"github.com/pion/webrtc/v3/pkg/media"
 )
 
 type AudioProcess struct {
@@ -19,7 +20,7 @@ type AudioProcess struct {
 }
 
 func HandleAudio(ctx context.Context, track *webrtc.TrackLocalStaticSample) error {
-	
+
 	appLoopbackExe, err := memexec.New(bin.StdoutPCMApplicationLoopback_exe)
 	if err != nil {
 		return err
@@ -33,7 +34,7 @@ func HandleAudio(ctx context.Context, track *webrtc.TrackLocalStaticSample) erro
 	stdoutPipe, err := cmd.StdoutPipe()
 
 	if err != nil {
-		return  err
+		return err
 	}
 
 	buff := make([]byte, 1024)
@@ -50,7 +51,7 @@ func HandleAudio(ctx context.Context, track *webrtc.TrackLocalStaticSample) erro
 			} else if n == 0 {
 				continue
 			}
-	
+
 			if err = track.WriteSample(media.Sample{Data: buff, Duration: time.Millisecond * 20}); err != nil {
 				return err
 			}
@@ -64,7 +65,7 @@ func GetAudioProcess() []AudioProcess {
 	procs := []AudioProcess{
 		{
 			Name: "None",
-			Pid: 0,
+			Pid:  0,
 		},
 	}
 
@@ -103,9 +104,6 @@ func GetAudioProcess() []AudioProcess {
 		return procs
 	}
 
-	fmt.Printf("Sessions: %d\n", sessionNumber)
-
-
 	for i := range sessionNumber {
 		var asc *wca.IAudioSessionControl
 		if err := ase.GetSession(i, &asc); err != nil {
@@ -130,6 +128,8 @@ func GetAudioProcess() []AudioProcess {
 		if err := asc2.GetProcessId(&pid); err != nil {
 			continue
 		}
+
+		log.Printf("Audio Src --- Name %s, pid: %d\n", name, pid)
 
 		procs = append(procs, AudioProcess{
 			Name: name,
