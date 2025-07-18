@@ -18,6 +18,7 @@ import (
 )
 
 var triggerEnd chan struct{} = make(chan struct{})
+var pidAudioChan chan uint32 = make(chan uint32)
 
 var openPeer bool = false
 var openPeerMutex sync.Mutex
@@ -127,7 +128,7 @@ func (a *App) TryCreateHost(ICEServers []webrtc.ICEServer, offerEncoded string) 
 
 	answerResponse := make(chan string)
 
-	go net.InitHost(a.ctx, ICEServers, offerEncoded, answerResponse, triggerEnd)
+	go net.InitHost(a.ctx, ICEServers, offerEncoded, answerResponse, triggerEnd, pidAudioChan)
 
 	return <-answerResponse
 

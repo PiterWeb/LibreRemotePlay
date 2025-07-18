@@ -66,6 +66,7 @@ require (
 )
 
 require (
+	github.com/amenzhinsky/go-memexec v0.7.1
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/go-vgo/robotgo v0.110.6
 	github.com/google/uuid v1.6.0 // indirect

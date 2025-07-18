@@ -9,3 +9,7 @@ func (a *App) OpenViGEmWizard() (err string) {
 	return gamepad.OpenViGEmWizard().Error()
 
 }
+
+func (a *App) SetAudioPid(pid uint32) {
+	pidAudioChan <- pid
+}

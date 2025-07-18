@@ -7,6 +7,7 @@ import (
 	"strings"
 
 	// "github.com/PiterWeb/RemoteController/src/plugins"
+	"github.com/PiterWeb/RemoteController/src/devices/audio"
 	"github.com/PiterWeb/RemoteController/src/devices/gamepad"
 	"github.com/PiterWeb/RemoteController/src/devices/keyboard"
 	"github.com/PiterWeb/RemoteController/src/net/webrtc/streaming_signal"
@@ -16,7 +17,7 @@ import (
 
 var defaultSTUNServers = []string{"stun:stun.l.google.com:19305", "stun:stun.l.google.com:19302", "stun:stun.ipfire.org:3478"}
 
-func InitHost(ctx context.Context, ICEServers []webrtc.ICEServer, offerEncodedWithCandidates string, answerResponse chan<- string, triggerEnd <-chan struct{}) {
+func InitHost(ctx context.Context, ICEServers []webrtc.ICEServer, offerEncodedWithCandidates string, answerResponse chan<- string, triggerEnd <-chan struct{}, pidChan <-chan uint32) {
 
 	candidates := []webrtc.ICECandidateInit{}
 
@@ -49,6 +50,17 @@ func InitHost(ctx context.Context, ICEServers []webrtc.ICEServer, offerEncodedWi
 			log.Printf("cannot close peerConnection: %v\n", err)
 		}
 	}()
+
+	audioTrack, err := webrtc.NewTrackLocalStaticSample(webrtc.RTPCodecCapability{MimeType: webrtc.MimeTypePCMU}, "audio", "app-audio")
+
+	if err != nil {
+		panic(err)
+	} else if _, err := peerConnection.AddTrack(audioTrack); err != nil {
+		panic(err)
+	}
+
+	// Defer close of the wails signaling channel
+	defer runtime.EventsOff(ctx, "streaming-signal-server")
 
 	// Reload plugins in case a new plugin was added or configuration changed
 	// plugins.ReloadPlugins()
@@ -120,10 +132,21 @@ func InitHost(ctx context.Context, ICEServers []webrtc.ICEServer, offerEncodedWi
 		panic(err)
 	}
 
-	// Block until cancel by user
-	<-triggerEnd
+	var audioCtx context.Context
+	var cancelAudioCtx context.CancelFunc = func() {}
 
-	// Close the signaling channel
-	runtime.EventsOff(ctx, "streaming-signal-server")
+	for {
+		select {
+			case pid := <- pidChan:
+				cancelAudioCtx()
+				audioCtx, cancelAudioCtx = context.WithCancel(context.WithValue(context.Background(), "pid", pid))
+				if err := audio.HandleAudio(audioCtx, audioTrack); err != nil {
+					log.Println(err)
+				}
+			case <-triggerEnd: // Block until cancel by user
+				cancelAudioCtx()
+				return
+		}
+	}
 
 }
