@@ -60,44 +60,51 @@ func HandleAudio(ctx context.Context, track *webrtc.TrackLocalStaticSample) erro
 }
 
 func GetAudioProcess() []AudioProcess {
+
+	procs := []AudioProcess{
+		{
+			Name: "None",
+			Pid: 0,
+		},
+	}
+
 	if err := ole.CoInitializeEx(0, ole.COINIT_APARTMENTTHREADED); err != nil {
-		return []AudioProcess{}
+		return procs
 	}
 	defer ole.CoUninitialize()
 
 	var mmde *wca.IMMDeviceEnumerator
 	if err := wca.CoCreateInstance(wca.CLSID_MMDeviceEnumerator, 0, wca.CLSCTX_ALL, wca.IID_IMMDeviceEnumerator, &mmde); err != nil {
-		return []AudioProcess{}
+		return procs
 	}
 	defer mmde.Release()
 
 	var mmd *wca.IMMDevice
 	if err := mmde.GetDefaultAudioEndpoint(wca.ERender, wca.EConsole, &mmd); err != nil {
-		return []AudioProcess{}
+		return procs
 	}
 
 	var asm2 *wca.IAudioSessionManager2
 	if err := mmd.Activate(wca.IID_IAudioSessionManager2, ole.CLSCTX_ALL, nil, &asm2); err != nil {
-		return []AudioProcess{}
+		return procs
 	}
 
 	defer asm2.Release()
 
 	var ase *wca.IAudioSessionEnumerator
 	if err := asm2.GetSessionEnumerator(&ase); err != nil {
-		return []AudioProcess{}
+		return procs
 	}
 
 	defer ase.Release()
 
 	var sessionNumber int
 	if err := ase.GetCount(&sessionNumber); err != nil {
-		return []AudioProcess{}
+		return procs
 	}
 
 	fmt.Printf("Sessions: %d\n", sessionNumber)
 
-	procs := []AudioProcess{}
 
 	for i := range sessionNumber {
 		var asc *wca.IAudioSessionControl

@@ -139,6 +139,10 @@ func InitHost(ctx context.Context, ICEServers []webrtc.ICEServer, offerEncodedWi
 		select {
 			case pid := <- pidChan:
 				cancelAudioCtx()
+				// Pid value to not stream audio
+				if pid == 0 {
+					continue
+				}
 				audioCtx, cancelAudioCtx = context.WithCancel(context.WithValue(context.Background(), "pid", pid))
 				if err := audio.HandleAudio(audioCtx, audioTrack); err != nil {
 					log.Println(err)
