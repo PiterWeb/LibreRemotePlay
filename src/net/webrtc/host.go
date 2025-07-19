@@ -51,7 +51,7 @@ func InitHost(ctx context.Context, ICEServers []webrtc.ICEServer, offerEncodedWi
 		}
 	}()
 
-	audioTrack, err := webrtc.NewTrackLocalStaticSample(webrtc.RTPCodecCapability{MimeType: webrtc.MimeTypePCMA}, "audio", "app-audio")
+	audioTrack, err := webrtc.NewTrackLocalStaticSample(webrtc.RTPCodecCapability{MimeType: webrtc.MimeTypePCMA, Channels: 2}, "audio", "app-audio")
 
 	if err != nil {
 		panic(err)
@@ -138,6 +138,7 @@ func InitHost(ctx context.Context, ICEServers []webrtc.ICEServer, offerEncodedWi
 	for {
 		select {
 			case pid := <- pidChan:
+				log.Printf("Audio pid: %d\n", pid)
 				cancelAudioCtx()
 				// Pid value to not stream audio
 				if pid == 0 {
