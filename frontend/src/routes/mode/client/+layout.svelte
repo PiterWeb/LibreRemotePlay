@@ -32,3 +32,5 @@
 	>
 </video>
 </media-theme-microvideo>
+
+<audio id="stream-audio" class:hidden={!consumingStream.value} muted={!consumingStream.value} controls playsinline></audio>
