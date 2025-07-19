@@ -40,7 +40,7 @@ func InitHost(ctx context.Context, ICEServers []webrtc.ICEServer, offerEncodedWi
 		}
 	}()
 
-	peerConnection, err := webrtc.NewAPI().NewPeerConnection(config)
+	peerConnection, err := webrtc.NewPeerConnection(config)
 	if err != nil {
 		return
 	}

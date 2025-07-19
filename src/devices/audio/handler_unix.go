@@ -9,3 +9,12 @@ import (
 func HandleAudio(ctx context.Context, track *webrtc.TrackLocalStaticSample) error {
 	return nil
 }
+
+func GetAudioProcess() []AudioProcess {
+	return []AudioProcess{
+		{
+			Name: "None",
+			Pid: 0,
+		},
+	}
+}

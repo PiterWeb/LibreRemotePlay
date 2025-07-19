@@ -10,6 +10,7 @@ import (
 
 	"runtime"
 
+	"github.com/PiterWeb/RemoteController/src/devices/audio"
 	"github.com/PiterWeb/RemoteController/src/devices/gamepad"
 	"github.com/PiterWeb/RemoteController/src/devices/keyboard"
 	net "github.com/PiterWeb/RemoteController/src/net/webrtc"
@@ -174,4 +175,12 @@ func (a *App) GetCurrentOS() string {
 
 func (a *App) LogPrintln(info string) {
 	log.Println(info)
+}
+
+func (a *App) SetAudioPid(pid uint32) {
+	pidAudioChan <- pid
+}
+
+func (a *App) GetAudioProcess() []audio.AudioProcess {
+	return audio.GetAudioProcess()
 }
