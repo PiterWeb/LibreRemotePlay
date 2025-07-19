@@ -14,11 +14,6 @@ import (
 	"github.com/pion/webrtc/v3/pkg/media"
 )
 
-type AudioProcess struct {
-	Name string
-	Pid  uint32
-}
-
 func HandleAudio(ctx context.Context, track *webrtc.TrackLocalStaticSample) error {
 
 	appLoopbackExe, err := memexec.New(bin.StdoutPCMApplicationLoopback_exe)
