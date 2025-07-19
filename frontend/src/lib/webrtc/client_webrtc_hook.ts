@@ -140,6 +140,8 @@ async function CreateClientWeb(options: CreateClientWebOptions) {
 		return;
 	}
 
+	handleStreamAudio(peerConnection)
+	
 	peerConnection.onconnectionstatechange = handleConnectionState;
 
 	const controllerChannel = peerConnection.createDataChannel(DataChannelLabel.Controller);
@@ -277,6 +279,30 @@ function handleConnectionState() {
 			break;
 	}
 }
+
+function handleStreamAudio(pc: RTCPeerConnection) {
+  
+    pc.addTransceiver('audio', {direction: 'recvonly'})
+    
+    let inboundStream: MediaStream;
+    
+    const audioElement = document.getElementById("stream-audio") as HTMLAudioElement
+    
+    pc.addEventListener("track", (ev) => {
+      if (ev.streams && ev.streams[0]) {
+			audioElement.srcObject = ev.streams[0];
+			audioElement.play();
+  		} else {
+  			if (!inboundStream) {
+  				inboundStream = new MediaStream();
+  				audioElement.srcObject = inboundStream;
+  				audioElement.play();
+  			}
+  			inboundStream.addTrack(ev.track);
+  		}
+    })
+  
+} 
 
 // Function WASM (GOLANG)
 function signalEncode<T>(signal: T): string {
