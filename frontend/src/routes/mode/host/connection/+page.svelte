@@ -9,7 +9,6 @@
 	import IsLinux from '$lib/detection/IsLinux.svelte';
 	import KeyboardIcon from '$lib/layout/icons/KeyboardIcon.svelte';
 	import GamepadIcon from '$lib/layout/icons/GamepadIcon.svelte';
-	import IsWindows from '$lib/detection/IsWindows.svelte';
 	import type {audio} from "$lib/wailsjs/go/models"
 	import { GetAudioProcess, SetAudioPid } from '$lib/wailsjs/go/bindings/App';
 
@@ -106,25 +105,23 @@
 	</div>
 </section>
 
-<IsWindows>
-	<section class="w-1/3 mx-auto" class:hidden={!streaming.value}>
-		<h3 class="text-3xl text-white text-center">
-			{$_('audio_selector')}
-		</h3>
-		<select
-				class="select w-full mx-auto mt-6"
-				bind:value={selected_audio_src}
-				id="audio_srcs"
-				aria-label="audio_srcs"
-			>
-				{#each audio_srcs as src}
-					<option selected={src.Pid == selected_audio_src} value={src.Pid}
-						>{src.Name}</option
-					>
-				{/each}
-			</select>
-	</section>
-</IsWindows>
+<section class="w-1/3 mx-auto" class:hidden={!streaming.value}>
+	<h3 class="text-3xl text-white text-center">
+		{$_('audio_selector')}
+	</h3>
+	<select
+			class="select w-full mx-auto mt-6"
+			bind:value={selected_audio_src}
+			id="audio_srcs"
+			aria-label="audio_srcs"
+		>
+			{#each audio_srcs as src}
+				<option selected={src.Pid == selected_audio_src} value={src.Pid}
+					>{src.Name}</option
+				>
+			{/each}
+		</select>
+</section>
 
 <IsLinux>
 	<div class="w-full h-full">
