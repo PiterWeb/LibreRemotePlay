@@ -63,6 +63,8 @@ func HandleAudio(ctx context.Context, track *webrtc.TrackLocalStaticSample) erro
 				return err
 			} else if n == 0 {
 				continue
+			} else {
+				log.Printf("Audio bytes readed: %d", n)
 			}
 
 			if AudioEnabled.IsEnabled() {	
