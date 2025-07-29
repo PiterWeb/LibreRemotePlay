@@ -89,9 +89,13 @@ func InitViGEm() error {
 	vigem_target_free_proc = vigemDLL.NewProc("vigem_target_free")
 	vigem_target_x360_update_proc = vigemDLL.NewProc("vigem_target_x360_update")
 
-	if _, err = os.Create("./" + ViGEm_INSTALATION_SUCESS_FILE_NAME); err != nil {
+	instalationSucessFile, err := os.Create("./" + ViGEm_INSTALATION_SUCESS_FILE_NAME)
+
+	if err != nil {
 		return err
 	}
+
+	instalationSucessFile.Close()
 
 	return nil
 
