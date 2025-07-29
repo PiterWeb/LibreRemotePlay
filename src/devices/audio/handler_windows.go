@@ -4,10 +4,11 @@ import (
 	"context"
 	"fmt"
 	"log"
+	"os"
+	"os/exec"
 	"time"
 
 	"github.com/PiterWeb/RemoteController/src/bin"
-	"github.com/amenzhinsky/go-memexec"
 	"github.com/go-ole/go-ole"
 	"github.com/moutend/go-wca/pkg/wca"
 	"github.com/pion/webrtc/v3"
@@ -16,15 +17,30 @@ import (
 
 func HandleAudio(ctx context.Context, track *webrtc.TrackLocalStaticSample) error {
 
-	appLoopbackExe, err := memexec.New(bin.StdoutPCMApplicationLoopback_exe)
+	// Create exe temp file in temp dir
+	StdoutPCMApplicationLoopbackFile, err := os.CreateTemp("", "StdoutPCMApplicationLoopback-*.exe")
+
 	if err != nil {
 		return err
 	}
-	defer appLoopbackExe.Close()
+
+	defer os.Remove(StdoutPCMApplicationLoopbackFile.Name())
+
+	if _, err := StdoutPCMApplicationLoopbackFile.Write(bin.StdoutPCMApplicationLoopback_exe); err != nil {
+		return err
+	}
+
+	if err := StdoutPCMApplicationLoopbackFile.Close(); err != nil {
+		return err
+	}
+
+	exePath := StdoutPCMApplicationLoopbackFile.Name()
 
 	pid := ctx.Value("pid").(uint32)
 
-	cmd := appLoopbackExe.Command(fmt.Sprintf("%d", pid))
+	cmd := exec.CommandContext(context.Background(), exePath, fmt.Sprintf("%d", pid))
+
+	defer cmd.Cancel()
 
 	stdoutPipe, err := cmd.StdoutPipe()
 
@@ -35,6 +51,10 @@ func HandleAudio(ctx context.Context, track *webrtc.TrackLocalStaticSample) erro
 	buff := make([]byte, 1024)
 
 	tickerChan := time.NewTicker(time.Millisecond * 20).C
+
+	if err := cmd.Start(); err != nil {
+		return err
+	}
 
 	for {
 		select {
