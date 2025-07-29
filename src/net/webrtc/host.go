@@ -34,9 +34,12 @@ func InitHost(ctx context.Context, ICEServers []webrtc.ICEServer, offerEncodedWi
 		ICEServers: ICEServers,
 	}
 
+	closedConnChan := make(chan struct{})
+
 	defer func() {
 		if err := recover(); err != nil {
-			answerResponse <- "Error"
+			answerResponse <- "ERROR"
+			closedConnChan <- struct{}{}
 		}
 	}()
 
@@ -94,9 +97,14 @@ func InitHost(ctx context.Context, ICEServers []webrtc.ICEServer, offerEncodedWi
 		runtime.EventsEmit(ctx, "connection_state", s.String())
 
 		if s == webrtc.PeerConnectionStateFailed {
+			closedConnChan <- struct{}{}
 
 			peerConnection.Close()
 
+		}
+
+		if s == webrtc.PeerConnectionStateClosed {
+			closedConnChan <- struct{}{}
 		}
 	})
 
@@ -149,6 +157,11 @@ func InitHost(ctx context.Context, ICEServers []webrtc.ICEServer, offerEncodedWi
 					log.Println(err)
 				}
 			case <-triggerEnd: // Block until cancel by user
+				answerResponse <- "ERROR"
+				cancelAudioCtx()
+				return
+			case <-closedConnChan: // Block until failed/clossed peerconnection
+				answerResponse <- "ERROR"
 				cancelAudioCtx()
 				return
 		}
