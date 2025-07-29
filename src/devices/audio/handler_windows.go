@@ -38,9 +38,7 @@ func HandleAudio(ctx context.Context, track *webrtc.TrackLocalStaticSample) erro
 
 	pid := ctx.Value("pid").(uint32)
 
-	cmd := exec.CommandContext(context.Background(), exePath, fmt.Sprintf("%d", pid))
-
-	defer cmd.Cancel()
+	cmd := exec.CommandContext(ctx, exePath, fmt.Sprintf("%d", pid))
 
 	stdoutPipe, err := cmd.StdoutPipe()
 
@@ -67,8 +65,10 @@ func HandleAudio(ctx context.Context, track *webrtc.TrackLocalStaticSample) erro
 				continue
 			}
 
-			if err = track.WriteSample(media.Sample{Data: buff, Duration: time.Millisecond * 20}); err != nil {
-				return err
+			if AudioEnabled.IsEnabled() {	
+				if err = track.WriteSample(media.Sample{Data: buff, Duration: time.Millisecond * 20}); err != nil {
+					return err
+				}
 			}
 		}
 	}
