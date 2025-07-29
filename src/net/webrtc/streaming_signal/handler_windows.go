@@ -20,7 +20,7 @@ func HandleStreamingSignal(ctx context.Context, streamingSignalChannel *webrtc.D
 
 	})
 
-	runtime.EventsOn(ctx, "streaming-signal-server", func(data ...interface{}) {
+	runtime.EventsOn(ctx, "streaming-signal-server", func(data ...any) {
 
 		if len(data) == 0 {
 			return
