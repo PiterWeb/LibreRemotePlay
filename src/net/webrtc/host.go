@@ -153,9 +153,11 @@ func InitHost(ctx context.Context, ICEServers []webrtc.ICEServer, offerEncodedWi
 					continue
 				}
 				audioCtx, cancelAudioCtx = context.WithCancel(context.WithValue(context.Background(), "pid", pid))
-				if err := audio.HandleAudio(audioCtx, audioTrack); err != nil {
-					log.Println(err)
-				}
+				go func () {
+					if err := audio.HandleAudio(audioCtx, audioTrack); err != nil {
+						log.Println(err)
+					}
+				}()
 			case <-triggerEnd: // Block until cancel by user
 				answerResponse <- "ERROR"
 				cancelAudioCtx()
