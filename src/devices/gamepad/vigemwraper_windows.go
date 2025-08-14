@@ -1,6 +1,7 @@
 package gamepad
 
 import (
+	"errors"
 	"os"
 	"os/exec"
 	"strconv"
@@ -133,6 +134,10 @@ func VIGEM_SUCCESS(val uintptr) bool {
 }
 
 func CloseViGEmDLL() error {
+
+	if vigemDLL == nil {
+		return errors.New("vigem not loaded")
+	}
 
 	return syscall.FreeLibrary(syscall.Handle(vigemDLL.Handle()))
 
