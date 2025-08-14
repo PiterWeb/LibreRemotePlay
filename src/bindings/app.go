@@ -4,6 +4,7 @@ package bindings
 
 import (
 	"context"
+	"embed"
 	"log"
 	"strings"
 	"sync"
@@ -14,6 +15,8 @@ import (
 	"github.com/PiterWeb/RemoteController/src/devices/gamepad"
 	"github.com/PiterWeb/RemoteController/src/devices/keyboard"
 	net "github.com/PiterWeb/RemoteController/src/net/webrtc"
+	"github.com/PiterWeb/RemoteController/src/onfinish"
+	"github.com/PiterWeb/RemoteController/src/oninit"
 	"github.com/pion/webrtc/v3"
 	wailsRuntime "github.com/wailsapp/wails/v2/pkg/runtime"
 )
@@ -27,17 +30,31 @@ var openPeerMutex sync.Mutex
 // App struct
 type App struct {
 	ctx context.Context
+	assets embed.FS
 }
 
 // NewApp creates a new App application struct
-func NewApp() *App {
-	return &App{}
+func NewApp(assets embed.FS) *App {
+	return &App{
+		ctx: context.Background(),
+		assets: assets,
+	}
 }
 
 // Startup is called at application Startup
 func (a *App) Startup(ctx context.Context) {
 	// Perform your setup here
+
+	go func() {
+
+		if err := oninit.Execute(a.assets); err != nil {
+			log.Println(err)
+		}
+
+	}()
+
 	a.ctx = ctx
+
 }
 
 // BeforeClose is called when the application is about to quit,
@@ -81,6 +98,9 @@ func (a *App) Shutdown(ctx context.Context) {
 	// Perform your teardown here
 	a.TryClosePeerConnection()
 	close(triggerEnd)
+	if err := onfinish.Execute(); err != nil {
+		log.Printf("Error onfinish: %s", err.Error())
+	}
 }
 
 func (a *App) NotifyCreateClient() {

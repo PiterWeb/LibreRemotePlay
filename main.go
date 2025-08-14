@@ -6,8 +6,6 @@ import (
 
 	"github.com/PiterWeb/RemoteController/src/bindings"
 	appLogger "github.com/PiterWeb/RemoteController/src/logger"
-	"github.com/PiterWeb/RemoteController/src/onfinish"
-	"github.com/PiterWeb/RemoteController/src/oninit"
 	"github.com/wailsapp/wails/v2"
 	"github.com/wailsapp/wails/v2/pkg/logger"
 	"github.com/wailsapp/wails/v2/pkg/options"
@@ -23,25 +21,11 @@ func main() {
 	logFile := appLogger.InitLogger()
 
 	defer logFile.Close()
-	
-	go func() {
-
-		if err := oninit.Execute(assets); err != nil {
-			log.Println(err)
-		}
-
-	}()
 
 	log.Println("LibreRemotePlay Starting app")
 
-	defer func() {
-		if err := onfinish.Execute(); err != nil {
-			log.Printf("Error onfinish: %s", err.Error())
-		}
-	}()
-
 	// Create an instance of the app structure
-	app := bindings.NewApp()
+	app := bindings.NewApp(assets)
 
 	// Create application with options
 	// Create application with options
