@@ -165,6 +165,9 @@ You can give us a star and join our [Discord Community](https://discord.gg/v7qd7
 
 ## Are you interested in other gaming projects 🤔? 
 
+<br/>
+<img width="128" height="128" alt="logo of gamelinksafe cli" src="https://github.com/user-attachments/assets/615bfb59-7f1c-4e9d-8e84-c9368e92f2f7" />
+
 You may be interested in [GameLinkSafeCLI](https://github.com/PiterWeb/GameLinkSafeCLI) is like ngrok but works with TCP/UDP without account and no need to self-host in normal enviroments. 
 Can be used like a hamachi alternative for gamers who are familiar with CLIs.
 
