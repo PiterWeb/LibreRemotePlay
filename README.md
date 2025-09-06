@@ -163,6 +163,11 @@ These projects are making LibreRemotePlay a reality.
 ## Did you like the project 👍 ?
 You can give us a star and join our [Discord Community](https://discord.gg/v7qd7nU3fJ), the project is always looking for feedback :)
 
+## Are you interested in other gaming projects 🤔? 
+
+You may be interested in [GameLinkSafeCLI](https://github.com/PiterWeb/GameLinkSafeCLI) is like ngrok but works with TCP/UDP without account and no need to self-host in normal enviroments. 
+Can be used like a hamachi alternative for gamers who are familiar with CLIs.
+
 ## Star History
 Here you can see how fast the community is growing
 <br/>
