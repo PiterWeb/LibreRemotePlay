@@ -185,10 +185,12 @@ async function CreateClientWeb(options: CreateClientWebOptions) {
 		handleGamepad(controllerChannel);
 	};
 
+	let intervalSignalChannel: NodeJS.Timeout
+	
 	streamingSignalChannel.onopen = () => {
 		let activeStream = false;
 
-		setInterval(() => {
+		intervalSignalChannel = setInterval(() => {
 			if (!getConsumingStream() && activeStream) {
 				activeStream = false;
 				CloseStreamClientConnection();
@@ -212,6 +214,7 @@ async function CreateClientWeb(options: CreateClientWebOptions) {
 
 	streamingSignalChannel.onclose = () => {
 		CloseStreamClientConnection();
+        clearInterval(intervalSignalChannel);
 	};
 
 	return await createClientCode({ clipboard: !easyConnect });
