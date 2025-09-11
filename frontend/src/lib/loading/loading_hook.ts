@@ -26,9 +26,8 @@ export function toogleLoading() {
 
 			const loading = !store.loading;
 
-			if (loading) {
-				return { ...translatedLoading, loading };
-			}
+			if (loading) return { ...translatedLoading, loading };
+			
 
 			return defaultLoadingStore;
 		});
@@ -38,9 +37,7 @@ export function toogleLoading() {
 	loadingWritable.update((store) => {
 		const loading = !store.loading;
 
-		if (loading) {
-			return { ...store, loading };
-		}
+		if (loading) return { ...store, loading };
 
 		return defaultLoadingStore;
 	});

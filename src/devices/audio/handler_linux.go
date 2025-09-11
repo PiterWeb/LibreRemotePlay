@@ -12,6 +12,11 @@ import (
 )
 
 func HandleAudio(ctx context.Context, track *webrtc.TrackLocalStaticSample) error {
+
+	if AudioEnabled.IsEnabled() {
+		return nil
+	}
+
 	return nil
 }
 

@@ -113,25 +113,20 @@ func (a *App) TryCreateHost(ICEServers []webrtc.ICEServer, offerEncoded string) 
 
 	openPeer = true
 
-	defer func() {
-
-		if err := recover(); err != nil {
-
-			log.Println(err)
-
-			openPeerMutex.Lock()
-			defer openPeerMutex.Unlock()
-			openPeer = false
-			value = "ERROR"
-		}
-
-	}()
-
 	answerResponse := make(chan string)
 
 	go net.InitHost(a.ctx, ICEServers, offerEncoded, answerResponse, triggerEnd, pidAudioChan)
 
-	return <-answerResponse
+	response := <-answerResponse
+
+	if strings.Contains(response, "ERROR") {
+		openPeerMutex.Lock()
+		defer openPeerMutex.Unlock()
+		openPeer = false
+		log.Println("Error on WebRTC host connection")
+	}
+
+	return response
 
 }
 
