@@ -10,7 +10,7 @@
 	import KeyboardIcon from '$lib/layout/icons/KeyboardIcon.svelte';
 	import GamepadIcon from '$lib/layout/icons/GamepadIcon.svelte';
 	import type {audio} from "$lib/wailsjs/go/models"
-	import { GetAudioProcess, SetAudioPid } from '$lib/wailsjs/go/bindings/App';
+	// import { GetAudioProcess, SetAudioPid } from '$lib/wailsjs/go/bindings/App';
 
 	let selected_audio_src = $state(0)
 	let audio_srcs = $state<audio.AudioProcess[]>([])
@@ -30,10 +30,10 @@
 			clearTimeout(timeoutSetAudioPid)
 			timeoutSetAudioPid = setTimeout(() => {
 				console.log("Selected audio :", selected_audio_src)
-				SetAudioPid(selected_audio_src)
+				// SetAudioPid(selected_audio_src)
 			}, 750)
 		} else {
-			SetAudioPid(0)
+			// SetAudioPid(0)
 		}
 	})
 
