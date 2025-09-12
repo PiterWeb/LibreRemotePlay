@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { CreateHostStream } from '$lib/webrtc/stream/host_stream_hook';
-	import { DEFAULT_IDEAL_FRAMERATE, DEFAULT_MAX_FRAMERATE, FIXED_RESOLUTIONS, MAX_FRAMES, MIN_FRAMES } from '$lib/webrtc/stream/stream_config.svelte';
+	import { DEFAULT_IDEAL_FRAMERATE, DEFAULT_MAX_FRAMERATE, FIXED_RESOLUTIONS, MAX_FRAMES, MIN_FRAMES, RESOLUTIONS } from '$lib/webrtc/stream/stream_config.svelte';
 	import { _ } from 'svelte-i18n';
 	import { streaming } from '$lib/webrtc/stream/stream_signal_hook.svelte';
 	import { ListenForConnectionChanges } from '$lib/webrtc/host_webrtc_hook';
@@ -15,7 +15,7 @@
 	let selected_audio_src = $state(0)
 	let audio_srcs = $state<audio.AudioProcess[]>([])
 
-	let selected_resolution = $state(FIXED_RESOLUTIONS.resolution720p);
+	let selected_resolution = $state(FIXED_RESOLUTIONS.resolutionNative);
 	
 	let idealFramerate = $state(DEFAULT_IDEAL_FRAMERATE);
 	let maxFramerate = $state(DEFAULT_MAX_FRAMERATE);
@@ -80,11 +80,11 @@
 		ListenForConnectionChanges();
 
 		(async () => {
-			audio_srcs = (await GetAudioProcess()).map(MapAudioSrcs)
+			// audio_srcs = (await GetAudioProcess()).map(MapAudioSrcs)
 		})()
 
 		const interval = setInterval(async () => {
-			audio_srcs = (await GetAudioProcess()).map(MapAudioSrcs)
+			// audio_srcs = (await GetAudioProcess()).map(MapAudioSrcs)
 		}, 5000)
 
 		return () => clearInterval(interval)
@@ -143,9 +143,12 @@
 				aria-label="resolution"
 			>
 				{#each Object.values(FIXED_RESOLUTIONS) as resolution}
-					<option selected={resolution === selected_resolution} value={resolution}
-						>{resolution}p</option
-					>
+					<option selected={resolution === selected_resolution} value={resolution}>
+						{resolution}
+						{#if resolution !== FIXED_RESOLUTIONS.resolutionNative}
+							p
+						{/if}
+					</option>
 				{/each}
 			</select>
 		</section>

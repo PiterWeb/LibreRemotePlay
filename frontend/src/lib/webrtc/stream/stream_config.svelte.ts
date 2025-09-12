@@ -2,6 +2,7 @@ import { browser } from '$app/environment'
 import log from '$lib/logger/logger'
 
 export enum FIXED_RESOLUTIONS {
+	resolutionNative = "Native",
 	resolution1080p = "1080",
 	resolution720p = "720",
 	resolution480p = "480",
