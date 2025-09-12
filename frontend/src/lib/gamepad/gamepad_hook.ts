@@ -29,24 +29,20 @@ export function cloneGamepad(gamepad: Gamepad): ClonedGamepad {
 
 export function handleGamepad(controllerChannel: RTCDataChannel) {
 	
-  let channelEnd = false;
-  let skipGamepadIter = true;
-  let gamepadData = navigator.getGamepads();
-  
-  const updateGamepadsInterval = setInterval(() => {
-    gamepadData = navigator.getGamepads();
-  }, 1000);
-  
-  controllerChannel.addEventListener("close", () => {
-    clearInterval(updateGamepadsInterval);
-    channelEnd = true;
-  })
-  
-  const sendGamepadData = () => {
-    
-    skipGamepadIter = !skipGamepadIter;
-    if (skipGamepadIter) return
-    
+	let channelEnd = false;
+	let skipGamepadIter = true;
+	
+	controllerChannel.addEventListener("close", () => {
+		channelEnd = true;
+	})
+	
+	const sendGamepadData = () => {
+		
+		skipGamepadIter = !skipGamepadIter;
+		if (skipGamepadIter) return
+
+		const gamepadData = navigator.getGamepads();
+
 		gamepadData.forEach((gamepad) => {
 			if (!gamepad || !gamepad.connected) return;
 
