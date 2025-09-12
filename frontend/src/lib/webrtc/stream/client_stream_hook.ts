@@ -25,9 +25,11 @@ async function CreateClientStream(
 
 	if (!videoElement || !peerConnection) throw new Error('Error creating stream');
 
-	const transceiver = peerConnection.addTransceiver("video", { direction: "recvonly" });
-
-	transceiver.setCodecPreferences(getSortedVideoCodecs());
+	const videoTransceiver = peerConnection.addTransceiver("video");
+  const audioTransceiver = peerConnection.addTransceiver("audio");
+  
+  monitorAndAdaptAudioCodec(audioTransceiver.sender)
+	videoTransceiver.setCodecPreferences(getSortedVideoCodecs());
 
 	peerConnection.onconnectionstatechange = () => {
 		if (!peerConnection) return;
@@ -109,6 +111,47 @@ async function CreateClientStream(
 	};
 
 
+}
+
+// Example of monitoring and adapting audio codec parameters
+function monitorAndAdaptAudioCodec(audioSender: RTCRtpSender) {
+  // Monitor network conditions
+  setInterval(async () => {
+    const stats = await audioSender.getStats();
+    let availableBitrate = 0;
+
+    // Calculate packet loss using remote-inbound-rtp stats
+    // (outbound-rtp doesn't know about lost packets)
+    stats.forEach(report => {
+      if (report.type === 'candidate-pair' && report.state === 'succeeded') {
+        availableBitrate = report.availableOutgoingBitrate;
+      }
+    });
+
+    // Adapt Opus parameters based on conditions
+    const parameters = audioSender.getParameters();
+
+    // Find Opus codec in parameters
+    const opusEncodingIdx = parameters.encodings.findIndex(() => 
+      parameters.codecs.find(c => c.mimeType.toLowerCase() === 'audio/opus')
+    );
+
+    if (opusEncodingIdx >= 0) {
+      // Adjust bitrate based on available bandwidth
+      if (availableBitrate > 0) {
+        // Leave headroom for other traffic
+        const targetBitrate = Math.min(128000, availableBitrate * 0.7);
+        parameters.encodings[opusEncodingIdx].maxBitrate = targetBitrate;
+      }
+
+      // Note: We're using standard RTCRtpEncodingParameters rather than
+      // non-standard properties like 'networkPriority' which are
+      // Chromium-only and behind flags
+
+      // Apply the changes
+      audioSender.setParameters(parameters);
+    }
+  }, 2000); // Check every 2 seconds
 }
 
 function CloseStreamClientConnection() {

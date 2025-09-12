@@ -31,8 +31,8 @@ async function getDisplayMediaStream(resolution: FIXED_RESOLUTIONS = FIXED_RESOL
 			video: { 
 				frameRate: { ideal: idealFrameRate, max: maxFramerate },
 				...(RESOLUTIONS.get(resolution) ?? {}),
-				noiseSuppression: true, 
-				autoGainControl: true,
+				noiseSuppression: false, 
+				autoGainControl: false,
 			},
 			audio: true,
 		});

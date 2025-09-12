@@ -20,8 +20,6 @@ func Execute(assets embed.FS) error {
 
 	ips_channel := make(chan []string, 1)
 	errChan := make(chan error, 2)
-	defer close(errChan)
-	defer close(ips_channel)
 
 	go func() {
 		err := net_http.InitHTTPAssets(httpServerMux, serverPort, assets)
