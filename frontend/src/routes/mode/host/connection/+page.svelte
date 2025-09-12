@@ -159,7 +159,7 @@
 					<h4 class="text-lg text-gray-300">{$_('ideal-framerate')}</h4>
 						<input
 						type="number"
-						class="input w-14 h-10 bg-neutral border border-gray-400 text-white text-center"
+						class="input w-14 px-2 h-10 bg-neutral border border-gray-400 text-white text-center"
 						bind:value={idealFramerate}
 						pattern="0|[1-9]\d*"
 						min={MIN_FRAMES}
@@ -179,7 +179,7 @@
 					<h4 class="text-lg text-gray-300">{$_('max-framerate')}</h4>
 					<input
 					type="number"
-					class="input w-14 h-10 bg-neutral border border-gray-400 text-white text-center"
+					class="input w-14 px-2 h-10 bg-neutral border border-gray-400 text-white text-center"
 					bind:value={maxFramerate}
 					pattern="0|[1-9]\d*"
 					min={MIN_FRAMES}
