@@ -85,5 +85,19 @@
   "resolutions": "Resolutions",
   "framerate": "Framerate",
   "ideal-framerate": "Ideal Framerate",
-  "max-framerate": "Max Framerate"
+  "max-framerate": "Max Framerate",
+  "lost-code-modal-title": "Did lost your code?",
+  "lost-code-modal-copy": "Copy to clipboard",
+  "lost-code-modal-close": "Close",
+  "easy-connect": "Easy Connect",
+  "easy-connect-description": "Use an Easy Connect server to avoid passing codes",
+  "id-easy-connect": "ID Easy Connect",
+  "ip-domain-easy-connect": "Easy Connect server address (ip/domain)",
+  "manual-connection": "Manual connection",
+  "manual-connection-description": "Send and receive client/host codes to stablish the connection",
+  "lan-mode-explanation": "Activate it when you are in LAN, it will stablish the connection faster and will ignore STUN/TURN servers",
+  "lan-mode": "LAN mode",
+  "close-stream": "Close stream",
+  "audio_selector": "Audio selector",
+  "toogle_devices": "Toogle devices"
 }

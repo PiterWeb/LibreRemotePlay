@@ -51,10 +51,10 @@
 </script>
 
 <Modal>
-	<p class="text-xl">Did lost your code?</p>
+	<p class="text-xl">{$_('lost-code-modal-title')}</p>
 	<div class="flex gap-2">
-		<button onclick={copyCodeToClipboard} class="btn btn-primary">Copy to clipboard</button>
-		<button class="btn btn-neutral">Close</button>
+		<button onclick={copyCodeToClipboard} class="btn btn-primary">{$_('lost-code-modal-copy')}</button>
+		<button class="btn btn-neutral">{$_('lost-code-modal-close')}</button>
 	</div>
 </Modal>
 
