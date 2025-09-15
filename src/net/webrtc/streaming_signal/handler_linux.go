@@ -5,7 +5,7 @@ import (
 	"log"
 
 	"github.com/coder/websocket"
-	"github.com/pion/webrtc/v3"
+	"github.com/pion/webrtc/v4"
 )
 
 func HandleStreamingSignal(ctx context.Context, streamingSignalChannel *webrtc.DataChannel) {

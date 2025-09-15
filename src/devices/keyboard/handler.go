@@ -6,7 +6,7 @@ import (
 
 	"github.com/PiterWeb/RemoteController/src/devices"
 	"github.com/go-vgo/robotgo"
-	"github.com/pion/webrtc/v3"
+	"github.com/pion/webrtc/v4"
 )
 
 var KeyboardEnabled = new(devices.DeviceEnabled).Disable()

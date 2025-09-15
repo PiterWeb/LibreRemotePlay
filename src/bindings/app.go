@@ -17,7 +17,7 @@ import (
 	net "github.com/PiterWeb/RemoteController/src/net/webrtc"
 	"github.com/PiterWeb/RemoteController/src/onfinish"
 	"github.com/PiterWeb/RemoteController/src/oninit"
-	"github.com/pion/webrtc/v3"
+	"github.com/pion/webrtc/v4"
 	wailsRuntime "github.com/wailsapp/wails/v2/pkg/runtime"
 )
 
@@ -29,14 +29,14 @@ var openPeerMutex sync.Mutex
 
 // App struct
 type App struct {
-	ctx context.Context
+	ctx    context.Context
 	assets embed.FS
 }
 
 // NewApp creates a new App application struct
 func NewApp(assets embed.FS) *App {
 	return &App{
-		ctx: context.Background(),
+		ctx:    context.Background(),
 		assets: assets,
 	}
 }

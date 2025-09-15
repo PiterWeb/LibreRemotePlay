@@ -11,8 +11,8 @@ import (
 	"github.com/PiterWeb/RemoteController/src/bin"
 	"github.com/go-ole/go-ole"
 	"github.com/moutend/go-wca/pkg/wca"
-	"github.com/pion/webrtc/v3"
-	"github.com/pion/webrtc/v3/pkg/media"
+	"github.com/pion/webrtc/v4"
+	"github.com/pion/webrtc/v4/pkg/media"
 )
 
 func HandleAudio(ctx context.Context, track *webrtc.TrackLocalStaticSample) error {
@@ -67,7 +67,7 @@ func HandleAudio(ctx context.Context, track *webrtc.TrackLocalStaticSample) erro
 				log.Printf("Audio bytes readed: %d", n)
 			}
 
-			if AudioEnabled.IsEnabled() {	
+			if AudioEnabled.IsEnabled() {
 				if err = track.WriteSample(media.Sample{Data: buff, Duration: time.Millisecond * 20}); err != nil {
 					return err
 				}
