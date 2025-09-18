@@ -27,7 +27,7 @@ export function cloneGamepad(gamepad: Gamepad): ClonedGamepad {
 	};
 }
 
-export function handleGamepad(controllerChannel: RTCDataChannel) {
+export function handleGamepad(controllerChannel: RTCDataChannel, reduceBandwidth = true) {
 	
 	let channelEnd = false;
 	let skipGamepadIter = true;
@@ -38,7 +38,7 @@ export function handleGamepad(controllerChannel: RTCDataChannel) {
 	
 	const sendGamepadData = () => {
 		
-		skipGamepadIter = !skipGamepadIter;
+		skipGamepadIter = reduceBandwidth && !skipGamepadIter;
 		if (skipGamepadIter) return
 
 		const gamepadData = navigator.getGamepads();
