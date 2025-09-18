@@ -15,7 +15,7 @@
 	let selected_audio_src = $state(0)
 	let audio_srcs = $state<audio.AudioProcess[]>([])
 
-	let selected_resolution = $state(FIXED_RESOLUTIONS.resolutionNative);
+	let selected_resolution = $state(FIXED_RESOLUTIONS.resolution720p);
 	
 	let idealFramerate = $state(DEFAULT_IDEAL_FRAMERATE);
 	let maxFramerate = $state(DEFAULT_MAX_FRAMERATE);
@@ -105,7 +105,7 @@
 	</div>
 </section>
 
-<section class="w-1/3 mx-auto" class:hidden={!streaming.value}>
+<!-- <section class="w-1/3 mx-auto" class:hidden={!streaming.value}>
 	<h3 class="text-3xl text-white text-center">
 		{$_('audio_selector')}
 	</h3>
@@ -121,7 +121,7 @@
 				>
 			{/each}
 		</select>
-</section>
+</section> -->
 
 <IsLinux>
 	<div class="w-full h-full">
