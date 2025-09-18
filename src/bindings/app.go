@@ -15,6 +15,7 @@ import (
 	"github.com/PiterWeb/RemoteController/src/devices/gamepad"
 	"github.com/PiterWeb/RemoteController/src/devices/keyboard"
 	net "github.com/PiterWeb/RemoteController/src/net/webrtc"
+	"github.com/PiterWeb/RemoteController/src/net/webrtc/streaming_signal"
 	"github.com/PiterWeb/RemoteController/src/onfinish"
 	"github.com/PiterWeb/RemoteController/src/oninit"
 	"github.com/pion/webrtc/v4"
@@ -51,6 +52,21 @@ func (a *App) Startup(ctx context.Context) {
 			log.Println(err)
 		}
 
+	}()
+	
+	offerChan := make(chan string)
+	answerChan := make(chan string)
+	
+	whipConfig := streaming_signal.WhipConfig
+	
+	whipConfig.Port = 8082
+	whipConfig.OfferChan = offerChan
+	whipConfig.AnswerChan = answerChan
+	
+	go func () {
+		if err := streaming_signal.InitWhipServer(*whipConfig); err != nil {
+			log.Println(err)
+		}
 	}()
 
 	a.ctx = ctx
