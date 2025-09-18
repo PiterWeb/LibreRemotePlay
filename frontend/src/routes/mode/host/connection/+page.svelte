@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { CreateHostStream } from '$lib/webrtc/stream/host_stream_hook';
+	import { CreateHostStream, StopStreaming } from '$lib/webrtc/stream/host_stream_hook';
 	import { DEFAULT_IDEAL_FRAMERATE, DEFAULT_MAX_FRAMERATE, FIXED_RESOLUTIONS, MAX_FRAMES, MIN_FRAMES, RESOLUTIONS } from '$lib/webrtc/stream/stream_config.svelte';
 	import { _ } from 'svelte-i18n';
 	import { streaming } from '$lib/webrtc/stream/stream_signal_hook.svelte';
@@ -101,6 +101,11 @@
 		</button>
 		<button onclick={toogleGamepad} class:btn-primary={gamepadEnabled}  class:btn-neutral={!gamepadEnabled} class:border-gray-400={!gamepadEnabled} class="btn border">
 			<GamepadIcon/>
+		</button>
+	</div>
+	<div class:hidden={!streaming.value} class="flex flex-row justify-center gap-3 mt-6">
+		<button onclick={StopStreaming} disabled={!streaming.value} class="btn btn-primary">
+			{$_('stop-streaming')}
 		</button>
 	</div>
 </section>
