@@ -13,7 +13,7 @@ type whipConfig struct {
 	AnswerChan chan string
 }
 
-var WhipConfig *whipConfig
+var WhipConfig *whipConfig = &whipConfig{}
 
 func InitWhipServer(config whipConfig) error {
 	
