@@ -5,6 +5,7 @@ import (
 	"io"
 	"net/http"
 	"time"
+	"log"
 )
 
 type whipConfig struct {
@@ -46,7 +47,8 @@ func InitWhipServer(config whipConfig) error {
 			w.WriteHeader(http.StatusInternalServerError)
 			w.Write([]byte("Error reading request body"))
 		}
-		
+
+		log.Printf("Offer received in whip: %s\"n", string(offer))
 		offerChan <- string(offer)
 		
 		answer, ok := <- answerChan
