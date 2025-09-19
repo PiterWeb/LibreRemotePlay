@@ -6,10 +6,13 @@
 	import { ListenForConnectionChanges } from '$lib/webrtc/host_webrtc_hook';
 
 	import { onMount } from 'svelte';
+	import CodecList from '$lib/webrtc/stream/CodecList.svelte';
 	import IsLinux from '$lib/detection/IsLinux.svelte';
 	import KeyboardIcon from '$lib/layout/icons/KeyboardIcon.svelte';
 	import GamepadIcon from '$lib/layout/icons/GamepadIcon.svelte';
 	import type {audio} from "$lib/wailsjs/go/models"
+	import ws from '$lib/websocket/ws';
+	import { IS_RUNNING_EXTERNAL } from '$lib/detection/onwebsite';
 	// import { GetAudioProcess, SetAudioPid } from '$lib/wailsjs/go/bindings/App';
 
 	let selected_audio_src = $state(0)
@@ -19,6 +22,8 @@
 	
 	let idealFramerate = $state(DEFAULT_IDEAL_FRAMERATE);
 	let maxFramerate = $state(DEFAULT_MAX_FRAMERATE);
+
+	let canStartStreaming = $state(false); 
 
 	let timeoutSetAudioPid: NodeJS.Timeout;
 
@@ -53,6 +58,7 @@
 	function createStream() {
 		CreateHostStream(selected_resolution, idealFramerate, maxFramerate);
 		streaming.value = true;
+		canStartStreaming = false;
 	}
 
 	async function toogleKeyboard() {
@@ -87,7 +93,30 @@
 			// audio_srcs = (await GetAudioProcess()).map(MapAudioSrcs)
 		}, 5000)
 
-		return () => clearInterval(interval)
+		let unlistener: () => void;
+
+		// Handle start streaming button
+		(async () => {
+
+			if (IS_RUNNING_EXTERNAL) {
+				const cllbck = (ev: MessageEvent<string>) =>  {
+					if (ev.data == "{}") canStartStreaming = true;
+				}
+				ws().addEventListener("message", cllbck)
+				unlistener = () => ws().removeEventListener("message", cllbck)
+				return
+			}
+
+			const { EventsOn } = await import('$lib/wailsjs/runtime/runtime');
+			unlistener = EventsOn('streaming-signal-client', (d) => {
+				if (d == "{}") canStartStreaming = true;
+			});
+		})()
+
+		return () => {
+			unlistener()
+			clearInterval(interval)
+		}
 	});
 </script>
 
@@ -139,6 +168,7 @@
 
 <IsLinux not>
 	<div class:hidden={streaming.value} class="w-2/3 flex flex-col md:flex-row gap-12 align-middle">
+		<CodecList/>
 		<section class="w-full">
 			<h3 class="text-3xl text-white text-center">{$_('resolutions')}</h3>
 			<select
@@ -204,7 +234,7 @@
 		</section>
 	</div>
 
-	<button onclick={createStream} disabled={streaming.value} class="btn btn-primary"
+	<button onclick={createStream} disabled={streaming.value || !canStartStreaming} class="btn btn-primary"
 		>{$_('start-streaming')}</button
 	>
 </IsLinux>

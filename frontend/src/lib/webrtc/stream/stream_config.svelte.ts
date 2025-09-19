@@ -22,7 +22,7 @@ export const DEFAULT_IDEAL_FRAMERATE = 30
 export const MIN_FRAMES = 25
 export const MAX_FRAMES = 145
 
-const DEFAULT_PREFERED_CODECS = ["video/VP9","video/AV1","video/H264", "video/VP8"]
+const DEFAULT_PREFERED_CODECS = ["video/AV1","video/H264","video/VP9","video/VP8"]
 
 export const preferedCodecsOrdered = $state({value: getStoredPreferedCodecsOrdered()})
 

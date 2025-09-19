@@ -186,7 +186,7 @@ async function CreateClientWeb(options: CreateClientWebOptions) {
 	};
 
 	let intervalSignalChannel: NodeJS.Timeout
-	
+
 	streamingSignalChannel.onopen = () => {
 		let activeStream = false;
 

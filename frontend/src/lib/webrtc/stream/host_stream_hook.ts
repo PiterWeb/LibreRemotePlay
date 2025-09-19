@@ -5,7 +5,7 @@ import { _ } from 'svelte-i18n';
 import { exportStunServers } from '../stun_servers';
 import { exportTurnServers } from '../turn_servers';
 import { IS_RUNNING_EXTERNAL } from '$lib/detection/onwebsite';
-import { DEFAULT_IDEAL_FRAMERATE, DEFAULT_MAX_FRAMERATE, FIXED_RESOLUTIONS, RESOLUTIONS } from './stream_config.svelte';
+import { DEFAULT_IDEAL_FRAMERATE, DEFAULT_MAX_FRAMERATE, FIXED_RESOLUTIONS, getSortedVideoCodecs, RESOLUTIONS } from './stream_config.svelte';
 import ws from '$lib/websocket/ws';
 import log from '$lib/logger/logger';
 import LANMode from '$lib/webrtc/lan_mode.svelte';
@@ -62,12 +62,22 @@ export function StopStreaming() {
 	}
 }
 
-export function CreateHostStream(resolution: FIXED_RESOLUTIONS = FIXED_RESOLUTIONS.resolution720p, idealFrameRate = DEFAULT_IDEAL_FRAMERATE, maxFramerate = DEFAULT_MAX_FRAMERATE) {
+export async function CreateHostStream(resolution: FIXED_RESOLUTIONS = FIXED_RESOLUTIONS.resolution720p, idealFrameRate = DEFAULT_IDEAL_FRAMERATE, maxFramerate = DEFAULT_MAX_FRAMERATE) {
 	initStreamingPeerConnection();
 
 	if (!peerConnection) {
 		throw new Error('Error creating stream');
 	}
+
+	const videoTransceiver = peerConnection.addTransceiver("video", {
+		direction: "sendonly",
+	});
+  	const audioTransceiver = peerConnection.addTransceiver("audio", {
+		direction: "sendonly"
+	});
+
+	monitorAndAdaptAudioCodec(audioTransceiver.sender)
+	videoTransceiver.setCodecPreferences(getSortedVideoCodecs());
 
 	peerConnection.onconnectionstatechange = async () => {
 		if (!peerConnection) return;
@@ -100,30 +110,46 @@ export function CreateHostStream(resolution: FIXED_RESOLUTIONS = FIXED_RESOLUTIO
 			return;
 		}
 
-		log('ICE gathering complete');
-
-		const answer = peerConnection?.localDescription?.toJSON();
-		const data: SignalingData = {
-			type: 'answer',
-			answer,
-			role: 'host'
-		};
-
-		if (IS_RUNNING_EXTERNAL) return ws().send(JSON.stringify(data));
-
-		const { EventsEmit } = await import('$lib/wailsjs/runtime/runtime');
-		EventsEmit('streaming-signal-server', JSON.stringify(data));
-
-		return
 	};
 
-	let offerArrived = false
+	stream = await getDisplayMediaStream(resolution, idealFrameRate, maxFramerate);
+
+	stream?.getTracks().forEach((track) => {
+		track.addEventListener(
+			'ended',
+			() => {
+				StopStreaming();
+			},
+			true
+		)
+		if (!stream) return;
+		peerConnection?.addTrack(track, stream);
+	});
+
+	const offer = await peerConnection.createOffer({
+        iceRestart: true,
+        offerToReceiveAudio: false,
+        offerToReceiveVideo: false
+    });
+	
+	await peerConnection.setLocalDescription(offer);
+
+	const data: SignalingData = {
+		type: 'offer',
+		offer: offer,
+		role: 'host'
+	};
+	
+	if (IS_RUNNING_EXTERNAL) ws().send(JSON.stringify(data));
+	else {
+		const { EventsEmit } = await import('$lib/wailsjs/runtime/runtime');
+		EventsEmit('streaming-signal-server', JSON.stringify(data));
+	}
 
 	async function onSignalArrive(data: string) {
 		if (!peerConnection) return;
 
-
-		const { type, offer, candidate, role } = JSON.parse(data) as SignalingData;
+		const { type, answer, candidate, role } = JSON.parse(data) as SignalingData;
 
 		if (role !== 'client') return;
 
@@ -132,39 +158,13 @@ export function CreateHostStream(resolution: FIXED_RESOLUTIONS = FIXED_RESOLUTIO
 			return
 		}
 
-		if (type !== 'offer') return;
-		if (!offer || offerArrived) return;
+		if (type !== 'answer') return;
+		if (!answer) return;
 
 		try {
-
-			await peerConnection.setRemoteDescription(offer);
-
+			await peerConnection.setRemoteDescription(answer);
 		} catch (e) {
 			// TODO: manage error
-			log(e, {err: true})
-			return
-		}
-		offerArrived = true;
-
-		stream = await getDisplayMediaStream(resolution, idealFrameRate, maxFramerate);
-
-		stream?.getTracks().forEach((track) => {
-			track.addEventListener(
-				'ended',
-				() => {
-					StopStreaming();
-				},
-				true
-			)
-			if (!stream) return;
-			peerConnection?.addTrack(track, stream);
-		});
-
-		try {
-			
-			await peerConnection.setLocalDescription(await peerConnection.createAnswer());
-
-		} catch (e) {
 			log(e, {err: true})
 			return
 		}
@@ -184,3 +184,44 @@ export function CreateHostStream(resolution: FIXED_RESOLUTIONS = FIXED_RESOLUTIO
 	})()
 
 }
+
+// Example of monitoring and adapting audio codec parameters
+function monitorAndAdaptAudioCodec(audioSender: RTCRtpSender) {
+	// Monitor network conditions
+	setInterval(async () => {
+	  const stats = await audioSender.getStats();
+	  let availableBitrate = 0;
+  
+	  // Calculate packet loss using remote-inbound-rtp stats
+	  // (outbound-rtp doesn't know about lost packets)
+	  stats.forEach(report => {
+		if (report.type === 'candidate-pair' && report.state === 'succeeded') {
+		  availableBitrate = report.availableOutgoingBitrate;
+		}
+	  });
+  
+	  // Adapt Opus parameters based on conditions
+	  const parameters = audioSender.getParameters();
+  
+	  // Find Opus codec in parameters
+	  const opusEncodingIdx = parameters.encodings.findIndex(() => 
+		parameters.codecs.find(c => c.mimeType.toLowerCase() === 'audio/opus')
+	  );
+  
+	  if (opusEncodingIdx >= 0) {
+		// Adjust bitrate based on available bandwidth
+		if (availableBitrate > 0) {
+		  // Leave headroom for other traffic
+		  const targetBitrate = Math.min(128000, availableBitrate * 0.7);
+		  parameters.encodings[opusEncodingIdx].maxBitrate = targetBitrate;
+		}
+  
+		// Note: We're using standard RTCRtpEncodingParameters rather than
+		// non-standard properties like 'networkPriority' which are
+		// Chromium-only and behind flags
+  
+		// Apply the changes
+		audioSender.setParameters(parameters);
+	  }
+	}, 2000); // Check every 2 seconds
+  }
