@@ -200,6 +200,14 @@ func (a *App) IsKeyboardEnabled() bool {
 	return keyboard.KeyboardEnabled.IsEnabled()
 }
 
+func (a *App) ToogleWhip() {
+	streaming_signal.WhipConfig.Enabled.Toogle()
+}
+
+func (a *App) IsWhipEnabled() bool {
+	return streaming_signal.WhipConfig.Enabled.IsEnabled()
+}
+
 func (a *App) GetCurrentOS() string {
 	return strings.ToUpper(runtime.GOOS)
 }
