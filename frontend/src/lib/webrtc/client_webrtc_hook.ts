@@ -140,7 +140,7 @@ async function CreateClientWeb(options: CreateClientWebOptions) {
 		return;
 	}
 
-	handleStreamAudio(peerConnection)
+	// handleStreamAudio(peerConnection)
 	
 	peerConnection.onconnectionstatechange = handleConnectionState;
 
@@ -283,29 +283,29 @@ function handleConnectionState() {
 	}
 }
 
-function handleStreamAudio(pc: RTCPeerConnection) {
+// function handleStreamAudio(pc: RTCPeerConnection) {
   
-    pc.addTransceiver('audio', {direction: 'recvonly'})
+//     pc.addTransceiver('audio', {direction: 'recvonly'})
     
-    let inboundStream: MediaStream;
+//     let inboundStream: MediaStream;
     
-    const audioElement = document.getElementById("stream-audio") as HTMLAudioElement
+//     const audioElement = document.getElementById("stream-audio") as HTMLAudioElement
     
-    pc.addEventListener("track", (ev) => {
-      if (ev.streams && ev.streams[0]) {
-			audioElement.srcObject = ev.streams[0];
-			audioElement.play();
-  		} else {
-  			if (!inboundStream) {
-  				inboundStream = new MediaStream();
-  				audioElement.srcObject = inboundStream;
-  				audioElement.play();
-  			}
-  			inboundStream.addTrack(ev.track);
-  		}
-    })
+//     pc.addEventListener("track", (ev) => {
+//       if (ev.streams && ev.streams[0]) {
+// 			audioElement.srcObject = ev.streams[0];
+// 			audioElement.play();
+//   		} else {
+//   			if (!inboundStream) {
+//   				inboundStream = new MediaStream();
+//   				audioElement.srcObject = inboundStream;
+//   				audioElement.play();
+//   			}
+//   			inboundStream.addTrack(ev.track);
+//   		}
+//     })
   
-} 
+// } 
 
 // Function WASM (GOLANG)
 function signalEncode<T>(signal: T): string {
