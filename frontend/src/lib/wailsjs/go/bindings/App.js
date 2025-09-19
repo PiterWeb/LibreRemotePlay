@@ -18,6 +18,10 @@ export function IsKeyboardEnabled() {
   return window['go']['bindings']['App']['IsKeyboardEnabled']();
 }
 
+export function IsWhipEnabled() {
+  return window['go']['bindings']['App']['IsWhipEnabled']();
+}
+
 export function LogPrintln(arg1) {
   return window['go']['bindings']['App']['LogPrintln'](arg1);
 }
@@ -44,6 +48,10 @@ export function ToogleGamepad() {
 
 export function ToogleKeyboard() {
   return window['go']['bindings']['App']['ToogleKeyboard']();
+}
+
+export function ToogleWhip() {
+  return window['go']['bindings']['App']['ToogleWhip']();
 }
 
 export function TryClosePeerConnection() {
