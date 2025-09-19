@@ -3,15 +3,18 @@ package streaming_signal
 import (
 	"fmt"
 	"io"
+	"log"
 	"net/http"
 	"time"
-	"log"
+
+	"github.com/PiterWeb/RemoteController/src/devices"
 )
 
 type whipConfig struct {
 	Port uint16
 	OfferChan chan string
 	AnswerChan chan string
+	Enabled devices.DeviceEnabled
 }
 
 var WhipConfig *whipConfig = &whipConfig{}
@@ -30,6 +33,12 @@ func InitWhipServer(config whipConfig) error {
 	
 	httpServerMux.HandleFunc("POST /whip", func(w http.ResponseWriter, r *http.Request) {
 		
+		if !WhipConfig.Enabled.IsEnabled() {
+			w.WriteHeader(http.StatusInternalServerError)
+			w.Write([]byte("Whip not enabled"))
+			return
+		}
+
 		defer func() {
 			if err := recover(); err != nil {
 				w.WriteHeader(http.StatusInternalServerError)
