@@ -14,13 +14,23 @@ func HandleStreamingSignal(ctx context.Context, streamingSignalChannel *webrtc.D
 		return
 	}
 
+	go handleWhipOffer(streamingSignalChannel)
+
 	streamingSignalChannel.OnMessage(func(msg webrtc.DataChannelMessage) {
 
-		runtime.EventsEmit(ctx, "streaming-signal-client", string(msg.Data))
+		if WhipConfig.Enabled.IsEnabled() {
+			handleWhipAnswer(msg.Data)
+		} else {
+			runtime.EventsEmit(ctx, "streaming-signal-client", string(msg.Data))
+		}
 
 	})
 
 	runtime.EventsOn(ctx, "streaming-signal-server", func(data ...any) {
+
+		if WhipConfig.Enabled.IsEnabled() {
+			return
+		}
 
 		if len(data) == 0 {
 			return

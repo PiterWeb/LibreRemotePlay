@@ -54,17 +54,8 @@ func (a *App) Startup(ctx context.Context) {
 
 	}()
 	
-	offerChan := make(chan string)
-	answerChan := make(chan string)
-	
-	whipConfig := streaming_signal.WhipConfig
-	
-	whipConfig.Port = 8082
-	whipConfig.OfferChan = offerChan
-	whipConfig.AnswerChan = answerChan
-	
 	go func () {
-		if err := streaming_signal.InitWhipServer(*whipConfig); err != nil {
+		if err := streaming_signal.InitWhipServer(streaming_signal.WhipConfig); err != nil {
 			log.Println(err)
 		}
 	}()

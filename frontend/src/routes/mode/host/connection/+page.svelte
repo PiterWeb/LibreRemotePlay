@@ -13,6 +13,7 @@
 	import type {audio} from "$lib/wailsjs/go/models"
 	import ws from '$lib/websocket/ws';
 	import { IS_RUNNING_EXTERNAL } from '$lib/detection/onwebsite';
+	import Tooltip from '$lib/layout/Tooltip.svelte';
 	// import { GetAudioProcess, SetAudioPid } from '$lib/wailsjs/go/bindings/App';
 
 	let selected_audio_src = $state(0)
@@ -42,6 +43,13 @@
 		}
 	})
 
+	let whipEnabled = $state(false);
+
+	$effect(() => {
+		if (whipEnabled) streaming.value = true
+		else streaming.value = false
+	})
+
 	$effect(() => {
 	    if (idealFramerate > maxFramerate) idealFramerate = maxFramerate
 		else if (idealFramerate < MIN_FRAMES) idealFramerate = MIN_FRAMES
@@ -59,6 +67,15 @@
 		CreateHostStream(selected_resolution, idealFramerate, maxFramerate);
 		streaming.value = true;
 		canStartStreaming = false;
+	}
+
+	async function toogleWhip() {
+
+		const { IsWhipEnabled, ToogleWhip } = await import('$lib/wailsjs/go/bindings/App')
+		
+		await ToogleWhip()
+		whipEnabled = await IsWhipEnabled()
+
 	}
 
 	async function toogleKeyboard() {
@@ -120,6 +137,29 @@
 	});
 </script>
 
+<Tooltip ref="label-external-whip-checkbox" placement="top">
+    <p>{$_('external-whip-explanation')}</p>
+</Tooltip>
+
+<section class:hidden={streaming.value && !whipEnabled} class="flex flex-row-reverse items-center gap-2">
+	<label
+		id="label-external-whip-checkbox"
+		for="lan-mode-checkbox"
+		class="font-semibold text-white">{$_('external-whip')}</label
+	>
+	<input
+		id="lan-mode-checkbox"
+		type="checkbox"
+		class="checkbox checkbox-xs checkbox-primary"
+		checked={whipEnabled}
+		onchange={toogleWhip}
+	/>
+</section>
+
+<section class:hidden={!whipEnabled} class="text-white">
+	Whip URL: http://localhost:8082
+</section>
+
 <section class="w-full">
 	<h3 class="text-3xl text-white text-center">
 		{$_('toogle_devices')}
@@ -132,7 +172,7 @@
 			<GamepadIcon/>
 		</button>
 	</div>
-	<div class:hidden={!streaming.value} class="flex flex-row justify-center gap-3 mt-6">
+	<div class:hidden={!streaming.value || whipEnabled} class="flex flex-row justify-center gap-3 mt-6">
 		<button onclick={StopStreaming} disabled={!streaming.value} class="btn btn-primary">
 			{$_('stop-streaming')}
 		</button>

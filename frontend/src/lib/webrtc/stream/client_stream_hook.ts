@@ -51,6 +51,40 @@ async function CreateClientStream(
 			return;
 		}
 
+		if (!peerConnection?.currentLocalDescription) return
+		
+		const data: SignalingData = {
+			type: 'answer',
+			answer: peerConnection?.currentLocalDescription,
+			role: 'client'
+		};
+
+		signalingChannel.send(JSON.stringify(data))
+
+	};
+
+	let playingStream = false;
+
+	peerConnection.ontrack = (ev) => {
+
+		if (playingStream) return;
+
+		if (ev.streams && ev.streams[0]) {
+			ev.streams[0].getTracks().forEach(t => t.addEventListener("ended", () => {CloseStreamClientConnection()}, true) )
+			videoElement.srcObject = ev.streams[0];
+			videoElement.play();
+			playingStream = true;
+		} else {
+			if (!inboundStream) {
+				inboundStream = new MediaStream();
+				videoElement.srcObject = inboundStream;
+				videoElement.play();
+				playingStream = true;
+			}
+			ev.track.addEventListener("ended", () => {CloseStreamClientConnection()}, true)
+			inboundStream.addTrack(ev.track);
+			inboundStream.getTracks().forEach(t => t.addEventListener("ended", () => {CloseStreamClientConnection()}, true))
+		}
 	};
 
 	let offerArrived = false
@@ -73,17 +107,10 @@ async function CreateClientStream(
 		offerArrived = true;
 
 		try {
+
 			await peerConnection?.setRemoteDescription(offer);
             const answer = await peerConnection?.createAnswer();
             await peerConnection?.setLocalDescription(answer);
-
-			const data: SignalingData = {
-				type: 'answer',
-				answer,
-				role: 'client'
-			};
-
-			signalingChannel.send(JSON.stringify(data))
 
 		} catch (e) {
 			// TODO: manage error
@@ -91,26 +118,7 @@ async function CreateClientStream(
 			return
 		}
 
-		peerConnection.ontrack = (ev) => {
-
-			if (ev.streams && ev.streams[0]) {
-				ev.streams[0].getTracks().forEach(t => t.addEventListener("ended", () => {CloseStreamClientConnection()}, true) )
-				videoElement.srcObject = ev.streams[0];
-				videoElement.play();
-			} else {
-				if (!inboundStream) {
-					inboundStream = new MediaStream();
-					videoElement.srcObject = inboundStream;
-					videoElement.play();
-				}
-				ev.track.addEventListener("ended", () => {CloseStreamClientConnection()}, true)
-				inboundStream.addTrack(ev.track);
-				inboundStream.getTracks().forEach(t => t.addEventListener("ended", () => {CloseStreamClientConnection()}, true))
-			}
-		};
-
 	};
-
 
 }
 
