@@ -7,7 +7,7 @@ import (
 	"strings"
 
 	// "github.com/PiterWeb/RemoteController/src/plugins"
-	"github.com/PiterWeb/RemoteController/src/devices/audio"
+	// "github.com/PiterWeb/RemoteController/src/devices/audio"
 	"github.com/PiterWeb/RemoteController/src/devices/gamepad"
 	"github.com/PiterWeb/RemoteController/src/devices/keyboard"
 	"github.com/PiterWeb/RemoteController/src/net/webrtc/streaming_signal"
@@ -28,6 +28,8 @@ func InitHost(ctx context.Context, ICEServers []webrtc.ICEServer, offerEncodedWi
 			},
 		}
 	}
+
+	streaming_signal.WhipConfig.ICEServers.Store(&ICEServers)
 
 	// Prepare the configuration
 	config := webrtc.Configuration{
@@ -54,13 +56,13 @@ func InitHost(ctx context.Context, ICEServers []webrtc.ICEServer, offerEncodedWi
 		}
 	}()
 
-	audioTrack, err := webrtc.NewTrackLocalStaticSample(webrtc.RTPCodecCapability{MimeType: webrtc.MimeTypePCMA, Channels: 2}, "audio", "app-audio")
+	// audioTrack, err := webrtc.NewTrackLocalStaticSample(webrtc.RTPCodecCapability{MimeType: webrtc.MimeTypePCMA, Channels: 2}, "audio", "app-audio")
 
-	if err != nil {
-		panic(err)
-	} else if _, err := peerConnection.AddTrack(audioTrack); err != nil {
-		panic(err)
-	}
+	// if err != nil {
+	// 	panic(err)
+	// } else if _, err := peerConnection.AddTrack(audioTrack); err != nil {
+	// 	panic(err)
+	// }
 
 	// Defer close of the wails signaling channel
 	defer runtime.EventsOff(ctx, "streaming-signal-server")
@@ -140,32 +142,32 @@ func InitHost(ctx context.Context, ICEServers []webrtc.ICEServer, offerEncodedWi
 		panic(err)
 	}
 
-	var audioCtx context.Context
+	// var audioCtx context.Context
 	var cancelAudioCtx context.CancelFunc = func() {}
 
 	for {
 		select {
-			case pid := <- pidChan:
-				log.Printf("Audio pid: %d\n", pid)
-				cancelAudioCtx()
-				// Pid value to not stream audio
-				if pid == 0 {
-					continue
-				}
-				audioCtx, cancelAudioCtx = context.WithCancel(context.WithValue(context.Background(), "pid", pid))
-				go func () {
-					if err := audio.HandleAudio(audioCtx, audioTrack); err != nil {
-						log.Println(err)
-					}
-				}()
-			case <-triggerEnd: // Block until cancel by user
-				answerResponse <- "ERROR"
-				cancelAudioCtx()
-				return
-			case <-closedConnChan: // Block until failed/clossed peerconnection
-				answerResponse <- "ERROR"
-				cancelAudioCtx()
-				return
+		case pid := <-pidChan:
+			log.Printf("Audio pid: %d\n", pid)
+			cancelAudioCtx()
+			// Pid value to not stream audio
+			if pid == 0 {
+				continue
+			}
+			// audioCtx, cancelAudioCtx = context.WithCancel(context.WithValue(context.Background(), "pid", pid))
+			go func() {
+				// if err := audio.HandleAudio(audioCtx, audioTrack); err != nil {
+				// 	log.Println(err)
+				// }
+			}()
+		case <-triggerEnd: // Block until cancel by user
+			answerResponse <- "ERROR"
+			cancelAudioCtx()
+			return
+		case <-closedConnChan: // Block until failed/clossed peerconnection
+			answerResponse <- "ERROR"
+			cancelAudioCtx()
+			return
 		}
 	}
 
