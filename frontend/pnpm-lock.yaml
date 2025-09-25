@@ -75,6 +75,9 @@ importers:
       eslint-plugin-svelte:
         specifier: ^2.46.0
         version: 2.46.1(eslint@8.57.1)(svelte@5.19.3)
+      mockrtc:
+        specifier: ^0.3.2
+        version: 0.3.2
       postcss:
         specifier: ^8.4.47
         version: 8.5.1
@@ -2260,6 +2263,11 @@ packages:
   mkdirp@3.0.1:
     resolution: {integrity: sha512-+NsyUUAZDmo6YVHzL/stxSu3t9YS1iljliy3BSDrXJ/dkn1KYdmtZODGGjLcc9XLgVVpH4KshHB8XmZgMhaBXg==}
     engines: {node: '>=10'}
+    hasBin: true
+
+  mockrtc@0.3.2:
+    resolution: {integrity: sha512-37b66UAOVmEDxihX/CHLC3ZRDBS3rkPdZC9GMfVglRkwY0l5iBAt5MVL2+oF6vlgChqBXklSTRfzoGYbkfgO9w==}
+    engines: {node: '>=14.17.0'}
     hasBin: true
 
   mockttp@3.15.5:
@@ -5363,6 +5371,20 @@ snapshots:
 
   mkdirp@3.0.1: {}
 
+  mockrtc@0.3.2:
+    dependencies:
+      '@graphql-tools/utils': 8.13.1(graphql@15.10.1)
+      '@types/lodash': 4.17.14
+      '@types/sdp-transform': 2.4.9
+      graphql: 15.10.1
+      graphql-subscriptions: 1.2.1(graphql@15.10.1)
+      graphql-tag: 2.12.6(graphql@15.10.1)
+      import-sync: 2.2.3
+      lodash: 4.17.21
+      mockttp: 3.15.5
+      node-datachannel: 0.5.5
+      performance-now: 2.1.0
+      sdp-transform: 2.15.0
     transitivePeerDependencies:
       - bufferutil
       - encoding
