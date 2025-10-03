@@ -1,4 +1,4 @@
-![LibreRemotePlay logo banner](https://github.com/user-attachments/assets/9173246d-1d65-4f29-bd79-0206250c538c)
+![LibreRemotePlay logo banner](./assets/libreremoteplaybanner.webp)
 
 [![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/PiterWeb/LibreRemotePlay)
 
