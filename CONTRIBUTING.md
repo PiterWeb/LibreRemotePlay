@@ -7,7 +7,7 @@
   - docs/ (All the development documentation)
   - frontend/src/lib/i18n (All the translations of the project)
 
-## Requisites
+## Requisites (only apply to code contributions)
   - If you want to contribute first you need to check the issues, them if you like any of the open issues work on it and merge it to the project (obviously you can open a new issue to enhance the features or correct any bug you found to work on it later)
   - Try to do self-explanatory code (if cannot be you can comment to enhance the comprehension)
 
@@ -27,6 +27,8 @@
   6. Done
 
 ## Translations 🔠
+
+By default English is the language of reference so you can check if there are entries in english that are missing in the language you may want to contribute to 
 
 ### How to
 
