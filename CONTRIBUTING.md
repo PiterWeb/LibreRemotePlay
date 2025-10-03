@@ -16,6 +16,8 @@
   - [LibreRemotePlay Docs](./docs/README.md)
   - [How to run the project](./README.md#run-dev)
   - [How to build the project](./README.md#build)
+  - [LibreRemotePlay Wiki](https://github.com/PiterWeb/LibreRemotePlay/wiki)
+  - [LibreRemotePlay DeepWiki](https://deepwiki.com/PiterWeb/LibreRemotePlay)
 
 ## How to
 
@@ -36,7 +38,7 @@ By default English is the language of reference so you can check if there are en
   2. Clone it
   3. Work on your translations (located in frontend/src/lib/i18n):
      - Create a JSON file of the language and register the language in the i18n.ts file (all of this if the language is not added already)
-     - Add the entries (you can do manually or using [i18n Ally extension](https://marketplace.visualstudio.com/items?itemName=Lokalise.i18n-ally))
+     - Add the entries (you can do manually but using [i18n Ally extension](https://marketplace.visualstudio.com/items?itemName=Lokalise.i18n-ally) is recommended)
   5. When you have finished make a pull request to merge it with the main branch
   6. Wait for merge
   7. Done
