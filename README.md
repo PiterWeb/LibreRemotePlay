@@ -7,6 +7,10 @@
 > [!IMPORTANT]  
 > The software for the moment is very experimental, may not always work an all systems. If you find a bug you can report it on issues page or discord.
 
+> [!NOTE]  
+> If you are interested in contributing (code/translations) you can follow [this guide](./CONTRIBUTING.md)
+
+
 ### An open source, free (as in freedom) and P2P alternative to Steam Remote Play
 
 - Website 🌐: https://libreremoteplay.vercel.app/
