@@ -52,7 +52,8 @@ https://github.com/user-attachments/assets/f4a412fa-f403-4429-85fb-9c1e74bff458
 - [x] Peer-to-Peer (WebRTC)
 - [ ] Groups
 - [x] Remote Video Streaming
-  - [x] Video Quality Config 
+  - [x] Video Quality Config
+  - [ ] WHIP streaming compatibility
 - [x] Browser Client
 - [x] Localization (translation to multiple languages)
 - [x] Support for custom STUN & TURN servers
