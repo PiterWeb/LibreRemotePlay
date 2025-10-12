@@ -18,20 +18,20 @@ var keyMap = map[string]string{
 	"CapsLock":   "capslock",
 }
 
-func mapJSKeyToRobotGo(jsKey string) string {
+func mapJSKeyToRobotGo(jsKey string) (key string, exists bool) {
 
 	// Map (F1 - F12) keys
 	if strings.HasPrefix(jsKey, "F") && len(jsKey) > 1 {
-		return strings.ToLower(jsKey) // "F1" → "f1"
+		return strings.ToLower(jsKey), true // "F1" → "f1"
 	}
 
 	if val, exists := keyMap[jsKey]; exists {
-		return val
+		return val, true
 	}
 
 	if len(jsKey) == 1 {
-		return jsKey
+		return jsKey, true
 	}
 
-	return ""
+	return "", false
 }
