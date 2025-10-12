@@ -56,8 +56,8 @@ func HandleKeyboard(d *webrtc.DataChannel) error {
 			}
 			keyStateMutex.RUnlock()
 			keyStateMutex.Lock()
-			defer keyStateMutex.Unlock()
 			keyState[key] = true
+			keyStateMutex.Unlock()
 			_ = robotgo.KeyDown(key)
 			return
 		} else {
@@ -68,8 +68,8 @@ func HandleKeyboard(d *webrtc.DataChannel) error {
 			}
 			keyStateMutex.RUnlock()
 			keyStateMutex.Lock()
-			defer keyStateMutex.Unlock()
 			keyState[key] = false
+			keyStateMutex.Unlock()
 			_ = robotgo.KeyUp(key)
 			return
 		}
