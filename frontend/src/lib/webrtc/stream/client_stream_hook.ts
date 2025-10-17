@@ -69,21 +69,34 @@ async function CreateClientStream(
 
 		if (playingStream) return;
 
+		ev.receiver.jitterBufferTarget = 0;
+
+		if ("playoutDelayHint" in ev.receiver) {
+      ev.receiver.playoutDelayHint = 0;
+		}
+		
 		if (ev.streams && ev.streams[0]) {
-			ev.streams[0].getTracks().forEach(t => t.addEventListener("ended", () => {CloseStreamClientConnection()}, true) )
+			ev.streams[0].getTracks().forEach(t => {
+			  if (t.kind == "video" && "contentHint" in t) t.contentHint = "motion";
+			  t.addEventListener("ended", () => {CloseStreamClientConnection()}, true)
+			})
 			videoElement.srcObject = ev.streams[0];
 			videoElement.play();
 			playingStream = true;
 		} else {
 			if (!inboundStream) {
 				inboundStream = new MediaStream();
+				inboundStream
 				videoElement.srcObject = inboundStream;
 				videoElement.play();
 				playingStream = true;
 			}
 			ev.track.addEventListener("ended", () => {CloseStreamClientConnection()}, true)
 			inboundStream.addTrack(ev.track);
-			inboundStream.getTracks().forEach(t => t.addEventListener("ended", () => {CloseStreamClientConnection()}, true))
+			inboundStream.getTracks().forEach(t => {
+        if (t.kind == "video" && "contentHint" in t) t.contentHint = "motion";
+				t.addEventListener("ended", () => {CloseStreamClientConnection()}, true)
+			})
 		}
 	};
 
