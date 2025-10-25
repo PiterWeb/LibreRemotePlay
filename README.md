@@ -53,7 +53,7 @@ https://github.com/user-attachments/assets/f4a412fa-f403-4429-85fb-9c1e74bff458
 - [ ] Groups
 - [x] Remote Video Streaming
   - [x] Video Quality Config
-  - [ ] WHIP streaming compatibility
+  - [ ] WHIP streaming compatibility (Gstreamer, OBS, ...)
 - [x] Browser Client
 - [x] Localization (translation to multiple languages)
 - [x] Support for custom STUN & TURN servers
