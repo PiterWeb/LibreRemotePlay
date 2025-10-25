@@ -10,27 +10,27 @@ tasks:
   build:
     deps: [build-front]
     cmds:
-      - wails build -s -platform=windows/amd64,windows/arm64,linux/amd64,linux/arm64
+      - wails build -s -platform=windows/amd64,linux/amd64
     desc: Build the application for all platforms
   build-win:
     deps: [build-front]
     cmds:
-      - wails build -s -platform=windows/amd64,windows/arm64
+      - wails build -s -platform=windows/amd64
     desc: Build the application for Windows
   build-debug-win:
     deps: [build-front]
     cmds:
-      - wails build -debug -s -platform=windows/amd64,windows/arm64
+      - wails build -debug -s -platform=windows/amd64
     desc: Build the debug application for Windows
   build-linux:
     deps: [build-front]
     cmds:
-      - wails build -s -platform=linux/amd64,linux/arm64
+      - wails build -s -platform=linux/amd64
     desc: Build the application for Linux
   build-debug-linux:
     deps: [build-front]
     cmds:
-      - wails build -debug -s -platform=linux/amd64,linux/arm64
+      - wails build -debug -s -platform=linux/amd64
     desc: Build the debug application for Linux
   build-linux-appimage:
     cmds:
