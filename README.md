@@ -48,19 +48,24 @@ https://github.com/user-attachments/assets/f4a412fa-f403-4429-85fb-9c1e74bff458
 
 ## Features 🧩
 
-- [x] Portable
-- [x] Simple & Modern UI
-- [x] Interactive Tutorial
-- [x] Peer-to-Peer (WebRTC)
+- [x] FOSS (Free & Open Source Software)
+- [x] Gamepad support (See the table below) 
+- [x] Portable (No installations needed)
+- [x] Privacy-friendly (No data collected in APP / Client website)
+- [x] Based on Europe: Developed mainly by me (PiterWeb) from Spain
+- [x] Simple & modern UI
+- [x] Includes an interactive tour through the application
+- [x] Peer to Peer connections (WebRTC)
+- [x] LAN mode (It is not necessary to use the Internet) 
 - [ ] Groups
 - [x] Remote Video Streaming
-  - [x] Video Quality Config
-  - [ ] WHIP streaming compatibility (Gstreamer, OBS, ...)
-- [x] Browser Client
-- [x] Localization (translation to multiple languages)
-- [x] Support for custom STUN & TURN servers
-- [x] Keyboard (Experimental)
-- [x] Toogle Devices
+  - [x] Stream video quality Config (Codecs, FPS, resolution)
+  - [ ] WHIP streaming compatibility (Stream your screen using: Gstreamer, OBS, ...)
+- [x] Client role works on browser
+- [x] Translated to multiple languages
+- [x] You can customize the STUN & TURN servers
+- [x] Keyboard support (Experimental)
+- [x] Toogle gamepad/keyboard access
 - [x] [EasyConnect](https://github.com/PiterWeb/LibreRemotePlayEasyConnectServer) 
 
 ### OS Support 💻
