@@ -1,6 +1,6 @@
 module github.com/PiterWeb/RemoteController
 
-go 1.24.2
+go 1.25.3
 
 require (
 	github.com/coder/websocket v1.8.12
