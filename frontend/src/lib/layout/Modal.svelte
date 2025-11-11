@@ -2,12 +2,12 @@
 	let modal: HTMLDialogElement;
 
 	export function openModal() {
-		modal?.showModal();
+		modal?.showModal?.();
 	}
 </script>
-<script>
+<script lang="ts">
 	interface Props {
-		children: import('svelte').Snippet;
+		children?: import('svelte').Snippet;
 	}
 
 	const { children }: Props = $props();
@@ -18,7 +18,7 @@
 	<div class="modal-box">
 		<form method="dialog" class="w-full mx-auto flex flex-col justify-center gap-4">
             <!-- if there is a button in form, it will close the modal -->
-            {@render children()}
+            {@render children?.()}
 		</form>
 	</div>
 </dialog>
