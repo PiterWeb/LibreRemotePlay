@@ -130,7 +130,7 @@ export async function CreateHostStream(resolution: FIXED_RESOLUTIONS = FIXED_RES
         iceRestart: true,
         offerToReceiveAudio: false,
         offerToReceiveVideo: false
-    });
+  });
 	
 	await peerConnection.setLocalDescription(offer);
 
@@ -195,9 +195,9 @@ function monitorAndAdaptAudioCodec(audioSender: RTCRtpSender) {
 	  // Calculate packet loss using remote-inbound-rtp stats
 	  // (outbound-rtp doesn't know about lost packets)
 	  stats.forEach(report => {
-		if (report.type === 'candidate-pair' && report.state === 'succeeded') {
-		  availableBitrate = report.availableOutgoingBitrate;
-		}
+  		if (report.type === 'candidate-pair' && report.state === 'succeeded') {
+  		  availableBitrate = report.availableOutgoingBitrate;
+  		}
 	  });
   
 	  // Adapt Opus parameters based on conditions
@@ -205,23 +205,23 @@ function monitorAndAdaptAudioCodec(audioSender: RTCRtpSender) {
   
 	  // Find Opus codec in parameters
 	  const opusEncodingIdx = parameters.encodings.findIndex(() => 
-		parameters.codecs.find(c => c.mimeType.toLowerCase() === 'audio/opus')
+			parameters.codecs.find(c => c.mimeType.toLowerCase() === 'audio/opus')
 	  );
   
 	  if (opusEncodingIdx >= 0) {
-		// Adjust bitrate based on available bandwidth
-		if (availableBitrate > 0) {
-		  // Leave headroom for other traffic
-		  const targetBitrate = Math.min(128000, availableBitrate * 0.7);
-		  parameters.encodings[opusEncodingIdx].maxBitrate = targetBitrate;
-		}
+  		// Adjust bitrate based on available bandwidth
+  		if (availableBitrate > 0) {
+  		  // Leave headroom for other traffic
+  		  const targetBitrate = Math.min(128000, availableBitrate * 0.7);
+  		  parameters.encodings[opusEncodingIdx].maxBitrate = targetBitrate;
+  		}
   
-		// Note: We're using standard RTCRtpEncodingParameters rather than
-		// non-standard properties like 'networkPriority' which are
-		// Chromium-only and behind flags
-  
-		// Apply the changes
-		audioSender.setParameters(parameters);
+  		// Note: We're using standard RTCRtpEncodingParameters rather than
+  		// non-standard properties like 'networkPriority' which are
+  		// Chromium-only and behind flags
+    
+  		// Apply the changes
+  		audioSender.setParameters(parameters);
 	  }
 	}, 2000); // Check every 2 seconds
-  }
+}

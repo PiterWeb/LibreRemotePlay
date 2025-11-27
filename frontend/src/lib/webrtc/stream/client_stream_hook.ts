@@ -20,6 +20,7 @@ function initStreamingPeerConnection() {
 async function CreateClientStream(
 	signalingChannel: RTCDataChannel,
 	videoElement: HTMLVideoElement,
+	videoSpeedOptimizationEnabled: boolean = false
 ) {
 	initStreamingPeerConnection();
 
@@ -69,15 +70,17 @@ async function CreateClientStream(
 
 		if (playingStream) return;
 
-		ev.receiver.jitterBufferTarget = 0;
+		if (videoSpeedOptimizationEnabled) {
+		  ev.receiver.jitterBufferTarget = 0;
 
-		if ("playoutDelayHint" in ev.receiver) {
-      ev.receiver.playoutDelayHint = 0;
+  		if ("playoutDelayHint" in ev.receiver) {
+        ev.receiver.playoutDelayHint = 0;
+  		}
 		}
 		
 		if (ev.streams && ev.streams[0]) {
 			ev.streams[0].getTracks().forEach(t => {
-			  if (t.kind == "video" && "contentHint" in t) t.contentHint = "motion";
+			  if (videoSpeedOptimizationEnabled && t.kind == "video" && "contentHint" in t) t.contentHint = "motion";
 			  t.addEventListener("ended", () => {CloseStreamClientConnection()}, true)
 			})
 			videoElement.srcObject = ev.streams[0];
@@ -94,7 +97,7 @@ async function CreateClientStream(
 			ev.track.addEventListener("ended", () => {CloseStreamClientConnection()}, true)
 			inboundStream.addTrack(ev.track);
 			inboundStream.getTracks().forEach(t => {
-        if (t.kind == "video" && "contentHint" in t) t.contentHint = "motion";
+        if (videoSpeedOptimizationEnabled && t.kind == "video" && "contentHint" in t) t.contentHint = "motion";
 				t.addEventListener("ended", () => {CloseStreamClientConnection()}, true)
 			})
 		}

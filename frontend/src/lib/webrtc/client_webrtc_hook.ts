@@ -18,6 +18,7 @@ import { getConsumingStream, setConsumingStream } from './stream/stream_signal_h
 import Bowser from 'bowser';
 import log from '$lib/logger/logger';
 import LANMode from './lan_mode.svelte';
+import { videoSpeedOptimizationEnabled } from './stream/stream_config.svelte';
 
 enum DataChannelLabel {
 	StreamingSignal = 'streaming-signal',
@@ -208,7 +209,7 @@ async function CreateClientWeb(options: CreateClientWebOptions) {
 			}
 
 			setConsumingStream(true);
-			CreateClientStream(streamingSignalChannel, videoElement);
+			CreateClientStream(streamingSignalChannel, videoElement, videoSpeedOptimizationEnabled.value);
 		}, 500);
 	};
 

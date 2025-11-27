@@ -75,3 +75,5 @@ export function getSortedVideoCodecs() {
 	  return orderA - orderB;
 	});
 }
+
+export const videoSpeedOptimizationEnabled = $state({value: false})
