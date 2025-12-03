@@ -23,7 +23,7 @@ type whipConfig struct {
 
 var whipConfigEnabled = &devices.DeviceEnabled{}
 
-var WhipConfig = whipConfig{
+var WhipConfig = &whipConfig{
 	Port:       8082,
 	OfferChan:  make(chan string),
 	AnswerChan: make(chan string),
@@ -31,7 +31,7 @@ var WhipConfig = whipConfig{
 	ICEServers: atomic.Pointer[[]webrtc.ICEServer]{},
 }
 
-func InitWhipServer(config whipConfig) error {
+func InitWhipServer(config *whipConfig) error {
 
 	var answerChan <-chan string = config.AnswerChan
 	var offerChan chan<- string = config.OfferChan
