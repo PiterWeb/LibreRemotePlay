@@ -5,6 +5,7 @@ import (
 	"log"
 
 	"github.com/PiterWeb/RemoteController/src/bindings"
+	_ "github.com/PiterWeb/RemoteController/src/cli"
 	appLogger "github.com/PiterWeb/RemoteController/src/logger"
 	"github.com/wailsapp/wails/v2"
 	"github.com/wailsapp/wails/v2/pkg/logger"
