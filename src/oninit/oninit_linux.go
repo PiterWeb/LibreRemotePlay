@@ -12,7 +12,7 @@ import (
 
 func Execute(assets embed.FS) error {
 
-	serverPort := 8080
+	serverPort := uint16(8080)
 
 	httpServerMux := http.NewServeMux()
 	

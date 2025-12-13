@@ -9,7 +9,7 @@ import (
 	"strings"
 )
 
-func InitHTTPAssets(serverMux *http.ServeMux, clientPort int, assets embed.FS) error {
+func InitHTTPAssets(serverMux *http.ServeMux, clientPort uint16, assets embed.FS) error {
 
 	staticFS, err := fs.Sub(assets, "frontend/build")
 
