@@ -16,15 +16,13 @@ func Execute(assets embed.FS) error {
 		return err
 	}
 
-	serverPort := uint16(8080)
-
 	httpServerMux := http.NewServeMux()
 
 	ips_channel := make(chan []string, 1)
 	errChan := make(chan error, 2)
 
 	go func() {
-		err := net_http.InitHTTPAssets(httpServerMux, serverPort, assets)
+		err := net_http.InitHTTPAssets(httpServerMux, assets)
 
 		if err != nil {
 			errChan <- err
