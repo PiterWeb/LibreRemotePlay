@@ -6,6 +6,17 @@ tasks:
     cmds:
       - pnpm install
       - pnpm run build
+    sources:
+        - src/**/*.js
+        - src/**/*.ts
+        - src/**/*.wasm
+        - src/**/*.svelte
+        - ./*.config.js
+        - ./*.config.js
+        - package.json
+    generates:
+        - build/**/*.js
+        - build/**/*.wasm
     desc: Build the frontend
   build:
     deps: [build-front]
@@ -40,16 +51,14 @@ tasks:
       - chmod +x linuxdeploy-plugin-gtk.sh
       - ./linuxdeploy-x86_64.AppImage --appdir AppDir --desktop-file assets/LibreRemotePlay.desktop --executable build/bin/LibreRemotePlay-linux-amd64 --plugin gtk -i assets/remotecontroller.png -d assets/LibreRemotePlay.desktop --output appimage
     desc: Build AppImage for Linux based on previously generated binaries 
-  build-wasm-front-linux:
+  build-wasm-front:
     dir: frontend/static/wasm
+    env: 
+      GOOS: js
+      GOARCH: wasm
     cmds:
-      - GOOS=js GOARCH=wasm go build -o signal.wasm
-    desc: Build the frontend wasm for Linux
-  build-wasm-front-win:
-    dir: frontend/static/wasm
-    cmds:
-      - powershell.exe -Command { $env:GOOS="js";$env:GOARCH="wasm"; go build -o signal.wasm }
-    desc: Build the frontend wasm for Windows
+      - go build -o signal.wasm
+    desc: Build the frontend wasm
   dev-all:
     deps: [build-front]
     cmds:
