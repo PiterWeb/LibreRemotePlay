@@ -70,10 +70,10 @@ importers:
         specifier: 9.39.2
         version: 9.39.2(jiti@2.6.1)
       eslint-plugin-svelte:
-        specifier: ^3.13.1
+        specifier: 3.13.1
         version: 3.13.1(eslint@9.39.2(jiti@2.6.1))(svelte@5.43.6)
       postcss:
-        specifier: ^8.4.47
+        specifier: 8.5.6
         version: 8.5.6
       svelte:
         specifier: 5.43.6
