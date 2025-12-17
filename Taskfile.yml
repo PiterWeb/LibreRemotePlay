@@ -1,10 +1,20 @@
 version: '3'
 
 tasks:
-  build-front:
+  install-front:
     dir: frontend
     cmds:
       - pnpm install
+    sources:
+      - package.json
+    generates:
+      - pnpm-lock.yaml
+    status:
+      - test -d node_modules
+  build-front:
+    deps: [install-front]
+    dir: frontend
+    cmds:
       - pnpm run build
     sources:
         - src/**/*.js
