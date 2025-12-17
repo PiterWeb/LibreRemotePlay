@@ -45,7 +45,7 @@ tasks:
       - wget -c "https://raw.githubusercontent.com/linuxdeploy/linuxdeploy-plugin-gtk/master/linuxdeploy-plugin-gtk.sh"
       - chmod +x linuxdeploy-plugin-gtk.sh
       - ./linuxdeploy-x86_64.AppImage --appdir AppDir --desktop-file assets/LibreRemotePlay.desktop --executable build/bin/LibreRemotePlay --plugin gtk -i assets/remotecontroller.png -d assets/LibreRemotePlay.desktop --output appimage
-    desc: [Experimental] Build AppImage for Linux based on previously generated binaries (wget required)
+    desc: (Experimental) Build AppImage for Linux based on previously generated binaries (wget required)
   build-wasm-front:
     dir: frontend/static/wasm
     env: 
