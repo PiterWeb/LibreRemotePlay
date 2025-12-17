@@ -1,33 +1,17 @@
 version: '3'
 
 tasks:
-  install-front:
-    dir: frontend
+  dev-all:
+    deps: [build-front]
     cmds:
-      - pnpm install
-    sources:
-      - package.json
-    generates:
-      - pnpm-lock.yaml
-    status:
-      - test -d node_modules
-  build-front:
-    deps: [install-front]
+      - wails dev
+    desc: Run the application in development mode
+  dev-front:
     dir: frontend
+    deps: [build-front]
     cmds:
-      - pnpm run build
-    sources:
-        - src/**/*.js
-        - src/**/*.ts
-        - src/**/*.wasm
-        - src/**/*.svelte
-        - ./*.config.js
-        - ./*.config.js
-        - package.json
-    generates:
-        - build/**/*.js
-        - build/**/*.wasm
-    desc: Build the frontend
+      - pnpm run dev
+    desc: Run the frontend in development mode
   build:
     deps: [build-front]
     cmds:
@@ -69,20 +53,32 @@ tasks:
     cmds:
       - go build -o signal.wasm
     desc: Build the frontend wasm
-  dev-all:
-    deps: [build-front]
-    cmds:
-      - wails dev
-    desc: Run the application in development mode
-  dev-front:
-    dir: frontend
-    deps: [build-front]
-    cmds:
-      - pnpm run dev
-    desc: Run the frontend in development mode
   test:
     desc: Run E2E tests
     dir: frontend
     deps: [dev-all]
     cmds:
       - pnpm run test
+  install-front:
+    dir: frontend
+    cmds:
+      - pnpm install
+    sources:
+      - package.json
+    status:
+      - test -d node_modules
+  build-front:
+    deps: [install-front]
+    dir: frontend
+    cmds:
+      - pnpm run build
+    sources:
+        - src/**/*.js
+        - src/**/*.ts
+        - src/**/*.wasm
+        - src/**/*.svelte
+        - vite.config.ts
+        - svelte.config.js
+        - tailwind.config.js
+        - package.json
+    desc: Build the frontend
