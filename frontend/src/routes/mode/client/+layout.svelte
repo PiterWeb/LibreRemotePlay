@@ -19,6 +19,40 @@
 		shadowRoot?.appendChild(styles)
 	})
 
+	// const events: (keyof HTMLVideoElementEventMap)[] = ["click", "auxclick"]
+	
+	let videoElement: HTMLVideoElement | null = $state(null)
+	
+	$effect(() => {
+	    if (!videoElement) return
+				
+		const onContextMenu = (ev: Event) => {
+		  ev.preventDefault()
+		  return false
+		}
+		
+		// Disable right-click context menu
+		videoElement.addEventListener("contextmenu", onContextMenu)
+				
+		// const onClick = (ev: Event) => {
+		//     if (!(ev instanceof PointerEvent)) return
+		//     ev.preventDefault()
+		//     console.log(`Click ${ev.type}: ${ev.button}`)
+		// }
+		
+		// Intercept clicks
+		// events.forEach(ev_name => videoElement?.addEventListener(ev_name, onClick))
+		
+		// Disable pause on video
+		// TODO: Look for better aproaches to prevent video pause
+		videoElement.pause = () => {}
+		
+		return () => {
+          // events.forEach(_ => videoElement?.removeEventListener("click", onClick))
+          videoElement?.removeEventListener("contextmenu", onContextMenu)
+		}
+	})
+	
 </script>
 
 {@render children?.()}
@@ -26,6 +60,7 @@
 <media-theme-microvideo bind:this={media} class:hidden={!consumingStream.value}>
 <!-- svelte-ignore a11y_media_has_caption -->
 <video
+    bind:this={videoElement}
 	slot="media"
 	id="stream-video"
 	playsinline
