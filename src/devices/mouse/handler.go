@@ -55,14 +55,19 @@ func HandleMouse(d *webrtc.DataChannel) error {
 			
 			switch clickBtn {
 				case mouseLeft:
+				// TODO: make left click persist
 				robotgo.Click()
 				case mouseCentral:
+				// TODO: make middle click persist
 				robotgo.Click("center")
 				case mouseRight:
+				// TODO: make right click persist
 				robotgo.Click("right")
 			}
 			
 		} else if msgType == typeMsgMove { // Handle move event
+			
+			// TODO: do some logging to check the values
 			
 			x, err := binary.ReadUvarint(msgBuf)
 			
