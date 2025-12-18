@@ -19,11 +19,13 @@ import Bowser from 'bowser';
 import log from '$lib/logger/logger';
 import LANMode from './lan_mode.svelte';
 import { videoSpeedOptimizationEnabled } from './stream/stream_config.svelte';
+import { handleClick, handleMove, unhandleClick, unhandleMove } from '$lib/mouse/mouse_hook';
 
 enum DataChannelLabel {
 	StreamingSignal = 'streaming-signal',
 	Controller = 'controller',
-	Keyboard = 'keyboard'
+	Keyboard = 'keyboard',
+	Mouse = 'mouse'
 }
 
 interface CreateClientWebOptions {
@@ -148,6 +150,7 @@ async function CreateClientWeb(options: CreateClientWebOptions) {
 	const controllerChannel = peerConnection.createDataChannel(DataChannelLabel.Controller);
 	const streamingSignalChannel = peerConnection.createDataChannel(DataChannelLabel.StreamingSignal);
 	const keyboardChannel = peerConnection.createDataChannel(DataChannelLabel.Keyboard);
+  const mouseChannel = peerConnection.createDataChannel(DataChannelLabel.Mouse);
 
 	peerConnection.ondatachannel = (ev) => {
 		const channel = ev.channel;
@@ -181,6 +184,25 @@ async function CreateClientWeb(options: CreateClientWebOptions) {
 		unhandleKeyDown(keyDownHandler);
 		unhandleKeyUp(keyUpHandler);
 	};
+	
+	let clickHandler: ReturnType<typeof handleClick>;
+  let moveHandler: ReturnType<typeof handleMove>;
+	
+	mouseChannel.onopen = () => {
+	
+    const sendMouseData = (output: ArrayBuffer) => {
+      mouseChannel.send(output)
+  	};
+    
+    clickHandler = handleClick(sendMouseData)
+    moveHandler = handleMove(sendMouseData)
+	
+	}
+	
+	mouseChannel.onclose = () => {
+    unhandleClick(clickHandler)
+	  unhandleMove(moveHandler)
+	}
 
 	controllerChannel.onopen = () => {
 		handleGamepad(controllerChannel);

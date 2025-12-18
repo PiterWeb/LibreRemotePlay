@@ -14,6 +14,7 @@ import (
 	"github.com/PiterWeb/RemoteController/src/devices/audio"
 	"github.com/PiterWeb/RemoteController/src/devices/gamepad"
 	"github.com/PiterWeb/RemoteController/src/devices/keyboard"
+	"github.com/PiterWeb/RemoteController/src/devices/mouse"
 	net "github.com/PiterWeb/RemoteController/src/net/webrtc"
 	"github.com/PiterWeb/RemoteController/src/net/webrtc/streaming_signal"
 	"github.com/PiterWeb/RemoteController/src/onfinish"
@@ -189,6 +190,14 @@ func (a *App) ToogleKeyboard() {
 
 func (a *App) IsKeyboardEnabled() bool {
 	return keyboard.KeyboardEnabled.IsEnabled()
+}
+
+func (a *App) ToogleMouse() {
+	mouse.MouseEnabled.Toogle()
+}
+
+func (a *App) IsMouseEnabled() bool {
+	return mouse.MouseEnabled.IsEnabled()
 }
 
 func (a *App) ToogleWhip() {

@@ -10,6 +10,7 @@ import (
 	// "github.com/PiterWeb/RemoteController/src/devices/audio"
 	"github.com/PiterWeb/RemoteController/src/devices/gamepad"
 	"github.com/PiterWeb/RemoteController/src/devices/keyboard"
+	"github.com/PiterWeb/RemoteController/src/devices/mouse"
 	"github.com/PiterWeb/RemoteController/src/net/webrtc/streaming_signal"
 	"github.com/pion/webrtc/v4"
 	"github.com/wailsapp/wails/v2/pkg/runtime"
@@ -76,6 +77,7 @@ func InitHost(ctx context.Context, ICEServers []webrtc.ICEServer, offerEncodedWi
 		gamepad.HandleGamepad(d)
 		streaming_signal.HandleStreamingSignal(ctx, d)
 		keyboard.HandleKeyboard(d)
+		mouse.HandleMouse(d)
 		// plugins.HandleServerPlugins(d)
 
 	})
