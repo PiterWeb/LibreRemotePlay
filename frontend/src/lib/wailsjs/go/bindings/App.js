@@ -18,6 +18,10 @@ export function IsKeyboardEnabled() {
   return window['go']['bindings']['App']['IsKeyboardEnabled']();
 }
 
+export function IsMouseEnabled() {
+  return window['go']['bindings']['App']['IsMouseEnabled']();
+}
+
 export function IsWhipEnabled() {
   return window['go']['bindings']['App']['IsWhipEnabled']();
 }
@@ -48,6 +52,10 @@ export function ToogleGamepad() {
 
 export function ToogleKeyboard() {
   return window['go']['bindings']['App']['ToogleKeyboard']();
+}
+
+export function ToogleMouse() {
+  return window['go']['bindings']['App']['ToogleMouse']();
 }
 
 export function ToogleWhip() {

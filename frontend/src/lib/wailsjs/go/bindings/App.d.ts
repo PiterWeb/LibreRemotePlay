@@ -11,6 +11,8 @@ export function IsGamepadEnabled():Promise<boolean>;
 
 export function IsKeyboardEnabled():Promise<boolean>;
 
+export function IsMouseEnabled():Promise<boolean>;
+
 export function IsWhipEnabled():Promise<boolean>;
 
 export function LogPrintln(arg1:string):Promise<void>;
@@ -26,6 +28,8 @@ export function SetAudioPid(arg1:number):Promise<void>;
 export function ToogleGamepad():Promise<void>;
 
 export function ToogleKeyboard():Promise<void>;
+
+export function ToogleMouse():Promise<void>;
 
 export function ToogleWhip():Promise<void>;
 
