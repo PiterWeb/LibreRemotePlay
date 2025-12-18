@@ -1,3 +1,7 @@
 media-live-button {
     display: none !important;
 }
+
+media-time-range {
+    visibility: hidden;
+}
