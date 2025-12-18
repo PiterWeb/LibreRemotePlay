@@ -18,8 +18,6 @@
 
 		shadowRoot?.appendChild(styles)
 	})
-
-	// const events: (keyof HTMLVideoElementEventMap)[] = ["click", "auxclick"]
 	
 	let videoElement: HTMLVideoElement | null = $state(null)
 	
@@ -33,22 +31,12 @@
 		
 		// Disable right-click context menu
 		videoElement.addEventListener("contextmenu", onContextMenu)
-				
-		// const onClick = (ev: Event) => {
-		//     if (!(ev instanceof PointerEvent)) return
-		//     ev.preventDefault()
-		//     console.log(`Click ${ev.type}: ${ev.button}`)
-		// }
-		
-		// Intercept clicks
-		// events.forEach(ev_name => videoElement?.addEventListener(ev_name, onClick))
 		
 		// Disable pause on video
 		// TODO: Look for better aproaches to prevent video pause
 		videoElement.pause = () => {}
 		
 		return () => {
-          // events.forEach(_ => videoElement?.removeEventListener("click", onClick))
           videoElement?.removeEventListener("contextmenu", onContextMenu)
 		}
 	})
