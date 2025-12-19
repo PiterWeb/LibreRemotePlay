@@ -16,8 +16,8 @@ RESOLUTIONS.set(FIXED_RESOLUTIONS.resolution720p,{width: 1280, height: 720})
 RESOLUTIONS.set(FIXED_RESOLUTIONS.resolution480p, {width:854, height: 480})
 RESOLUTIONS.set(FIXED_RESOLUTIONS.resolution360p, {width: 640, height:360})
 
-export const DEFAULT_MAX_FRAMERATE = 60
-export const DEFAULT_IDEAL_FRAMERATE = 30
+export const DEFAULT_MAX_FRAMERATE = 75
+export const DEFAULT_IDEAL_FRAMERATE = 60
 
 export const MIN_FRAMES = 25
 export const MAX_FRAMES = 145
