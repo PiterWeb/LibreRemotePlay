@@ -14,6 +14,7 @@
 	import ws from '$lib/websocket/ws';
 	import { IS_RUNNING_EXTERNAL } from '$lib/detection/onwebsite';
 	import Tooltip from '$lib/layout/Tooltip.svelte';
+	import MouseIcon from '$lib/layout/icons/MouseIcon.svelte';
 	// import { GetAudioProcess, SetAudioPid } from '$lib/wailsjs/go/bindings/App';
 
 	let selected_audio_src = $state(0)
@@ -62,6 +63,7 @@
 	
 	let keyboardEnabled = $state(false);
 	let gamepadEnabled = $state(true);
+	let mouseEnabled = $state(false);
 
 	function createStream() {
 		CreateHostStream(selected_resolution, idealFramerate, maxFramerate);
@@ -92,6 +94,14 @@
 
 		await ToogleGamepad()
 		gamepadEnabled = await IsGamepadEnabled()
+	}
+	
+	async function toogleMouse() {
+	
+	    const { IsMouseEnabled, ToogleMouse } = await import('$lib/wailsjs/go/bindings/App')
+		await ToogleMouse()
+		mouseEnabled = await IsMouseEnabled()
+		
 	}
 
 	function MapAudioSrcs (s: audio.AudioProcess) {
@@ -165,7 +175,10 @@
 		{$_('toogle_devices')}
 	</h3>
 	<div class="flex flex-row justify-center gap-3 mt-6">
-		<button onclick={toogleKeyboard} class:btn-primary={keyboardEnabled} class:btn-neutral={!keyboardEnabled} class:border-gray-400={!keyboardEnabled} class="btn border">
+    	<button onclick={toogleMouse} class:btn-primary={mouseEnabled}  class:btn-neutral={!mouseEnabled} class:border-gray-400={!mouseEnabled} class="btn border">
+    		<MouseIcon/>
+    	</button>
+	    <button onclick={toogleKeyboard} class:btn-primary={keyboardEnabled} class:btn-neutral={!keyboardEnabled} class:border-gray-400={!keyboardEnabled} class="btn border">
 			<KeyboardIcon/>
 		</button>
 		<button onclick={toogleGamepad} class:btn-primary={gamepadEnabled}  class:btn-neutral={!gamepadEnabled} class:border-gray-400={!gamepadEnabled} class="btn border">
