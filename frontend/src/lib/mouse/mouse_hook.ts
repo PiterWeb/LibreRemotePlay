@@ -9,22 +9,30 @@ enum MouseValue {
 	Right = 2
 }
 
+enum MouseState {
+  MouseDown = 0,
+  MouseUp = 1
+}
+
 type mouseHandler = (output: ArrayBuffer) => void;
 
-const click_events: (keyof HTMLVideoElementEventMap)[] = ['click', 'auxclick'];
+const click_events: (keyof HTMLVideoElementEventMap)[] = ['mousedown', 'mouseup'];
 
 export function handleClick(callback: mouseHandler) {
 	const handler = (event: Event) => {
-		if (!(event instanceof PointerEvent)) return;
+		if (!(event instanceof MouseEvent)) return;
 		console.log(`Click ${event.type}: ${event.button}`);
 
-		const value = event.button as MouseValue;
+		const btnCLicked = event.button as MouseValue;
 		
-		const buf = new ArrayBuffer(2)
+		const buf = new ArrayBuffer(3)
 		const view = new Uint8Array(buf);
 		
+		const stateBtn = event.type === "mousedown" ? MouseState.MouseDown : MouseState.MouseUp
+		
 		view[0] = MouseType.Click
-		view[1] = value 
+		view[1] = btnCLicked 
+		view[2] = stateBtn
 		
 		return callback(buf);
 	};

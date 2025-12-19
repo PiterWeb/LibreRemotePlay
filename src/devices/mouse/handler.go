@@ -53,16 +53,27 @@ func HandleMouse(d *webrtc.DataChannel) error {
 				return
 			}
 			
+			btnState, err := msgBuf.ReadByte()
+			
+			if err != nil {
+				return
+			}
+			
+			var state string
+			
+			if btnState == mouseDown {
+				state = "down"
+			} else if btnState == mouseUp {
+				state = "up"
+			}
+			
 			switch clickBtn {
 				case mouseLeft:
-				// TODO: make left click persist
-				robotgo.Click()
+				robotgo.Toggle("left", state)
 				case mouseCentral:
-				// TODO: make middle click persist
-				robotgo.Click("center")
+				robotgo.Toggle("center", state)
 				case mouseRight:
-				// TODO: make right click persist
-				robotgo.Click("right")
+				robotgo.Toggle("right", state)
 			}
 			
 		} else if msgType == typeMsgMove { // Handle move event

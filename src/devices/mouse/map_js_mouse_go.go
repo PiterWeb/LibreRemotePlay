@@ -10,3 +10,8 @@ const (
 	mouseCentral
 	mouseRight
 )
+
+const (
+	mouseDown uint8 = iota
+	mouseUp
+)
