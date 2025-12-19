@@ -15,6 +15,7 @@
 	import { IS_RUNNING_EXTERNAL } from '$lib/detection/onwebsite';
 	import Tooltip from '$lib/layout/Tooltip.svelte';
 	import MouseIcon from '$lib/layout/icons/MouseIcon.svelte';
+	import IsRunningExternal from '$lib/detection/IsRunningExternal.svelte';
 	// import { GetAudioProcess, SetAudioPid } from '$lib/wailsjs/go/bindings/App';
 
 	let selected_audio_src = $state(0)
@@ -151,46 +152,51 @@
     <p>{$_('external-whip-explanation')}</p>
 </Tooltip>
 
-<section class:hidden={streaming.value && !whipEnabled} class="flex flex-row-reverse items-center gap-2">
-	<label
-		id="label-external-whip-checkbox"
-		for="lan-mode-checkbox"
-		class="font-semibold text-white">{$_('external-whip')}</label
-	>
-	<input
-		id="lan-mode-checkbox"
-		type="checkbox"
-		class="checkbox checkbox-xs checkbox-primary"
-		checked={whipEnabled}
-		onchange={toogleWhip}
-	/>
-</section>
+<IsRunningExternal not>
+    
+    <section class:hidden={streaming.value && !whipEnabled} class="flex flex-row-reverse items-center gap-2">
+    	<label
+    		id="label-external-whip-checkbox"
+    		for="lan-mode-checkbox"
+    		class="font-semibold text-white">{$_('external-whip')}</label
+    	>
+    	<input
+    		id="lan-mode-checkbox"
+    		type="checkbox"
+    		class="checkbox checkbox-xs checkbox-primary"
+    		checked={whipEnabled}
+    		onchange={toogleWhip}
+    	/>
+    </section>
+    
+    <section class:hidden={!whipEnabled} class="text-white">
+    	Whip URL: http://localhost:8082/whip
+    </section>
+    
+    <section class="w-full">
+    	<h3 class="text-3xl text-white text-center">
+    		{$_('toogle_devices')}
+    	</h3>
+    	<div class="flex flex-row justify-center gap-3 mt-6">
+       	<button onclick={toogleMouse} class:btn-primary={mouseEnabled}  class:btn-neutral={!mouseEnabled} class:border-gray-400={!mouseEnabled} class="btn border">
+      		<MouseIcon/>
+       	</button>
+    	    <button onclick={toogleKeyboard} class:btn-primary={keyboardEnabled} class:btn-neutral={!keyboardEnabled} class:border-gray-400={!keyboardEnabled} class="btn border">
+    			<KeyboardIcon/>
+    		</button>
+    		<button onclick={toogleGamepad} class:btn-primary={gamepadEnabled}  class:btn-neutral={!gamepadEnabled} class:border-gray-400={!gamepadEnabled} class="btn border">
+    			<GamepadIcon/>
+    		</button>
+    	</div>
+    	<div class:hidden={!streaming.value || whipEnabled} class="flex flex-row justify-center gap-3 mt-6">
+    		<button onclick={StopStreaming} disabled={!streaming.value} class="btn btn-primary">
+    			{$_('stop-streaming')}
+    		</button>
+    	</div>
+    </section>
 
-<section class:hidden={!whipEnabled} class="text-white">
-	Whip URL: http://localhost:8082
-</section>
+</IsRunningExternal>
 
-<section class="w-full">
-	<h3 class="text-3xl text-white text-center">
-		{$_('toogle_devices')}
-	</h3>
-	<div class="flex flex-row justify-center gap-3 mt-6">
-    	<button onclick={toogleMouse} class:btn-primary={mouseEnabled}  class:btn-neutral={!mouseEnabled} class:border-gray-400={!mouseEnabled} class="btn border">
-    		<MouseIcon/>
-    	</button>
-	    <button onclick={toogleKeyboard} class:btn-primary={keyboardEnabled} class:btn-neutral={!keyboardEnabled} class:border-gray-400={!keyboardEnabled} class="btn border">
-			<KeyboardIcon/>
-		</button>
-		<button onclick={toogleGamepad} class:btn-primary={gamepadEnabled}  class:btn-neutral={!gamepadEnabled} class:border-gray-400={!gamepadEnabled} class="btn border">
-			<GamepadIcon/>
-		</button>
-	</div>
-	<div class:hidden={!streaming.value || whipEnabled} class="flex flex-row justify-center gap-3 mt-6">
-		<button onclick={StopStreaming} disabled={!streaming.value} class="btn btn-primary">
-			{$_('stop-streaming')}
-		</button>
-	</div>
-</section>
 
 <!-- <section class="w-1/3 mx-auto" class:hidden={!streaming.value}>
 	<h3 class="text-3xl text-white text-center">
