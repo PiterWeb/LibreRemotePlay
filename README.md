@@ -65,6 +65,7 @@ https://github.com/user-attachments/assets/f4a412fa-f403-4429-85fb-9c1e74bff458
 - [x] Translated to multiple languages
 - [x] You can customize the STUN & TURN servers
 - [x] Keyboard support (Experimental)
+- [ ] Mouse support
 - [x] Toogle gamepad/keyboard access
 - [x] [EasyConnect](https://github.com/PiterWeb/LibreRemotePlayEasyConnectServer) 
 
