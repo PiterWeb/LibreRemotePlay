@@ -16,12 +16,11 @@ enum MouseState {
 
 type mouseHandler = (output: ArrayBuffer) => void;
 
-const click_events: (keyof HTMLVideoElementEventMap)[] = ['mousedown', 'mouseup'];
+const click_events = ['mousedown', 'mouseup'] as const;
 
 export function handleClick(callback: mouseHandler) {
-	const handler = (event: Event) => {
-		if (!(event instanceof MouseEvent)) return;
-		console.log(`Click ${event.type}: ${event.button}`);
+	const handler = (event: MouseEvent) => {
+		// console.log(`Click ${event.type}: ${event.button}`);
 
 		const btnCLicked = event.button as MouseValue;
 		
@@ -47,9 +46,7 @@ export function unhandleClick(callback: ReturnType<typeof handleClick>) {
 }
 
 export function handleMove(callback: mouseHandler) {
-	const handler = (event: Event) => {
-		if (!(event instanceof MouseEvent)) return;
-
+	const handler = (event: MouseEvent) => {
     const xAxis = event.pageX;
     const yAxis = event.pageY;
 		console.log(`Move x:${xAxis}, y:${yAxis}`);
@@ -69,7 +66,7 @@ export function handleMove(callback: mouseHandler) {
 	return handler;
 }
 
-export function unhandleMove(callback: ReturnType<typeof handleClick>) {
+export function unhandleMove(callback: ReturnType<typeof handleMove>) {
   document?.removeEventListener("mousemove", callback, true);
 }
 
