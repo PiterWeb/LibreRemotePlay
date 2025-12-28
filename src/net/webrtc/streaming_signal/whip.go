@@ -43,12 +43,17 @@ func InitWhipServer(config *whipConfig) error {
 
 	httpServerMux := http.NewServeMux()
 
-	httpServerMux.HandleFunc("/whip/session", func(w http.ResponseWriter, r *http.Request) {
+	httpServerMux.HandleFunc("/whip", func(w http.ResponseWriter, r *http.Request) {
 
-	})
-
-	httpServerMux.HandleFunc("POST /whip", func(w http.ResponseWriter, r *http.Request) {
-
+		w.Header().Add("Access-Control-Allow-Origin", "*")
+		w.Header().Add("Access-Control-Allow-Methods", "POST")
+		w.Header().Add("Access-Control-Allow-Headers", "*")
+		w.Header().Add("Access-Control-Allow-Headers", "Authorization")
+		
+		if r.Method == http.MethodOptions {
+			return
+		}
+		
 		if !WhipConfig.Enabled.IsEnabled() {
 			w.WriteHeader(http.StatusInternalServerError)
 			_, _ = w.Write([]byte("Whip not enabled"))
@@ -57,16 +62,12 @@ func InitWhipServer(config *whipConfig) error {
 
 		defer func() {
 			if err := recover(); err != nil {
+				log.Printf("Fatal error %s\n", err)
 				w.WriteHeader(http.StatusInternalServerError)
 				_, _ =w.Write([]byte("Fatal error"))
 				return
 			}
 		}()
-
-		w.Header().Add("Access-Control-Allow-Origin", "*")
-		w.Header().Add("Access-Control-Allow-Methods", "POST")
-		w.Header().Add("Access-Control-Allow-Headers", "*")
-		w.Header().Add("Access-Control-Allow-Headers", "Authorization")
 
 		for _, s := range *WhipConfig.ICEServers.Load() {
 			for _, url := range s.URLs {
@@ -81,12 +82,22 @@ func InitWhipServer(config *whipConfig) error {
 			return
 		}
 
-		log.Printf("Offer received in whip: %s\"n", string(offer))
+		if len(offer) == 0 {
+			log.Println("Offer received in whip is too short")
+			w.WriteHeader(http.StatusInternalServerError)
+			_, _ = w.Write([]byte("Error request body too short"))
+			return
+		}
+		
+		log.Printf("Offer received in whip: %s\n", string(offer))
 		offerChan <- string(offer)
 
+		log.Println("Waiting for answer in whip")
+		
 		rawAnswer, ok := <-answerChan
 
 		if !ok {
+			log.Println("Answer channel closed in whip")
 			w.WriteHeader(http.StatusInternalServerError)
 			_, _ = w.Write([]byte("Error getting an answer"))
 			return
@@ -112,7 +123,7 @@ func InitWhipServer(config *whipConfig) error {
 		log.Printf("Sending answer for whip: %s\n", answerStruct.Answer.SDP)
 
 		w.Header().Set("Content-Type", "application/sdp")
-		w.Header().Add("Location", "http://localhost:8082/whip/session")
+		w.Header().Add("Location", "/whip")
 
 		w.WriteHeader(http.StatusCreated)
 		_, _ = w.Write([]byte(answerStruct.Answer.SDP))
