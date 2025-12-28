@@ -43,16 +43,14 @@ func InitWhipServer(config *whipConfig) error {
 
 	httpServerMux := http.NewServeMux()
 
-	httpServerMux.HandleFunc("/whip", func(w http.ResponseWriter, r *http.Request) {
-
+	httpServerMux.HandleFunc("OPTIONS /whip", func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Add("Access-Control-Allow-Origin", "*")
 		w.Header().Add("Access-Control-Allow-Methods", "POST")
 		w.Header().Add("Access-Control-Allow-Headers", "*")
 		w.Header().Add("Access-Control-Allow-Headers", "Authorization")
-		
-		if r.Method == http.MethodOptions {
-			return
-		}
+	})
+	
+	httpServerMux.HandleFunc("POST /whip", func(w http.ResponseWriter, r *http.Request) {
 		
 		if !WhipConfig.Enabled.IsEnabled() {
 			w.WriteHeader(http.StatusInternalServerError)
@@ -68,6 +66,11 @@ func InitWhipServer(config *whipConfig) error {
 				return
 			}
 		}()
+		
+		w.Header().Add("Access-Control-Allow-Origin", "*")
+		w.Header().Add("Access-Control-Allow-Methods", "POST")
+		w.Header().Add("Access-Control-Allow-Headers", "*")
+		w.Header().Add("Access-Control-Allow-Headers", "Authorization")
 
 		for _, s := range *WhipConfig.ICEServers.Load() {
 			for _, url := range s.URLs {
@@ -123,7 +126,7 @@ func InitWhipServer(config *whipConfig) error {
 		log.Printf("Sending answer for whip: %s\n", answerStruct.Answer.SDP)
 
 		w.Header().Set("Content-Type", "application/sdp")
-		w.Header().Add("Location", "/whip")
+		w.Header().Add("Location", fmt.Sprintf("http://localhost:%d/whip", config.Port))
 
 		w.WriteHeader(http.StatusCreated)
 		_, _ = w.Write([]byte(answerStruct.Answer.SDP))
