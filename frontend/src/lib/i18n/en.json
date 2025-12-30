@@ -99,5 +99,11 @@
   "lan-mode": "LAN mode",
   "close-stream": "Close stream",
   "audio_selector": "Audio selector",
-  "toogle_devices": "Toogle devices"
+  "toogle_devices": "Toogle devices",
+  "config-video-speed-optimization": "Use video speed optimization (may skip frames)",
+  "external-whip": "Use WHIP (OBS, Gstreamer, ...)",
+  "external-whip-explanation": "WHIP lets you use OBS or GStreamer to stream instead of the browser",
+  "codec-list": "Codec list",
+  "codec-list-preference": "Up to down preference",
+  "restore-codecs": "Restore codec order"
 }
