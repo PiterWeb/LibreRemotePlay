@@ -12,14 +12,18 @@ import (
 
 var KeyboardEnabled = new(devices.DeviceEnabled).Disable()
 
-func HandleKeyboard(d *webrtc.DataChannel) error {
+func HandleKeyboard(d *webrtc.DataChannel) {
 
 	if d.Label() != "keyboard" {
-		return nil
+		return
 	}
 
 	d.OnOpen(func() {
+		
+		robotgo.KeySleep = 100
+		
 		log.Println("keyboard data channel is open")
+		
 	})
 
 	keyState := make(map[string]bool)
@@ -75,7 +79,5 @@ func HandleKeyboard(d *webrtc.DataChannel) error {
 		}
 
 	})
-
-	return nil
 
 }
