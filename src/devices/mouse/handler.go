@@ -12,13 +12,16 @@ import (
 
 var MouseEnabled = new(devices.DeviceEnabled).Disable()
 
-func HandleMouse(d *webrtc.DataChannel) error {
+func HandleMouse(d *webrtc.DataChannel) {
 
 	if d.Label() != "mouse" {
-		return nil
+		return
 	}
 
 	d.OnOpen(func() {
+		
+		robotgo.MouseSleep = 100
+		
 		log.Println("mouse data channel is open")
 	})
 
@@ -61,12 +64,13 @@ func HandleMouse(d *webrtc.DataChannel) error {
 			
 			var state string
 			
-			if btnState == mouseDown {
+			switch btnState {
+				case mouseDown:
 				state = "down"
-			} else if btnState == mouseUp {
+				case mouseUp:
 				state = "up"
 			}
-			
+						
 			switch clickBtn {
 				case mouseLeft:
 				robotgo.Toggle("left", state)
@@ -78,26 +82,29 @@ func HandleMouse(d *webrtc.DataChannel) error {
 			
 		} else if msgType == typeMsgMove { // Handle move event
 			
-			// TODO: do some logging to check the values
+			x := make([]byte, 2)
+			_, err := msgBuf.Read(x)
 			
-			x, err := binary.ReadUvarint(msgBuf)
+			if err != nil {
+				return
+			}
+						
+			y := make([]byte, 2)
+			_, err = msgBuf.Read(y)
 			
 			if err != nil {
 				return
 			}
 			
-			y, err := binary.ReadUvarint(msgBuf)
+			xNum := binary.BigEndian.Uint16(x)
+			yNum := binary.BigEndian.Uint16(y)
 			
-			if err != nil {
-				return
-			}
+			// log.Printf("Mouse x: %d, y:%d\n", int(xNum), int(yNum))
 			
-			robotgo.Move(int(x), int(y))
+			robotgo.Move(int(xNum), int(yNum))
 			
 		}
 
 	})
-
-	return nil
 
 }

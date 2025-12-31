@@ -51,12 +51,12 @@ export function handleMove(callback: mouseHandler) {
     const yAxis = event.pageY;
 		console.log(`Move x:${xAxis}, y:${yAxis}`);
 		
-		const buf = new ArrayBuffer(1 + (8 * 8) * 2)
+		const buf = new ArrayBuffer(1 + (2 * 2))
 		const view = new DataView(buf);
 		
 		view.setUint8(0, MouseType.Move)
-		view.setBigUint64(1, BigInt(xAxis))
-		view.setBigUint64(2 + 8 * 8, BigInt(yAxis))
+		view.setUint16(1, xAxis)
+		view.setUint16(1 + 2, yAxis)
 		
 		return callback(buf);
 	};
