@@ -1,55 +1,6 @@
 version: '3'
 
 tasks:
-  build-front:
-    dir: frontend
-    cmds:
-      - pnpm install
-      - pnpm run build
-    desc: Build the frontend
-  build:
-    deps: [build-front]
-    cmds:
-      - wails build -s -platform=windows/amd64,windows/arm64,linux/amd64,linux/arm64
-    desc: Build the application for all platforms
-  build-win:
-    deps: [build-front]
-    cmds:
-      - wails build -s -platform=windows/amd64,windows/arm64
-    desc: Build the application for Windows
-  build-debug-win:
-    deps: [build-front]
-    cmds:
-      - wails build -debug -s -platform=windows/amd64,windows/arm64
-    desc: Build the debug application for Windows
-  build-linux:
-    deps: [build-front]
-    cmds:
-      - wails build -s -platform=linux/amd64,linux/arm64
-    desc: Build the application for Linux
-  build-debug-linux:
-    deps: [build-front]
-    cmds:
-      - wails build -debug -s -platform=linux/amd64,linux/arm64
-    desc: Build the debug application for Linux
-  build-linux-appimage:
-    cmds:
-      - wget https://github.com/linuxdeploy/linuxdeploy/releases/download/continuous/linuxdeploy-x86_64.AppImage
-      - chmod +x linuxdeploy-x86_64.AppImage
-      - wget -c "https://raw.githubusercontent.com/linuxdeploy/linuxdeploy-plugin-gtk/master/linuxdeploy-plugin-gtk.sh"
-      - chmod +x linuxdeploy-plugin-gtk.sh
-      - ./linuxdeploy-x86_64.AppImage --appdir AppDir --desktop-file assets/LibreRemotePlay.desktop --executable build/bin/LibreRemotePlay-linux-amd64 --plugin gtk -i assets/remotecontroller.png -d assets/LibreRemotePlay.desktop --output appimage
-    desc: Build AppImage for Linux based on previously generated binaries 
-  build-wasm-front-linux:
-    dir: frontend/static/wasm
-    cmds:
-      - GOOS=js GOARCH=wasm go build -o signal.wasm
-    desc: Build the frontend wasm for Linux
-  build-wasm-front-win:
-    dir: frontend/static/wasm
-    cmds:
-      - powershell.exe -Command { $env:GOOS="js";$env:GOARCH="wasm"; go build -o signal.wasm }
-    desc: Build the frontend wasm for Windows
   dev-all:
     deps: [build-front]
     cmds:
@@ -57,13 +8,80 @@ tasks:
     desc: Run the application in development mode
   dev-front:
     dir: frontend
-    deps: [build-front]
+    deps: [install-front]
     cmds:
       - pnpm run dev
     desc: Run the frontend in development mode
+  build:
+    deps: [build-front]
+    cmds:
+      - wails build -s -platform=windows/amd64,linux/amd64
+    desc: Build the application for all platforms
+  build-win:
+    deps: [build-front]
+    cmds:
+      - wails build -s -platform=windows/amd64
+    desc: Build the application for Windows
+  build-debug-win:
+    deps: [build-front]
+    cmds:
+      - wails build -debug -s -platform=windows/amd64
+    desc: Build the debug application for Windows
+  build-linux:
+    deps: [build-front]
+    cmds:
+      - wails build -s -platform=linux/amd64
+    desc: Build the application for Linux
+  build-debug-linux:
+    deps: [build-front]
+    cmds:
+      - wails build -debug -s -platform=linux/amd64
+    desc: Build the debug application for Linux
+  build-linux-appimage:
+    deps: [build-linux]
+    cmds:
+      - wget https://github.com/linuxdeploy/linuxdeploy/releases/download/continuous/linuxdeploy-x86_64.AppImage
+      - chmod +x linuxdeploy-x86_64.AppImage
+      - wget -c "https://raw.githubusercontent.com/linuxdeploy/linuxdeploy-plugin-gtk/master/linuxdeploy-plugin-gtk.sh"
+      - chmod +x linuxdeploy-plugin-gtk.sh
+      - ./linuxdeploy-x86_64.AppImage --appdir AppDir --desktop-file assets/LibreRemotePlay.desktop --executable build/bin/LibreRemotePlay --plugin gtk -i assets/remotecontroller.png -d assets/LibreRemotePlay.desktop --output appimage
+    desc: (Experimental) Build AppImage for Linux based on previously generated binaries (wget required)
+  build-wasm-front:
+    dir: frontend/static/wasm
+    env: 
+      GOOS: js
+      GOARCH: wasm
+    cmds:
+      - go build -o signal.wasm
+    desc: Build the frontend wasm
+    sources:
+      - signal.wasm
   test:
     desc: Run E2E tests
     dir: frontend
     deps: [dev-all]
     cmds:
       - pnpm run test
+  install-front:
+    dir: frontend
+    cmds:
+      - pnpm install
+    sources:
+      - package.json
+    status:
+      - test -d node_modules
+  build-front:
+    deps: [install-front, build-wasm-front]
+    dir: frontend
+    cmds:
+      - pnpm run build
+    sources:
+        - src/**/*.js
+        - src/**/*.ts
+        - src/**/*.svelte
+        - src/**/*.json
+        - vite.config.ts
+        - svelte.config.js
+        - tailwind.config.js
+        - package.json
+    desc: Build the frontend

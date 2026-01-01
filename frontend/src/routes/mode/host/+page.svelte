@@ -11,8 +11,10 @@
 	} from '$lib/easy_connect/easy_connect.svelte';
 	import { onMount } from 'svelte';
 	import ConnectionOptions from '$lib/webrtc/ConnectionOptions.svelte';
+	import Modal, { openModal } from '$lib/layout/Modal.svelte';
 
-	let code = $state('');
+	let hostCode = $state('')
+	let clientCode = $state('');
 	let generatedCode = $state(false);
 
 	onMount(() => {
@@ -21,19 +23,39 @@
 	});
 
 	async function handleConnectToClient() {
-		if (code.length < 1) {
+		if (clientCode.length < 1) {
 			showToast($_('code-is-empty'), ToastType.ERROR);
 			return;
 		}
 
 		try {
-			await CreateHost({ clientCode: code, easyConnect: false });
+			const code = await CreateHost({ clientCode, easyConnect: false });
+			hostCode = code ?? ""
 			generatedCode = true;
+			openModal()
 		} catch {
 			generatedCode = false;
 		}
 	}
+
+	async function copyCodeToClipboard() {
+		try {
+			await navigator.clipboard.writeText(hostCode)
+			showToast($_('client-code-copied-to-clipboard'), ToastType.SUCCESS);
+		} catch {
+			showToast($_('error-copying-client-code-to-clipboard'), ToastType.ERROR);
+		}
+	}
+
 </script>
+
+<Modal>
+	<p class="text-xl">Did lost your code?</p>
+	<div class="flex gap-2">
+		<button onclick={copyCodeToClipboard} class="btn btn-primary">Copy to clipboard</button>
+		<button class="btn btn-neutral">Close</button>
+	</div>
+</Modal>
 
 <h2 class="text-center text-white text-[clamp(2rem,6vw,4.2rem)] font-black leading-[1.1] xl:text-left">
 		{$_('host_card_title')}
@@ -148,7 +170,7 @@
 									class="input input-bordered w-full max-w-xs"
 									placeholder={$_('paste-here-code')}
 									required
-									bind:value={code}
+									bind:value={clientCode}
 								/>
 								<button
 									disabled={generatedCode}

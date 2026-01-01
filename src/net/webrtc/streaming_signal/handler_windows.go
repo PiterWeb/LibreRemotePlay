@@ -4,7 +4,7 @@ import (
 	"context"
 	"log"
 
-	"github.com/pion/webrtc/v3"
+	"github.com/pion/webrtc/v4"
 	"github.com/wailsapp/wails/v2/pkg/runtime"
 )
 
@@ -14,13 +14,23 @@ func HandleStreamingSignal(ctx context.Context, streamingSignalChannel *webrtc.D
 		return
 	}
 
+	go handleWhipOffer(streamingSignalChannel)
+
 	streamingSignalChannel.OnMessage(func(msg webrtc.DataChannelMessage) {
 
-		runtime.EventsEmit(ctx, "streaming-signal-client", string(msg.Data))
+		if WhipConfig.Enabled.IsEnabled() {
+			handleWhipAnswer(msg.Data)
+		} else {
+			runtime.EventsEmit(ctx, "streaming-signal-client", string(msg.Data))
+		}
 
 	})
 
-	runtime.EventsOn(ctx, "streaming-signal-server", func(data ...interface{}) {
+	runtime.EventsOn(ctx, "streaming-signal-server", func(data ...any) {
+
+		if WhipConfig.Enabled.IsEnabled() {
+			return
+		}
 
 		if len(data) == 0 {
 			return

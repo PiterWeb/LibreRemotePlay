@@ -3,8 +3,9 @@ package oninit
 import (
 	"embed"
 	"log"
-
+	"net/http"
 	LRPSignals "github.com/PiterWeb/LibreRemotePlaySignals/v1"
+	net_http "github.com/PiterWeb/RemoteController/src/net/http"
 	"github.com/PiterWeb/RemoteController/src/devices/gamepad"
 )
 
@@ -15,16 +16,34 @@ func Execute(assets embed.FS) error {
 		return err
 	}
 
-	easyConnectPort := uint16(8081)
+	httpServerMux := http.NewServeMux()
+
 	ips_channel := make(chan []string, 1)
-	defer close(ips_channel)
+	errChan := make(chan error, 2)
 
-	log.Println("Easy Connect Server started on port 8081")
-	options := LRPSignals.ServerOptions{
-		Port: easyConnectPort,
-	}
-	err = LRPSignals.InitServer(options, ips_channel)
+	go func() {
+		err := net_http.InitHTTPAssets(httpServerMux, assets)
 
-	return err
+		if err != nil {
+			errChan <- err
+		}
+	}()
+
+	easyConnectPort := uint16(8081)
+	
+	go func() {
+
+		options := LRPSignals.ServerOptions{
+			Port: easyConnectPort,
+		}
+		
+		log.Println("Easy Connect Server started on port 8081")
+		err := LRPSignals.InitServer(options, ips_channel)
+		if err != nil {
+			errChan <- err
+		}
+	}()
+
+	return <-errChan
 
 }

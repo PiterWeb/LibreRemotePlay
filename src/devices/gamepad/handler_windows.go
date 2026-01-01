@@ -4,8 +4,8 @@ import (
 	"log"
 	"time"
 
-	"github.com/pion/webrtc/v3"
-	"github.com/json-iterator/go"
+	jsoniter "github.com/json-iterator/go"
+	"github.com/pion/webrtc/v4"
 )
 
 var buttonValueToHexMap = map[int]uint16{
@@ -62,7 +62,7 @@ func HandleGamepad(gamepadChannel *webrtc.DataChannel) {
 	})
 
 	var pad GamepadAPIXState
-	
+
 	// Update the virtual device
 	gamepadChannel.OnMessage(func(msg webrtc.DataChannelMessage) {
 
@@ -81,7 +81,7 @@ func HandleGamepad(gamepadChannel *webrtc.DataChannel) {
 func gamepadAPIXToXInput(gms GamepadAPIXState) XInputState {
 
 	return XInputState{
-		ID:        ID(gms.Index),
+		ID: ID(gms.Index),
 		// Connected: gms.Connected,
 		Connected: true,
 		Packet:    uint32(time.Now().Nanosecond()), // Different values trigger update
