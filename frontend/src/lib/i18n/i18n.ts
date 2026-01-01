@@ -16,7 +16,8 @@ init({
 })
 
 export function getLocaleFromLocalStorage() {
-	return localStorage.getItem('locale')
+	const locale_stored = localStorage.getItem('locale')
+	return locale_stored
 }
 
 function saveLocaleToLocalStorage(locale: string) {

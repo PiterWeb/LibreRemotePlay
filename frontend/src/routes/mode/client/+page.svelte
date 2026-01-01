@@ -1,4 +1,4 @@
-<script lang="ts">
+<script>
 	import { CreateClientWeb, ConnectToHostWeb } from '$lib/webrtc/client_webrtc_hook';
 
 	import {
@@ -12,10 +12,8 @@
 	import { _ } from 'svelte-i18n';
 	import { onMount } from 'svelte';
 	import ConnectionOptions from '$lib/webrtc/ConnectionOptions.svelte';
-	import Modal, {openModal} from '$lib/layout/Modal.svelte';
 
-	let hostCode = $state('');
-	let clientCode = $state('')
+	let code = $state('');
 	let clientCreated = $state(false);
 
 	onMount(() => {
@@ -24,39 +22,19 @@
 	});
 
 	function handleConnectToHost() {
-		if (hostCode.length < 1) {
+		if (code.length < 1) {
 			showToast($_('code-is-empty'), ToastType.ERROR);
 			return;
 		}
 
-		ConnectToHostWeb(hostCode);
+		ConnectToHostWeb(code);
 	}
 
 	async function handleCreateClient() {
-		const code = await CreateClientWeb({ easyConnect: false });
+		await CreateClientWeb({ easyConnect: false });
 		clientCreated = true;
-		clientCode = code ?? ""
-		openModal()
-
-	}
-
-	async function copyCodeToClipboard() {
-		try {
-			await navigator.clipboard.writeText(clientCode)
-			showToast($_('client-code-copied-to-clipboard'), ToastType.SUCCESS);
-		} catch {
-			showToast($_('error-copying-client-code-to-clipboard'), ToastType.ERROR);
-		}
 	}
 </script>
-
-<Modal>
-	<p class="text-xl">{$_('lost-code-modal-title')}</p>
-	<div class="flex gap-2">
-		<button onclick={copyCodeToClipboard} class="btn btn-primary">{$_('lost-code-modal-copy')}</button>
-		<button class="btn btn-neutral">{$_('lost-code-modal-close')}</button>
-	</div>
-</Modal>
 
 <h2 class="text-center text-white text-[clamp(2rem,6vw,4.2rem)] font-black leading-[1.1] xl:text-left">
 		{$_('client_card_title')}
@@ -192,7 +170,7 @@
 									type="text"
 									placeholder="Paste here code"
 									class="input input-bordered w-full max-w-xs"
-									bind:value={hostCode}
+									bind:value={code}
 								/>
 								<button id="connect-to-host" onclick={handleConnectToHost} class="btn btn-primary"
 									>{$_('connect-to-host')}</button

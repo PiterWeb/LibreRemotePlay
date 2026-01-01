@@ -7,18 +7,16 @@ import (
 	"strings"
 
 	// "github.com/PiterWeb/RemoteController/src/plugins"
-	// "github.com/PiterWeb/RemoteController/src/devices/audio"
 	"github.com/PiterWeb/RemoteController/src/devices/gamepad"
 	"github.com/PiterWeb/RemoteController/src/devices/keyboard"
-	"github.com/PiterWeb/RemoteController/src/devices/mouse"
 	"github.com/PiterWeb/RemoteController/src/net/webrtc/streaming_signal"
-	"github.com/pion/webrtc/v4"
+	"github.com/pion/webrtc/v3"
 	"github.com/wailsapp/wails/v2/pkg/runtime"
 )
 
 var defaultSTUNServers = []string{"stun:stun.l.google.com:19305", "stun:stun.l.google.com:19302", "stun:stun.ipfire.org:3478"}
 
-func InitHost(ctx context.Context, ICEServers []webrtc.ICEServer, offerEncodedWithCandidates string, answerResponse chan<- string, triggerEnd <-chan struct{}, pidChan <-chan uint32) {
+func InitHost(ctx context.Context, ICEServers []webrtc.ICEServer, offerEncodedWithCandidates string, answerResponse chan<- string, triggerEnd <-chan struct{}) {
 
 	candidates := []webrtc.ICECandidateInit{}
 
@@ -30,23 +28,18 @@ func InitHost(ctx context.Context, ICEServers []webrtc.ICEServer, offerEncodedWi
 		}
 	}
 
-	streaming_signal.WhipConfig.ICEServers.Store(&ICEServers)
-
 	// Prepare the configuration
 	config := webrtc.Configuration{
 		ICEServers: ICEServers,
 	}
 
-	closedConnChan := make(chan struct{})
-
 	defer func() {
 		if err := recover(); err != nil {
-			answerResponse <- "ERROR"
-			closedConnChan <- struct{}{}
+			answerResponse <- "Error"
 		}
 	}()
 
-	peerConnection, err := webrtc.NewPeerConnection(config)
+	peerConnection, err := webrtc.NewAPI().NewPeerConnection(config)
 	if err != nil {
 		return
 	}
@@ -57,17 +50,6 @@ func InitHost(ctx context.Context, ICEServers []webrtc.ICEServer, offerEncodedWi
 		}
 	}()
 
-	// audioTrack, err := webrtc.NewTrackLocalStaticSample(webrtc.RTPCodecCapability{MimeType: webrtc.MimeTypePCMA, Channels: 2}, "audio", "app-audio")
-
-	// if err != nil {
-	// 	panic(err)
-	// } else if _, err := peerConnection.AddTrack(audioTrack); err != nil {
-	// 	panic(err)
-	// }
-
-	// Defer close of the wails signaling channel
-	defer runtime.EventsOff(ctx, "streaming-signal-server")
-
 	// Reload plugins in case a new plugin was added or configuration changed
 	// plugins.ReloadPlugins()
 
@@ -77,7 +59,6 @@ func InitHost(ctx context.Context, ICEServers []webrtc.ICEServer, offerEncodedWi
 		gamepad.HandleGamepad(d)
 		streaming_signal.HandleStreamingSignal(ctx, d)
 		keyboard.HandleKeyboard(d)
-		mouse.HandleMouse(d)
 		// plugins.HandleServerPlugins(d)
 
 	})
@@ -101,14 +82,9 @@ func InitHost(ctx context.Context, ICEServers []webrtc.ICEServer, offerEncodedWi
 		runtime.EventsEmit(ctx, "connection_state", s.String())
 
 		if s == webrtc.PeerConnectionStateFailed {
-			closedConnChan <- struct{}{}
 
 			peerConnection.Close()
 
-		}
-
-		if s == webrtc.PeerConnectionStateClosed {
-			closedConnChan <- struct{}{}
 		}
 	})
 
@@ -144,33 +120,10 @@ func InitHost(ctx context.Context, ICEServers []webrtc.ICEServer, offerEncodedWi
 		panic(err)
 	}
 
-	// var audioCtx context.Context
-	var cancelAudioCtx context.CancelFunc = func() {}
+	// Block until cancel by user
+	<-triggerEnd
 
-	for {
-		select {
-		case pid := <-pidChan:
-			log.Printf("Audio pid: %d\n", pid)
-			cancelAudioCtx()
-			// Pid value to not stream audio
-			if pid == 0 {
-				continue
-			}
-			// audioCtx, cancelAudioCtx = context.WithCancel(context.WithValue(context.Background(), "pid", pid))
-			go func() {
-				// if err := audio.HandleAudio(audioCtx, audioTrack); err != nil {
-				// 	log.Println(err)
-				// }
-			}()
-		case <-triggerEnd: // Block until cancel by user
-			answerResponse <- "ERROR"
-			cancelAudioCtx()
-			return
-		case <-closedConnChan: // Block until failed/clossed peerconnection
-			answerResponse <- "ERROR"
-			cancelAudioCtx()
-			return
-		}
-	}
+	// Close the signaling channel
+	runtime.EventsOff(ctx, "streaming-signal-server")
 
 }

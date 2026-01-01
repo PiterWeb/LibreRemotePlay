@@ -6,8 +6,8 @@ import (
 	"log"
 
 	"github.com/jbdemonte/virtual-device/gamepad"
-	jsoniter "github.com/json-iterator/go"
-	"github.com/pion/webrtc/v4"
+	"github.com/json-iterator/go"
+	"github.com/pion/webrtc/v3"
 )
 
 func HandleGamepad(gamepadChannel *webrtc.DataChannel) {
@@ -42,7 +42,7 @@ func HandleGamepad(gamepadChannel *webrtc.DataChannel) {
 	}()
 
 	var lastPad GamepadAPIXState
-
+	
 	// Update the virtual device
 	gamepadChannel.OnMessage(func(msg webrtc.DataChannelMessage) {
 
@@ -51,9 +51,9 @@ func HandleGamepad(gamepadChannel *webrtc.DataChannel) {
 		}
 
 		var actualPad GamepadAPIXState
-
+		
 		err := jsoniter.ConfigFastest.Unmarshal(msg.Data, &actualPad)
-
+		
 		if err != nil {
 			log.Println(err)
 			return

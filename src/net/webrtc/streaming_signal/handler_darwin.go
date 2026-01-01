@@ -3,7 +3,7 @@ package streaming_signal
 import (
 	"context"
 
-	"github.com/pion/webrtc/v4"
+	"github.com/pion/webrtc/v3"
 )
 
 func HandleStreamingSignal(ctx context.Context, streamingSignalChannel *webrtc.DataChannel) {

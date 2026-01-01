@@ -2,7 +2,6 @@ import { browser } from '$app/environment'
 import log from '$lib/logger/logger'
 
 export enum FIXED_RESOLUTIONS {
-	resolutionNative = "Native",
 	resolution1080p = "1080",
 	resolution720p = "720",
 	resolution480p = "480",
@@ -16,13 +15,13 @@ RESOLUTIONS.set(FIXED_RESOLUTIONS.resolution720p,{width: 1280, height: 720})
 RESOLUTIONS.set(FIXED_RESOLUTIONS.resolution480p, {width:854, height: 480})
 RESOLUTIONS.set(FIXED_RESOLUTIONS.resolution360p, {width: 640, height:360})
 
-export const DEFAULT_MAX_FRAMERATE = 75
-export const DEFAULT_IDEAL_FRAMERATE = 60
+export const DEFAULT_MAX_FRAMERATE = 60
+export const DEFAULT_IDEAL_FRAMERATE = 30
 
 export const MIN_FRAMES = 25
 export const MAX_FRAMES = 145
 
-const DEFAULT_PREFERED_CODECS = ["video/AV1","video/H264","video/VP9","video/VP8"]
+const DEFAULT_PREFERED_CODECS = ["video/VP9","video/AV1","video/H264", "video/VP8"]
 
 export const preferedCodecsOrdered = $state({value: getStoredPreferedCodecsOrdered()})
 
@@ -75,5 +74,3 @@ export function getSortedVideoCodecs() {
 	  return orderA - orderB;
 	});
 }
-
-export const videoSpeedOptimizationEnabled = $state({value: false})

@@ -18,14 +18,11 @@ import { getConsumingStream, setConsumingStream } from './stream/stream_signal_h
 import Bowser from 'bowser';
 import log from '$lib/logger/logger';
 import LANMode from './lan_mode.svelte';
-import { videoSpeedOptimizationEnabled } from './stream/stream_config.svelte';
-import { handleClick, handleMove, unhandleClick, unhandleMove } from '$lib/mouse/mouse_hook';
 
 enum DataChannelLabel {
 	StreamingSignal = 'streaming-signal',
 	Controller = 'controller',
-	Keyboard = 'keyboard',
-	Mouse = 'mouse'
+	Keyboard = 'keyboard'
 }
 
 interface CreateClientWebOptions {
@@ -143,14 +140,11 @@ async function CreateClientWeb(options: CreateClientWebOptions) {
 		return;
 	}
 
-	// handleStreamAudio(peerConnection)
-	
 	peerConnection.onconnectionstatechange = handleConnectionState;
 
 	const controllerChannel = peerConnection.createDataChannel(DataChannelLabel.Controller);
 	const streamingSignalChannel = peerConnection.createDataChannel(DataChannelLabel.StreamingSignal);
 	const keyboardChannel = peerConnection.createDataChannel(DataChannelLabel.Keyboard);
-  const mouseChannel = peerConnection.createDataChannel(DataChannelLabel.Mouse);
 
 	peerConnection.ondatachannel = (ev) => {
 		const channel = ev.channel;
@@ -184,36 +178,15 @@ async function CreateClientWeb(options: CreateClientWebOptions) {
 		unhandleKeyDown(keyDownHandler);
 		unhandleKeyUp(keyUpHandler);
 	};
-	
-	let clickHandler: ReturnType<typeof handleClick>;
-  let moveHandler: ReturnType<typeof handleMove>;
-	
-	mouseChannel.onopen = () => {
-	
-    const sendMouseData = (output: ArrayBuffer) => {
-      mouseChannel.send(output)
-  	};
-    
-    clickHandler = handleClick(sendMouseData)
-    moveHandler = handleMove(sendMouseData)
-	
-	}
-	
-	mouseChannel.onclose = () => {
-    unhandleClick(clickHandler)
-	  unhandleMove(moveHandler)
-	}
 
 	controllerChannel.onopen = () => {
 		handleGamepad(controllerChannel);
 	};
 
-	let intervalSignalChannel: NodeJS.Timeout
-
 	streamingSignalChannel.onopen = () => {
 		let activeStream = false;
 
-		intervalSignalChannel = setInterval(() => {
+		setInterval(() => {
 			if (!getConsumingStream() && activeStream) {
 				activeStream = false;
 				CloseStreamClientConnection();
@@ -231,13 +204,12 @@ async function CreateClientWeb(options: CreateClientWebOptions) {
 			}
 
 			setConsumingStream(true);
-			CreateClientStream(streamingSignalChannel, videoElement, videoSpeedOptimizationEnabled.value);
+			CreateClientStream(streamingSignalChannel, videoElement);
 		}, 500);
 	};
 
 	streamingSignalChannel.onclose = () => {
 		CloseStreamClientConnection();
-        clearInterval(intervalSignalChannel);
 	};
 
 	return await createClientCode({ clipboard: !easyConnect });
@@ -305,30 +277,6 @@ function handleConnectionState() {
 			break;
 	}
 }
-
-// function handleStreamAudio(pc: RTCPeerConnection) {
-  
-//     pc.addTransceiver('audio', {direction: 'recvonly'})
-    
-//     let inboundStream: MediaStream;
-    
-//     const audioElement = document.getElementById("stream-audio") as HTMLAudioElement
-    
-//     pc.addEventListener("track", (ev) => {
-//       if (ev.streams && ev.streams[0]) {
-// 			audioElement.srcObject = ev.streams[0];
-// 			audioElement.play();
-//   		} else {
-//   			if (!inboundStream) {
-//   				inboundStream = new MediaStream();
-//   				audioElement.srcObject = inboundStream;
-//   				audioElement.play();
-//   			}
-//   			inboundStream.addTrack(ev.track);
-//   		}
-//     })
-  
-// } 
 
 // Function WASM (GOLANG)
 function signalEncode<T>(signal: T): string {

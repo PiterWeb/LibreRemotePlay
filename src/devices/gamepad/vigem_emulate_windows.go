@@ -63,7 +63,7 @@ func UpdateVirtualDevice(device EmulatedDevice, rg GamepadAPIXState, virtualStat
 
 	realState := gamepadAPIXToXInput(rg)
 
-	realState.toXInput(virtualState)
+	realState.ToXInput(virtualState)
 
 	// Update the virtual gamepad
 	vigem_target_x360_update_proc.Call(uintptr(device.client), device.pad, uintptr(unsafe.Pointer(&virtualState.Gamepad)))
@@ -117,7 +117,7 @@ func FreeTargetAndDisconnect(device EmulatedDevice) {
 
 }
 
-func (gamepad *_ViGEm_GAMEPAD) updateFromRawState(state RawControls) {
+func (gamepad *_ViGEm_GAMEPAD) UpdateFromRawState(state RawControls) {
 
 	gamepad.wButtons = WORD(state.Buttons)
 	gamepad.bLeftTrigger = BYTE(state.LeftTrigger)

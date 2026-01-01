@@ -4,7 +4,7 @@
 	import Tooltip from '$lib/layout/Tooltip.svelte';
 </script>
 
-<Tooltip ref="label-lan-mode-checkbox" placement="left">
+<Tooltip ref="label-lan-mode-checkbox" placement="bottom">
     <p>{$_('lan-mode-explanation')}</p>
 </Tooltip>
 

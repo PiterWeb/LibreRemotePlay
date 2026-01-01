@@ -4,6 +4,13 @@ import (
 	"sync/atomic"
 )
 
+type DeviceEnabledI interface {
+	Toogle()
+	IsEnabled() bool
+	Enable() *DeviceEnabled
+	Disable() *DeviceEnabled
+}
+
 type DeviceEnabled struct {
 	enabled atomic.Bool
 }

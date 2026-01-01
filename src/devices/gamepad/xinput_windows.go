@@ -25,10 +25,10 @@ type RawControls struct {
 	ThumbRY      int16
 }
 
-func (state XInputState) toXInput(virtualState *ViGEmState) {
+func (state XInputState) ToXInput(virtualState *ViGEmState) {
 
 	virtualState.DwPacketNumber = uint32(state.Packet)
-	virtualState.Gamepad.updateFromRawState(state.Raw)
+	virtualState.Gamepad.UpdateFromRawState(state.Raw)
 }
 
 func (state *XInputState) Pressed(button Button) bool { return state.Raw.Buttons&button != 0 }

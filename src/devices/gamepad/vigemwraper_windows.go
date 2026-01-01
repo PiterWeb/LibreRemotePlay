@@ -1,7 +1,6 @@
 package gamepad
 
 import (
-	"errors"
 	"os"
 	"os/exec"
 	"strconv"
@@ -90,13 +89,9 @@ func InitViGEm() error {
 	vigem_target_free_proc = vigemDLL.NewProc("vigem_target_free")
 	vigem_target_x360_update_proc = vigemDLL.NewProc("vigem_target_x360_update")
 
-	instalationSucessFile, err := os.Create("./" + ViGEm_INSTALATION_SUCESS_FILE_NAME)
-
-	if err != nil {
+	if _, err = os.Create("./" + ViGEm_INSTALATION_SUCESS_FILE_NAME); err != nil {
 		return err
 	}
-
-	instalationSucessFile.Close()
 
 	return nil
 
@@ -133,13 +128,9 @@ func VIGEM_SUCCESS(val uintptr) bool {
 	return val == uintptr(VIGEM_ERROR_NONE)
 }
 
-func CloseViGEmDLL() error {
+func CloseViGEmDLL() {
 
-	if vigemDLL == nil {
-		return errors.New("vigem not loaded")
-	}
-
-	return syscall.FreeLibrary(syscall.Handle(vigemDLL.Handle()))
+	syscall.FreeLibrary(syscall.Handle(vigemDLL.Handle()))
 
 }
 

@@ -100,9 +100,6 @@ function isError(err: string) {
 	return err.toUpperCase().includes('ERROR');
 }
 
-//@ts-expect-error Override window object property to use in debug mode from console
-window.CloseHostConnection = CloseHostConnection
-
 export function CloseHostConnection(fn?: () => void) {
 	if (!host) return;
 	closeConnectionFn();

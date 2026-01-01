@@ -7,22 +7,9 @@ import (
 	"io/fs"
 	"net/http"
 	"strings"
-
-	"github.com/PiterWeb/RemoteController/src/cli"
 )
 
-func InitHTTPAssets(serverMux *http.ServeMux, assets embed.FS) error {
-
-	config := cli.GetConfig()
-	clientPort := config.GetHTTPPort()
-
-	var addr string
-
-	if config.GetNetworkVisible() {
-		addr = fmt.Sprintf("0.0.0.0:%d", clientPort)
-	} else {
-		addr = fmt.Sprintf("127.0.0.1:%d", clientPort)
-	}
+func InitHTTPAssets(serverMux *http.ServeMux, clientPort int, assets embed.FS) error {
 
 	staticFS, err := fs.Sub(assets, "frontend/build")
 
@@ -34,7 +21,7 @@ func InitHTTPAssets(serverMux *http.ServeMux, assets embed.FS) error {
 
 	httpServer := &http.Server{
 		Handler: serverMux,
-		Addr:    addr,
+		Addr:    fmt.Sprintf("127.0.0.1:%d", clientPort),
 	}
 
 	err = httpServer.ListenAndServe()
