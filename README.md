@@ -1,4 +1,4 @@
-![LibreRemotePlay logo banner](https://github.com/user-attachments/assets/9173246d-1d65-4f29-bd79-0206250c538c)
+![LibreRemotePlay logo banner](./assets/libreremoteplaybanner.webp)
 
 [![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/PiterWeb/LibreRemotePlay)
 
@@ -6,6 +6,10 @@
 
 > [!IMPORTANT]  
 > The software for the moment is very experimental, may not always work an all systems. If you find a bug you can report it on issues page or discord.
+
+> [!NOTE]  
+> If you are interested in contributing (code/translations) you can follow [this guide](./CONTRIBUTING.md)
+
 
 ### An open source, free (as in freedom) and P2P alternative to Steam Remote Play
 
@@ -16,6 +20,8 @@
 - Discord Community 👥: https://discord.gg/v7qd7nU3fJ
 
 - Series of WebRTC Articles 👨‍💻: https://dev.to/piterweb/series/30718
+  
+- Codeberg Mirror 🗃️: https://codeberg.org/PiterWeb/LibreRemotePlay 
 
 ## Use cases ✨
 
@@ -29,7 +35,7 @@
 ## Resources 📚
 
 - [Docs](./docs/) 📘
-- [Linux Docs](./docs/LINUX.md) 📘
+- [Linux Docs](https://github.com/PiterWeb/LibreRemotePlay/wiki/installation-&-execution#execute-in-linux) 📘
 - [Wiki](https://github.com/PiterWeb/LibreRemotePlay/wiki) (Guides, FAQ, ...)
 - [Discord Community](https://discord.gg/v7qd7nU3fJ)
 
@@ -42,18 +48,25 @@ https://github.com/user-attachments/assets/f4a412fa-f403-4429-85fb-9c1e74bff458
 
 ## Features 🧩
 
-- [x] Portable
-- [x] Simple & Modern UI
-- [x] Interactive Tutorial
-- [x] Peer-to-Peer (WebRTC)
+- [x] FOSS (Free & Open Source Software)
+- [x] Gamepad support (See the table below) 
+- [x] Portable (No installations needed)
+- [x] Privacy-friendly (No data collected in APP / Client website)
+- [x] Based on Europe: Developed mainly by me (PiterWeb) from Spain
+- [x] Simple & modern UI
+- [x] Includes an interactive tour through the application
+- [x] Peer to Peer connections (WebRTC)
+- [x] LAN mode (It is not necessary to use the Internet) 
 - [ ] Groups
 - [x] Remote Video Streaming
-  - [x] Video Quality Config 
-- [x] Browser Client
-- [x] Localization (translation to multiple languages)
-- [x] Support for custom STUN & TURN servers
-- [x] Keyboard (Experimental)
-- [x] Toogle Devices
+  - [x] Stream video quality Config (Codecs, FPS, resolution)
+  - [ ] WHIP streaming compatibility (Stream your screen using: Gstreamer, OBS, ...)
+- [x] Client role works on browser
+- [x] Translated to multiple languages
+- [x] You can customize the STUN & TURN servers
+- [x] Keyboard support (Experimental)
+- [ ] Mouse support
+- [x] Toogle gamepad/keyboard access
 - [x] [EasyConnect](https://github.com/PiterWeb/LibreRemotePlayEasyConnectServer) 
 
 ### OS Support 💻
@@ -162,6 +175,14 @@ These projects are making LibreRemotePlay a reality.
 
 ## Did you like the project 👍 ?
 You can give us a star and join our [Discord Community](https://discord.gg/v7qd7nU3fJ), the project is always looking for feedback :)
+
+## Are you interested in other gaming projects 🤔? 
+
+<br/>
+<img width="128" height="128" alt="logo of gamelinksafe cli" src="https://github.com/user-attachments/assets/615bfb59-7f1c-4e9d-8e84-c9368e92f2f7" />
+
+You may be interested in [GameLinkSafeCLI](https://github.com/PiterWeb/GameLinkSafeCLI) is like ngrok but works with TCP/UDP without account and no need to self-host in normal enviroments. 
+Can be used like a hamachi alternative for gamers who are familiar with CLIs.
 
 ## Star History
 Here you can see how fast the community is growing

@@ -4,38 +4,65 @@ package bindings
 
 import (
 	"context"
+	"embed"
 	"log"
 	"strings"
 	"sync"
 
 	"runtime"
 
+	"github.com/PiterWeb/RemoteController/src/devices/audio"
 	"github.com/PiterWeb/RemoteController/src/devices/gamepad"
 	"github.com/PiterWeb/RemoteController/src/devices/keyboard"
+	"github.com/PiterWeb/RemoteController/src/devices/mouse"
 	net "github.com/PiterWeb/RemoteController/src/net/webrtc"
-	"github.com/pion/webrtc/v3"
+	"github.com/PiterWeb/RemoteController/src/net/webrtc/streaming_signal"
+	"github.com/PiterWeb/RemoteController/src/onfinish"
+	"github.com/PiterWeb/RemoteController/src/oninit"
+	"github.com/pion/webrtc/v4"
 	wailsRuntime "github.com/wailsapp/wails/v2/pkg/runtime"
 )
 
 var triggerEnd chan struct{} = make(chan struct{})
+var pidAudioChan chan uint32 = make(chan uint32)
 
 var openPeer bool = false
 var openPeerMutex sync.Mutex
 
 // App struct
 type App struct {
-	ctx context.Context
+	ctx    context.Context
+	assets embed.FS
 }
 
 // NewApp creates a new App application struct
-func NewApp() *App {
-	return &App{}
+func NewApp(assets embed.FS) *App {
+	return &App{
+		ctx:    context.Background(),
+		assets: assets,
+	}
 }
 
 // Startup is called at application Startup
 func (a *App) Startup(ctx context.Context) {
 	// Perform your setup here
+
+	go func() {
+
+		if err := oninit.Execute(a.assets); err != nil {
+			log.Println(err)
+		}
+
+	}()
+	
+	go func () {
+		if err := streaming_signal.InitWhipServer(streaming_signal.WhipConfig); err != nil {
+			log.Println(err)
+		}
+	}()
+
 	a.ctx = ctx
+
 }
 
 // BeforeClose is called when the application is about to quit,
@@ -79,6 +106,9 @@ func (a *App) Shutdown(ctx context.Context) {
 	// Perform your teardown here
 	a.TryClosePeerConnection()
 	close(triggerEnd)
+	if err := onfinish.Execute(); err != nil {
+		log.Printf("Error onfinish: %s", err.Error())
+	}
 }
 
 func (a *App) NotifyCreateClient() {
@@ -111,25 +141,20 @@ func (a *App) TryCreateHost(ICEServers []webrtc.ICEServer, offerEncoded string) 
 
 	openPeer = true
 
-	defer func() {
-
-		if err := recover(); err != nil {
-
-			log.Println(err)
-
-			openPeerMutex.Lock()
-			defer openPeerMutex.Unlock()
-			openPeer = false
-			value = "ERROR"
-		}
-
-	}()
-
 	answerResponse := make(chan string)
 
-	go net.InitHost(a.ctx, ICEServers, offerEncoded, answerResponse, triggerEnd)
+	go net.InitHost(a.ctx, ICEServers, offerEncoded, answerResponse, triggerEnd, pidAudioChan)
 
-	return <-answerResponse
+	response := <-answerResponse
+
+	if strings.Contains(response, "ERROR") {
+		openPeerMutex.Lock()
+		defer openPeerMutex.Unlock()
+		openPeer = false
+		log.Println("Error on WebRTC host connection")
+	}
+
+	return response
 
 }
 
@@ -167,10 +192,34 @@ func (a *App) IsKeyboardEnabled() bool {
 	return keyboard.KeyboardEnabled.IsEnabled()
 }
 
+func (a *App) ToogleMouse() {
+	mouse.MouseEnabled.Toogle()
+}
+
+func (a *App) IsMouseEnabled() bool {
+	return mouse.MouseEnabled.IsEnabled()
+}
+
+func (a *App) ToogleWhip() {
+	streaming_signal.WhipConfig.Enabled.Toogle()
+}
+
+func (a *App) IsWhipEnabled() bool {
+	return streaming_signal.WhipConfig.Enabled.IsEnabled()
+}
+
 func (a *App) GetCurrentOS() string {
 	return strings.ToUpper(runtime.GOOS)
 }
 
 func (a *App) LogPrintln(info string) {
 	log.Println(info)
+}
+
+func (a *App) SetAudioPid(pid uint32) {
+	pidAudioChan <- pid
+}
+
+func (a *App) GetAudioProcess() []audio.AudioProcess {
+	return audio.GetAudioProcess()
 }

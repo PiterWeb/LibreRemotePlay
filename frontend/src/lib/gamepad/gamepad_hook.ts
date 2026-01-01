@@ -27,8 +27,20 @@ export function cloneGamepad(gamepad: Gamepad): ClonedGamepad {
 	};
 }
 
-export function handleGamepad(controllerChannel: RTCDataChannel) {
+export function handleGamepad(controllerChannel: RTCDataChannel, reduceBandwidth = true) {
+	
+	let channelEnd = false;
+	let skipGamepadIter = true;
+	
+	controllerChannel.addEventListener("close", () => {
+		channelEnd = true;
+	})
+	
 	const sendGamepadData = () => {
+		
+		skipGamepadIter = reduceBandwidth && !skipGamepadIter;
+		if (skipGamepadIter) return
+
 		const gamepadData = navigator.getGamepads();
 
 		gamepadData.forEach((gamepad) => {
@@ -41,6 +53,7 @@ export function handleGamepad(controllerChannel: RTCDataChannel) {
 
 	const gamepadLoop = () => {
 		sendGamepadData();
+	  if (channelEnd) return
 
 		// Continue the loop
 		requestAnimationFrame(gamepadLoop);

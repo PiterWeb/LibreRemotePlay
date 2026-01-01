@@ -1,3 +1,4 @@
+.task/
 build/
 /*.exe
 /*.dll

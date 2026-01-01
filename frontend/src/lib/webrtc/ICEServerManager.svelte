@@ -152,8 +152,8 @@
 	</form>
 </section>
 
-<section id="tutorial-group-server" class="m-12">
-	<ul>
+<section class="m-12">
+	<ul id="tutorial-group-server">
 		{#if Object.keys($servers).length === 0}
 			<p class="text-red-400 text-center text-lg font-medium my-auto h-full">
 				{$_('no_groups_warning')}

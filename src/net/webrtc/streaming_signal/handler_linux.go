@@ -5,7 +5,7 @@ import (
 	"log"
 
 	"github.com/coder/websocket"
-	"github.com/pion/webrtc/v3"
+	"github.com/pion/webrtc/v4"
 )
 
 func HandleStreamingSignal(ctx context.Context, streamingSignalChannel *webrtc.DataChannel) {
@@ -27,6 +27,8 @@ func HandleStreamingSignal(ctx context.Context, streamingSignalChannel *webrtc.D
 		}
 	}()
 
+	go handleWhipOffer(streamingSignalChannel)
+
 	go func() {
 
 		defer wsClient.Close(websocket.StatusInternalError, "Client terminated")
@@ -36,6 +38,10 @@ func HandleStreamingSignal(ctx context.Context, streamingSignalChannel *webrtc.D
 
 			if err != nil {
 				log.Println(err)
+				continue
+			}
+
+			if WhipConfig.Enabled.IsEnabled() {
 				continue
 			}
 
@@ -50,7 +56,11 @@ func HandleStreamingSignal(ctx context.Context, streamingSignalChannel *webrtc.D
 
 	streamingSignalChannel.OnMessage(func(msg webrtc.DataChannelMessage) {
 
-		wsClient.Write(context.Background(), websocket.MessageText, msg.Data)
+		if WhipConfig.Enabled.IsEnabled() {
+			handleWhipAnswer(msg.Data)
+		} else {
+			wsClient.Write(context.Background(), websocket.MessageText, msg.Data)
+		}
 
 	})
 

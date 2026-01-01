@@ -20,6 +20,9 @@ const config = {
 		}),
 		serviceWorker: {
 			register: false,
+		},
+		version: {
+      name: '1.0'
 		}
 	}
 };
