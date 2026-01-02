@@ -16,7 +16,7 @@
 	<StunServers />
 	<TurnServers />
 
-	<!-- <IsWindows> -->
+	<IsWindows>
 		<ViGEmDownload />
-	<!-- </IsWindows> -->
+	</IsWindows>
 </div>

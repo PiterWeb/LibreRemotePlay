@@ -1,19 +1,56 @@
 <script lang="ts">
-	import { CreateHostStream } from '$lib/webrtc/stream/host_stream_hook';
-	import { DEFAULT_IDEAL_FRAMERATE, DEFAULT_MAX_FRAMERATE, FIXED_RESOLUTIONS, MAX_FRAMES, MIN_FRAMES } from '$lib/webrtc/stream/stream_config.svelte';
+	import { CreateHostStream, StopStreaming } from '$lib/webrtc/stream/host_stream_hook';
+	import { DEFAULT_IDEAL_FRAMERATE, DEFAULT_MAX_FRAMERATE, FIXED_RESOLUTIONS, MAX_FRAMES, MIN_FRAMES, RESOLUTIONS } from '$lib/webrtc/stream/stream_config.svelte';
 	import { _ } from 'svelte-i18n';
 	import { streaming } from '$lib/webrtc/stream/stream_signal_hook.svelte';
 	import { ListenForConnectionChanges } from '$lib/webrtc/host_webrtc_hook';
 
 	import { onMount } from 'svelte';
+	import CodecList from '$lib/webrtc/stream/CodecList.svelte';
 	import IsLinux from '$lib/detection/IsLinux.svelte';
 	import KeyboardIcon from '$lib/layout/icons/KeyboardIcon.svelte';
 	import GamepadIcon from '$lib/layout/icons/GamepadIcon.svelte';
+	import type {audio} from "$lib/wailsjs/go/models"
+	import ws from '$lib/websocket/ws';
+	import { IS_RUNNING_EXTERNAL } from '$lib/detection/onwebsite';
+	import Tooltip from '$lib/layout/Tooltip.svelte';
+	import MouseIcon from '$lib/layout/icons/MouseIcon.svelte';
+	import IsRunningExternal from '$lib/detection/IsRunningExternal.svelte';
+	// import { GetAudioProcess, SetAudioPid } from '$lib/wailsjs/go/bindings/App';
+
+	let selected_audio_src = $state(0)
+	let audio_srcs = $state<audio.AudioProcess[]>([])
 
 	let selected_resolution = $state(FIXED_RESOLUTIONS.resolution720p);
 	
 	let idealFramerate = $state(DEFAULT_IDEAL_FRAMERATE);
 	let maxFramerate = $state(DEFAULT_MAX_FRAMERATE);
+
+	let canStartStreaming = $state(false); 
+
+	let timeoutSetAudioPid: NodeJS.Timeout;
+
+	$effect(() => {
+		// *** This is a hack needed to trigger the effect
+		selected_audio_src;
+		// ***
+		if (streaming.value) {
+			clearTimeout(timeoutSetAudioPid)
+			timeoutSetAudioPid = setTimeout(() => {
+				console.log("Selected audio :", selected_audio_src)
+				// SetAudioPid(selected_audio_src)
+			}, 750)
+		} else {
+			// SetAudioPid(0)
+		}
+	})
+
+	let whipEnabled = $state(false);
+
+	$effect(() => {
+		if (whipEnabled) streaming.value = true
+		else streaming.value = false
+	})
 
 	$effect(() => {
 	    if (idealFramerate > maxFramerate) idealFramerate = maxFramerate
@@ -27,10 +64,21 @@
 	
 	let keyboardEnabled = $state(false);
 	let gamepadEnabled = $state(true);
+	let mouseEnabled = $state(false);
 
 	function createStream() {
 		CreateHostStream(selected_resolution, idealFramerate, maxFramerate);
 		streaming.value = true;
+		canStartStreaming = false;
+	}
+
+	async function toogleWhip() {
+
+		const { IsWhipEnabled, ToogleWhip } = await import('$lib/wailsjs/go/bindings/App')
+		
+		await ToogleWhip()
+		whipEnabled = await IsWhipEnabled()
+
 	}
 
 	async function toogleKeyboard() {
@@ -48,25 +96,125 @@
 		await ToogleGamepad()
 		gamepadEnabled = await IsGamepadEnabled()
 	}
+	
+	async function toogleMouse() {
+	
+	    const { IsMouseEnabled, ToogleMouse } = await import('$lib/wailsjs/go/bindings/App')
+		await ToogleMouse()
+		mouseEnabled = await IsMouseEnabled()
+		
+	}
+
+	function MapAudioSrcs (s: audio.AudioProcess) {
+		if (s.Name.length > 0) return s
+		else return {Name: `Unknow<${s.Pid}>`, Pid: s.Pid}
+	}
 
 	onMount(() => {
 		ListenForConnectionChanges();
+
+		(async () => {
+			// audio_srcs = (await GetAudioProcess()).map(MapAudioSrcs)
+		})()
+
+		const interval = setInterval(async () => {
+			// audio_srcs = (await GetAudioProcess()).map(MapAudioSrcs)
+		}, 5000)
+
+		let unlistener: () => void;
+
+		// Handle start streaming button
+		(async () => {
+
+			if (IS_RUNNING_EXTERNAL) {
+				const cllbck = (ev: MessageEvent<string>) =>  {
+					if (ev.data == "{}") canStartStreaming = true;
+				}
+				ws().addEventListener("message", cllbck)
+				unlistener = () => ws().removeEventListener("message", cllbck)
+				return
+			}
+
+			const { EventsOn } = await import('$lib/wailsjs/runtime/runtime');
+			unlistener = EventsOn('streaming-signal-client', (d) => {
+				if (d == "{}") canStartStreaming = true;
+			});
+		})()
+
+		return () => {
+			unlistener()
+			clearInterval(interval)
+		}
 	});
 </script>
 
-<section class="w-full">
+<Tooltip ref="label-external-whip-checkbox" placement="top">
+    <p>{$_('external-whip-explanation')}</p>
+</Tooltip>
+
+<IsRunningExternal not>
+    
+    <section class:hidden={streaming.value && !whipEnabled} class="flex flex-row-reverse items-center gap-2">
+    	<label
+    		id="label-external-whip-checkbox"
+    		for="lan-mode-checkbox"
+    		class="font-semibold text-white">{$_('external-whip')}</label
+    	>
+    	<input
+    		id="lan-mode-checkbox"
+    		type="checkbox"
+    		class="checkbox checkbox-xs checkbox-primary"
+    		checked={whipEnabled}
+    		onchange={toogleWhip}
+    	/>
+    </section>
+    
+    <section class:hidden={!whipEnabled} class="text-white">
+    	Whip URL: http://localhost:8082/whip
+    </section>
+    
+    <section class="w-full">
+    	<h3 class="text-3xl text-white text-center">
+    		{$_('toogle_devices')}
+    	</h3>
+    	<div class="flex flex-row justify-center gap-3 mt-6">
+       	<button onclick={toogleMouse} class:btn-primary={mouseEnabled}  class:btn-neutral={!mouseEnabled} class:border-gray-400={!mouseEnabled} class="btn border">
+      		<MouseIcon/>
+       	</button>
+    	    <button onclick={toogleKeyboard} class:btn-primary={keyboardEnabled} class:btn-neutral={!keyboardEnabled} class:border-gray-400={!keyboardEnabled} class="btn border">
+    			<KeyboardIcon/>
+    		</button>
+    		<button onclick={toogleGamepad} class:btn-primary={gamepadEnabled}  class:btn-neutral={!gamepadEnabled} class:border-gray-400={!gamepadEnabled} class="btn border">
+    			<GamepadIcon/>
+    		</button>
+    	</div>
+    	<div class:hidden={!streaming.value || whipEnabled} class="flex flex-row justify-center gap-3 mt-6">
+    		<button onclick={StopStreaming} disabled={!streaming.value} class="btn btn-primary">
+    			{$_('stop-streaming')}
+    		</button>
+    	</div>
+    </section>
+
+</IsRunningExternal>
+
+
+<!-- <section class="w-1/3 mx-auto" class:hidden={!streaming.value}>
 	<h3 class="text-3xl text-white text-center">
-		{$_('toogle_devices')}
+		{$_('audio_selector')}
 	</h3>
-	<div class="flex flex-row justify-center gap-3 mt-6">
-		<button onclick={toogleKeyboard} class:btn-primary={keyboardEnabled} class:btn-neutral={!keyboardEnabled} class:border-gray-400={!keyboardEnabled} class="btn border">
-			<KeyboardIcon/>
-		</button>
-		<button onclick={toogleGamepad} class:btn-primary={gamepadEnabled}  class:btn-neutral={!gamepadEnabled} class:border-gray-400={!gamepadEnabled} class="btn border">
-			<GamepadIcon/>
-		</button>
-	</div>
-</section>
+	<select
+			class="select w-full mx-auto mt-6"
+			bind:value={selected_audio_src}
+			id="audio_srcs"
+			aria-label="audio_srcs"
+		>
+			{#each audio_srcs as src}
+				<option selected={src.Pid == selected_audio_src} value={src.Pid}
+					>{src.Name}</option
+				>
+			{/each}
+		</select>
+</section> -->
 
 <IsLinux>
 	<div class="w-full h-full">
@@ -79,6 +227,7 @@
 
 <IsLinux not>
 	<div class:hidden={streaming.value} class="w-2/3 flex flex-col md:flex-row gap-12 align-middle">
+		<CodecList/>
 		<section class="w-full">
 			<h3 class="text-3xl text-white text-center">{$_('resolutions')}</h3>
 			<select
@@ -88,9 +237,12 @@
 				aria-label="resolution"
 			>
 				{#each Object.values(FIXED_RESOLUTIONS) as resolution}
-					<option selected={resolution === selected_resolution} value={resolution}
-						>{resolution}p</option
-					>
+					<option selected={resolution === selected_resolution} value={resolution}>
+						{resolution}
+						{#if resolution !== FIXED_RESOLUTIONS.resolutionNative}
+							p
+						{/if}
+					</option>
 				{/each}
 			</select>
 		</section>
@@ -101,7 +253,7 @@
 					<h4 class="text-lg text-gray-300">{$_('ideal-framerate')}</h4>
 						<input
 						type="number"
-						class="input w-14 h-10 bg-neutral border border-gray-400 text-white text-center"
+						class="input w-16 px-2 h-10 bg-neutral border border-gray-400 text-white text-center"
 						bind:value={idealFramerate}
 						pattern="0|[1-9]\d*"
 						min={MIN_FRAMES}
@@ -121,7 +273,7 @@
 					<h4 class="text-lg text-gray-300">{$_('max-framerate')}</h4>
 					<input
 					type="number"
-					class="input w-14 h-10 bg-neutral border border-gray-400 text-white text-center"
+					class="input w-16 px-2 h-10 bg-neutral border border-gray-400 text-white text-center"
 					bind:value={maxFramerate}
 					pattern="0|[1-9]\d*"
 					min={MIN_FRAMES}
@@ -141,7 +293,7 @@
 		</section>
 	</div>
 
-	<button onclick={createStream} disabled={streaming.value} class="btn btn-primary"
+	<button onclick={createStream} disabled={streaming.value || !canStartStreaming} class="btn btn-primary"
 		>{$_('start-streaming')}</button
 	>
 </IsLinux>

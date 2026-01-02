@@ -1,8 +1,8 @@
 import { exportStunServers } from '$lib/webrtc/stun_servers';
 import { setConsumingStream, type SignalingData } from '$lib/webrtc/stream/stream_signal_hook.svelte';
 import { exportTurnServers } from '$lib/webrtc/turn_servers';
-import { getSortedVideoCodecs} from './stream_config.svelte';
 import LANMode from '$lib/webrtc/lan_mode.svelte';
+import log from '$lib/logger/logger';
 
 let peerConnection: RTCPeerConnection | undefined;
 let inboundStream: MediaStream | null = null;
@@ -19,15 +19,15 @@ function initStreamingPeerConnection() {
 
 async function CreateClientStream(
 	signalingChannel: RTCDataChannel,
-	videoElement: HTMLVideoElement
+	videoElement: HTMLVideoElement,
+	videoSpeedOptimizationEnabled: boolean = false
 ) {
 	initStreamingPeerConnection();
 
 	if (!videoElement || !peerConnection) throw new Error('Error creating stream');
 
-	const transceiver = peerConnection.addTransceiver("video", { direction: "recvonly" });
-
-	transceiver.setCodecPreferences(getSortedVideoCodecs());
+	// Trigger host streaming button
+	signalingChannel.send(JSON.stringify({}))
 
 	peerConnection.onconnectionstatechange = () => {
 		if (!peerConnection) return;
@@ -39,75 +39,102 @@ async function CreateClientStream(
 		}
 	};
 
-	peerConnection.onicecandidate = (e) => {
-		if (!e.candidate) return;
+	peerConnection.onicecandidate = (event) => {
+		if (event.candidate) {
 
+			const data: SignalingData = {
+				type: 'candidate',
+				candidate: event.candidate.toJSON(),
+				role: 'client'
+			};
+			
+			signalingChannel.send(JSON.stringify(data));
+			return;
+		}
+
+		if (!peerConnection?.currentLocalDescription) return
+		
 		const data: SignalingData = {
-			type: 'candidate',
-			candidate: e.candidate.toJSON(),
+			type: 'answer',
+			answer: peerConnection?.currentLocalDescription,
 			role: 'client'
 		};
 
-		signalingChannel.send(JSON.stringify(data));
+		signalingChannel.send(JSON.stringify(data))
+
 	};
+
+	let playingStream = false;
 
 	peerConnection.ontrack = (ev) => {
 
+		if (playingStream) return;
+
+		if (videoSpeedOptimizationEnabled) {
+		  ev.receiver.jitterBufferTarget = 0;
+
+  		if ("playoutDelayHint" in ev.receiver) {
+        ev.receiver.playoutDelayHint = 0;
+  		}
+		}
+		
 		if (ev.streams && ev.streams[0]) {
-			ev.streams[0].getTracks().forEach(t => t.addEventListener("ended", () => {CloseStreamClientConnection()}, true) )
+			ev.streams[0].getTracks().forEach(t => {
+			  if (videoSpeedOptimizationEnabled && t.kind == "video" && "contentHint" in t) t.contentHint = "motion";
+			  t.addEventListener("ended", () => {CloseStreamClientConnection()}, true)
+			})
 			videoElement.srcObject = ev.streams[0];
 			videoElement.play();
+			playingStream = true;
 		} else {
 			if (!inboundStream) {
 				inboundStream = new MediaStream();
+				inboundStream
 				videoElement.srcObject = inboundStream;
 				videoElement.play();
+				playingStream = true;
 			}
 			ev.track.addEventListener("ended", () => {CloseStreamClientConnection()}, true)
 			inboundStream.addTrack(ev.track);
-			inboundStream.getTracks().forEach(t => t.addEventListener("ended", () => {CloseStreamClientConnection()}, true))
+			inboundStream.getTracks().forEach(t => {
+        if (videoSpeedOptimizationEnabled && t.kind == "video" && "contentHint" in t) t.contentHint = "motion";
+				t.addEventListener("ended", () => {CloseStreamClientConnection()}, true)
+			})
 		}
 	};
 
-
-	const offer = await peerConnection.createOffer({
-		offerToReceiveAudio: true,
-		offerToReceiveVideo: true,
-		iceRestart: true
-	});
-
-	await peerConnection.setLocalDescription(offer);
-
-	const data: SignalingData = {
-		type: 'offer',
-		offer: offer,
-		role: 'client'
-	};
-
-	signalingChannel.send(JSON.stringify(data));
+	let offerArrived = false
 
 	signalingChannel.onmessage = async (e) => {
-		const { type, answer, candidate, role } = JSON.parse(e.data) as SignalingData;
+		if (!peerConnection) return;
 
-		if (!peerConnection) {
-			return;
+		const { type, offer, candidate, role } = JSON.parse(e.data) as SignalingData;
+
+		if (role !== 'host') return;
+
+		if (type == "candidate") {
+			try {await peerConnection?.addIceCandidate(candidate)} catch {/** */}
+			return
 		}
 
-		if (role !== 'host') {
-			return;
+		if (type !== 'offer') return;
+		if (!offer || offerArrived) return;
+		
+		offerArrived = true;
+
+		try {
+
+			await peerConnection?.setRemoteDescription(offer);
+            const answer = await peerConnection?.createAnswer();
+            await peerConnection?.setLocalDescription(answer);
+
+		} catch (e) {
+			// TODO: manage error
+			log(e, {err: true})
+			return
 		}
 
-		switch (type) {
-			case 'answer':
-				if (!answer) return;
-				await peerConnection.setRemoteDescription(answer);
-				break;
-			case 'candidate':
-				try {await peerConnection.addIceCandidate(candidate)} catch {/** */}
-				break;
-		}
 	};
-
 
 }
 
