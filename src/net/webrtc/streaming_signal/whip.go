@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"sync/atomic"
 	"time"
+	"context"
 
 	"github.com/PiterWeb/RemoteController/src/devices"
 	"github.com/pion/webrtc/v4"
@@ -152,8 +153,14 @@ func handleWhipOffer(streamingSignalChannel *webrtc.DataChannel) {
 
 			offerMap := map[string]any{}
 
+			ctx, cancelCtx :=  context.WithTimeout(context.Background(), time.Second)
+			
+			defer cancelCtx()
+			
+			finalOffer := getFinalOffer(ctx, offer)		
+			
 			offerSdp := webrtc.SessionDescription{
-				Type: webrtc.SDPTypeOffer, SDP: offer,
+				Type: webrtc.SDPTypeOffer, SDP: finalOffer,
 			}
 
 			offerMap["offer"] = offerSdp
@@ -174,6 +181,18 @@ func handleWhipOffer(streamingSignalChannel *webrtc.DataChannel) {
 		}
 	}
 
+}
+
+func getFinalOffer(ctx context.Context, offer string) string {
+	tempOffer := offer
+	for {
+		select {
+			case tempOffer = <- WhipConfig.OfferChan:
+			continue
+			case <-ctx.Done():
+			return tempOffer
+		}
+	}
 }
 
 func handleWhipAnswer(msg []byte) {
