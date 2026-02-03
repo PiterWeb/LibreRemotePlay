@@ -105,5 +105,6 @@
   "external-whip-explanation": "WHIP lets you use OBS or GStreamer to stream instead of the browser",
   "codec-list": "Codec list",
   "codec-list-preference": "Up to down preference",
-  "restore-codecs": "Restore codec order"
+  "restore-codecs": "Restore codec order",
+  "install_pwa": "Install PWA"
 }

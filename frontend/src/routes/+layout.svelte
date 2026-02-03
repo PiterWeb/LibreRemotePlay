@@ -11,6 +11,8 @@
 	import Loading from '$lib/loading/Loading.svelte';
 	import log from '$lib/logger/logger';
 	import Tooltip from '$lib/layout/Tooltip.svelte';
+	import onwebsite from '$lib/detection/onwebsite';
+	import PWAInstall from '$lib/pwa/PWAInstall.svelte';
 
 	/** @type {{children?: import('svelte').Snippet}} */
 	let { children } = $props();
@@ -44,8 +46,9 @@
 				</a>
 		</h1>
 	</div>
-	<div class="flex-none">
-		<a id="btn-config" aria-label="config" href="/mode/config" class="btn btn-ghost">
+	<div class="flex flex-row gap-4">
+	    <PWAInstall />
+        <a id="btn-config" aria-label="config" href="/mode/config" class="btn btn-ghost">
 			<svg
 				id="tutorial-config-btn"
 				xmlns="http://www.w3.org/2000/svg"
