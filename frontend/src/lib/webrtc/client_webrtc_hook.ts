@@ -1,12 +1,12 @@
 import { showToast, ToastType } from '$lib/toast/toast_hook';
 import { goto } from '$app/navigation';
-import { handleGamepad } from '$lib/gamepad/gamepad_hook';
+import { handleGamepad } from '$lib/devices/gamepad/gamepad_hook.svelte';
 import {
 	handleKeyDown,
 	handleKeyUp,
 	unhandleKeyDown,
 	unhandleKeyUp
-} from '$lib/keyboard/keyboard_hook';
+} from '$lib/devices/keyboard/keyboard_hook.svelte';
 import { toogleLoading } from '$lib/loading/loading_hook';
 import { CreateClientStream } from '$lib/webrtc/stream/client_stream_hook';
 import { get } from 'svelte/store';
@@ -19,7 +19,7 @@ import Bowser from 'bowser';
 import log from '$lib/logger/logger';
 import LANMode from './lan_mode.svelte';
 import { videoSpeedOptimizationEnabled } from './stream/stream_config.svelte';
-import { handleClick, handleMove, unhandleClick, unhandleMove } from '$lib/mouse/mouse_hook';
+import { handleClick, handleMove, unhandleClick, unhandleMove } from '$lib/devices/mouse/mouse_hook.svelte';
 
 enum DataChannelLabel {
 	StreamingSignal = 'streaming-signal',

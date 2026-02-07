@@ -16,7 +16,10 @@ enum MouseState {
 
 type mouseHandler = (output: ArrayBuffer) => void;
 
+
 const click_events = ['mousedown', 'mouseup'] as const;
+
+export const mouseLatency = $state({ value: 0 })
 
 export function handleClick(callback: mouseHandler) {
 	const handler = (event: MouseEvent) => {
@@ -33,7 +36,9 @@ export function handleClick(callback: mouseHandler) {
 		view[1] = btnCLicked 
 		view[2] = stateBtn
 		
-		return callback(buf);
+		if (mouseLatency.value === 0) return callback(buf)
+		
+		return setTimeout(() => callback(buf), mouseLatency.value) 
 	};
 
 	click_events.forEach((event_name) => document?.addEventListener(event_name, handler, true));
@@ -58,7 +63,9 @@ export function handleMove(callback: mouseHandler) {
 		view.setUint16(1, xAxis)
 		view.setUint16(1 + 2, yAxis)
 		
-		return callback(buf);
+		if (mouseLatency.value === 0) return callback(buf)
+		
+		return setTimeout(() => callback(buf), mouseLatency.value)
 	};
 
 	document?.addEventListener("mousemove", handler, true);
