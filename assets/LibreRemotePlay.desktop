@@ -1,6 +1,6 @@
 [Desktop Entry]
 Name=LibreRemotePlay
-Exec=LibreRemotePlay-linux-amd64
+Exec=LibreRemotePlay
 Icon=remotecontroller
 Type=Application
 Categories=Utility;

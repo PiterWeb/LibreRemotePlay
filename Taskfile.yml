@@ -1,4 +1,4 @@
-version: '3'
+version: "3"
 
 tasks:
   dev-all:
@@ -38,17 +38,15 @@ tasks:
       - wails build -debug -s -platform=linux/amd64
     desc: Build the debug application for Linux
   build-linux-appimage:
-    deps: [build-linux]
+    deps: [build-linux, install-linuxdeploy]
+    # env:
+    #   NO_STRIP: true
     cmds:
-      - wget https://github.com/linuxdeploy/linuxdeploy/releases/download/continuous/linuxdeploy-x86_64.AppImage
-      - chmod +x linuxdeploy-x86_64.AppImage
-      - wget -c "https://raw.githubusercontent.com/linuxdeploy/linuxdeploy-plugin-gtk/master/linuxdeploy-plugin-gtk.sh"
-      - chmod +x linuxdeploy-plugin-gtk.sh
       - ./linuxdeploy-x86_64.AppImage --appdir AppDir --desktop-file assets/LibreRemotePlay.desktop --executable build/bin/LibreRemotePlay --plugin gtk -i assets/remotecontroller.png -d assets/LibreRemotePlay.desktop --output appimage
     desc: (Experimental) Build AppImage for Linux based on previously generated binaries (wget required)
   build-wasm-front:
     dir: frontend/static/wasm
-    env: 
+    env:
       GOOS: js
       GOARCH: wasm
     cmds:
@@ -70,18 +68,27 @@ tasks:
       - package.json
     status:
       - test -d node_modules
+  install-linuxdeploy:
+    cmds:
+      - wget https://github.com/linuxdeploy/linuxdeploy/releases/download/continuous/linuxdeploy-x86_64.AppImage
+      - chmod +x linuxdeploy-x86_64.AppImage
+      - wget -c "https://raw.githubusercontent.com/linuxdeploy/linuxdeploy-plugin-gtk/master/linuxdeploy-plugin-gtk.sh"
+      - chmod +x linuxdeploy-plugin-gtk.sh
+    sources:
+      - linuxdeploy-x86_64.AppImage
+      - linuxdeploy-plugin-gtk.sh
   build-front:
     deps: [install-front, build-wasm-front]
     dir: frontend
     cmds:
       - pnpm run build
     sources:
-        - src/**/*.js
-        - src/**/*.ts
-        - src/**/*.svelte
-        - src/**/*.json
-        - vite.config.ts
-        - svelte.config.js
-        - tailwind.config.js
-        - package.json
+      - src/**/*.js
+      - src/**/*.ts
+      - src/**/*.svelte
+      - src/**/*.json
+      - vite.config.ts
+      - svelte.config.js
+      - tailwind.config.js
+      - package.json
     desc: Build the frontend
