@@ -1,6 +1,7 @@
 package streaming_signal
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -8,8 +9,8 @@ import (
 	"net/http"
 	"sync/atomic"
 	"time"
-	"context"
 
+	"github.com/PiterWeb/RemoteController/src/cli"
 	"github.com/PiterWeb/RemoteController/src/devices"
 	"github.com/pion/webrtc/v4"
 )
@@ -25,7 +26,7 @@ type whipConfig struct {
 var whipConfigEnabled = &devices.DeviceEnabled{}
 
 var WhipConfig = &whipConfig{
-	Port:       8082,
+	Port:       cli.GetConfig().GetWhipServerPort(),
 	OfferChan:  make(chan string),
 	AnswerChan: make(chan string),
 	Enabled:    whipConfigEnabled.Disable(),

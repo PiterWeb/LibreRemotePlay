@@ -8,6 +8,7 @@ func init() {
 	networkVisible := flag.Bool("network_visible", false, "Indicate to use all network interfaces (0.0.0.0) instead of loopback-only (127.0.0.1)")
 	httpPort := flag.Uint("port", 8080, "Port used for serving http Web client")
 	easyConnectPort := flag.Uint("easyport", 8081, "Port used for Easy Connect Server")
+	whipServerPort := flag.Uint("whipport", 8082, "Port used for WHIP Server")
 	
 	flag.Parse()
 
@@ -15,6 +16,7 @@ func init() {
 		networkVisible: *networkVisible,
 		httpPort:       uint16(*httpPort),
 		easyConnectPort: uint16(*easyConnectPort),
+		whipServerPort: uint16(*whipServerPort),
 	}
 }
 
@@ -22,6 +24,7 @@ type configT struct {
 	networkVisible bool
 	httpPort       uint16
 	easyConnectPort uint16
+	whipServerPort uint16
 }
 
 func (c configT) GetNetworkVisible() bool {
@@ -34,6 +37,10 @@ func (c configT) GetHTTPPort() uint16 {
 
 func (c configT) GetEasyConnectPort() uint16 {
 	return c.easyConnectPort
+}
+
+func (c configT) GetWhipServerPort() uint16 {
+	return c.whipServerPort
 }
 
 var config configT
