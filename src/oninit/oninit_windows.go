@@ -6,6 +6,7 @@ import (
 	"net/http"
 	LRPSignals "github.com/PiterWeb/LibreRemotePlaySignals/v1"
 	net_http "github.com/PiterWeb/RemoteController/src/net/http"
+	"github.com/PiterWeb/RemoteController/src/cli"
 	"github.com/PiterWeb/RemoteController/src/devices/gamepad"
 )
 
@@ -28,13 +29,11 @@ func Execute(assets embed.FS) error {
 			errChan <- err
 		}
 	}()
-
-	easyConnectPort := uint16(8081)
 	
 	go func() {
 
 		options := LRPSignals.ServerOptions{
-			Port: easyConnectPort,
+			Port: cli.GetConfig().GetEasyConnectPort(),
 		}
 		
 		log.Println("Easy Connect Server started on port 8081")
