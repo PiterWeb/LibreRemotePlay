@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
 	import { CreateHost } from '$lib/webrtc/host_webrtc_hook';
 	import { showToast, ToastType } from '$lib/toast/toast_hook';
 	import { _ } from 'svelte-i18n';
@@ -11,8 +11,10 @@
 	} from '$lib/easy_connect/easy_connect.svelte';
 	import { onMount } from 'svelte';
 	import ConnectionOptions from '$lib/webrtc/ConnectionOptions.svelte';
-	import Modal, { openModal } from '$lib/layout/Modal.svelte';
+	import Modal from '$lib/layout/Modal.svelte';
 
+	let modalElement: Modal
+	
 	let hostCode = $state('')
 	let clientCode = $state('');
 	let generatedCode = $state(false);
@@ -32,7 +34,7 @@
 			const code = await CreateHost({ clientCode, easyConnect: false });
 			hostCode = code ?? ""
 			generatedCode = true;
-			openModal()
+			modalElement.openModal()
 		} catch {
 			generatedCode = false;
 		}
@@ -49,7 +51,7 @@
 
 </script>
 
-<Modal>
+<Modal bind:this={modalElement}>
 	<p class="text-xl">Did lost your code?</p>
 	<div class="flex gap-2">
 		<button onclick={copyCodeToClipboard} class="btn btn-primary">Copy to clipboard</button>

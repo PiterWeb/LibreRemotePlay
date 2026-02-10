@@ -12,8 +12,10 @@
 	import { _ } from 'svelte-i18n';
 	import { onMount } from 'svelte';
 	import ConnectionOptions from '$lib/webrtc/ConnectionOptions.svelte';
-	import Modal, {openModal} from '$lib/layout/Modal.svelte';
+	import Modal from '$lib/layout/Modal.svelte';
 
+	let modalElement: Modal
+	
 	let hostCode = $state('');
 	let clientCode = $state('')
 	let clientCreated = $state(false);
@@ -36,8 +38,7 @@
 		const code = await CreateClientWeb({ easyConnect: false });
 		clientCreated = true;
 		clientCode = code ?? ""
-		openModal()
-
+		modalElement.openModal()
 	}
 
 	async function copyCodeToClipboard() {
@@ -50,7 +51,7 @@
 	}
 </script>
 
-<Modal>
+<Modal bind:this={modalElement}>
 	<p class="text-xl">{$_('lost-code-modal-title')}</p>
 	<div class="flex gap-2">
 		<button onclick={copyCodeToClipboard} class="btn btn-primary">{$_('lost-code-modal-copy')}</button>
