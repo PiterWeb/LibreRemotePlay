@@ -3,6 +3,7 @@ package http
 
 import (
 	"embed"
+	"errors"
 	"fmt"
 	"io/fs"
 	"net/http"
@@ -39,6 +40,10 @@ func InitHTTPAssets(serverMux *http.ServeMux, assets embed.FS) error {
 
 	err = httpServer.ListenAndServe()
 
+	if err != nil {
+		errors.Join(err, errors.New("local web http server error"))
+	}
+	
 	return err
 
 }

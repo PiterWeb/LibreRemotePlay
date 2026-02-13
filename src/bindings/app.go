@@ -8,9 +8,11 @@ import (
 	"log"
 	"strings"
 	"sync"
+	"time"
 
 	"runtime"
 
+	"github.com/PiterWeb/RemoteController/src/cli"
 	"github.com/PiterWeb/RemoteController/src/devices/audio"
 	"github.com/PiterWeb/RemoteController/src/devices/gamepad"
 	"github.com/PiterWeb/RemoteController/src/devices/keyboard"
@@ -29,10 +31,16 @@ var pidAudioChan chan uint32 = make(chan uint32)
 var openPeer bool = false
 var openPeerMutex sync.Mutex
 
+type UsedPorts struct {
+	HTTP uint16
+	EasyConnect uint16
+	WHIP uint16
+}
+
 // App struct
 type App struct {
 	ctx    context.Context
-	assets embed.FS
+	assets embed.FS 
 }
 
 // NewApp creates a new App application struct
@@ -50,6 +58,8 @@ func (a *App) Startup(ctx context.Context) {
 	go func() {
 
 		if err := oninit.Execute(a.assets); err != nil {
+			time.Sleep(time.Second * 5) // Add some time to load the UI
+			wailsRuntime.EventsEmit(ctx, "ERROR", err.Error())
 			log.Println(err)
 		}
 
@@ -57,6 +67,8 @@ func (a *App) Startup(ctx context.Context) {
 	
 	go func () {
 		if err := streaming_signal.InitWhipServer(streaming_signal.WhipConfig); err != nil {
+			time.Sleep(time.Second * 5) // Add some time to load the UI
+			wailsRuntime.EventsEmit(ctx, "ERROR", err.Error())
 			log.Println(err)
 		}
 	}()
@@ -174,6 +186,17 @@ func (a *App) TryClosePeerConnection() bool {
 
 	return true
 
+}
+
+func (a *App) GetUsedPorts() UsedPorts {
+	
+	config := cli.GetConfig()
+	
+	return UsedPorts{
+		HTTP: config.GetHTTPPort(),
+		EasyConnect: config.GetEasyConnectPort(),
+		WHIP: config.GetWhipServerPort(),
+	}
 }
 
 func (a *App) ToogleGamepad() {

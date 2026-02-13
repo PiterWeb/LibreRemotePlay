@@ -1,6 +1,7 @@
 import {
 	TryCreateHost as createHostFn,
-	TryClosePeerConnection as closeConnectionFn
+  TryClosePeerConnection as closeConnectionFn,
+	GetUsedPorts
 } from '$lib/wailsjs/go/bindings/App';
 
 import { _ } from 'svelte-i18n';
@@ -17,7 +18,7 @@ import { IS_RUNNING_EXTERNAL } from '$lib/detection/onwebsite';
 import log from '$lib/logger/logger';
 import LANMode from './lan_mode.svelte';
 
-const BROWSER_BASE_URL = 'http://localhost:8080/mode/host/connection';
+const BROWSER_BASE_URL = IS_RUNNING_EXTERNAL ? null : `http://localhost:${(await GetUsedPorts()).HTTP}/mode/host/connection`;
 
 let host: boolean = false;
 

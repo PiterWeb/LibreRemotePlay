@@ -2,8 +2,10 @@ package streaming_signal
 
 import (
 	"context"
+	"fmt"
 	"log"
 
+	"github.com/PiterWeb/RemoteController/src/cli"
 	"github.com/coder/websocket"
 	"github.com/pion/webrtc/v4"
 )
@@ -14,7 +16,7 @@ func HandleStreamingSignal(ctx context.Context, streamingSignalChannel *webrtc.D
 		return
 	}
 
-	wsClient, _, err := websocket.Dial(context.Background(), "ws://localhost:8080/ws", nil)
+	wsClient, _, err := websocket.Dial(context.Background(), fmt.Sprintf("ws://localhost:%d/ws", cli.GetConfig().GetHTTPPort()), nil)
 
 	if err != nil {
 		log.Println(err)

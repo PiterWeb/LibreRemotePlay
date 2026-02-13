@@ -47,7 +47,8 @@
 			<IsLinux>
 			    <button onclick={async () => {
 							const { BrowserOpenURL } = await import('$lib/wailsjs/runtime/runtime');
-							BrowserOpenURL("http://localhost:8080/mode/client")
+							const { GetUsedPorts } = await import('$lib/wailsjs/go/bindings/App');
+							BrowserOpenURL(`http://localhost:${(await GetUsedPorts()).HTTP}/mode/client`)
 				}} class="btn btn-primary text-white">{$_('client_card_cta')}</button>
 			</IsLinux>
 			<IsLinux not>

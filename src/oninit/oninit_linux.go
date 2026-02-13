@@ -2,6 +2,7 @@ package oninit
 
 import (
 	"embed"
+	"errors"
 	"log"
 	"net/http"
 
@@ -37,7 +38,7 @@ func Execute(assets embed.FS) error {
 		log.Printf("Easy Connect Server started on port %d\n", options.Port)
 		err := LRPSignals.InitServer(options, ips_channel)
 		if err != nil {
-			errChan <- err
+			errChan <- errors.Join(err, errors.New("easy connect server error"))
 		}
 	}()
 

@@ -36,7 +36,7 @@ func Execute(assets embed.FS) error {
 			Port: cli.GetConfig().GetEasyConnectPort(),
 		}
 		
-		log.Println("Easy Connect Server started on port 8081")
+		log.Printf("Easy Connect Server started on port %d\n", options.Port)
 		err := LRPSignals.InitServer(options, ips_channel)
 		if err != nil {
 			errChan <- err

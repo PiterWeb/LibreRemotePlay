@@ -6,7 +6,7 @@ import { SendClientCode, server, ReceiveClientCode, SendHostCode } from '@librer
 import { _ } from 'svelte-i18n';
 import { get } from 'svelte/store';
 
-export const DEFAULT_EASY_CONNECT_SERVER_IP_DOMAIN = 'localhost:8081';
+export const DEFAULT_EASY_CONNECT_SERVER_IP_DOMAIN = 'localhost:8091';
 export const DEFAULT_EASY_CONNECT_ID = 1;
 
 export const easyConnectServerIpDomain = $state({ value: DEFAULT_EASY_CONNECT_SERVER_IP_DOMAIN });

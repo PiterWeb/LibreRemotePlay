@@ -3,6 +3,7 @@ package streaming_signal
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"log"
@@ -143,6 +144,11 @@ func InitWhipServer(config *whipConfig) error {
 	}
 
 	err := httpServer.ListenAndServe()
+	
+	if err != nil {
+		errors.Join(err, errors.New("whip server error"))
+	}
+	
 	return err
 
 }

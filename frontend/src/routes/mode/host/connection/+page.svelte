@@ -66,6 +66,9 @@
 	let gamepadEnabled = $state(true);
 	let mouseEnabled = $state(false);
 
+	let httpExternalPort = $state(8090)
+	let whipPort = $state(8092)
+	
 	function createStream() {
 		CreateHostStream(selected_resolution, idealFramerate, maxFramerate);
 		streaming.value = true;
@@ -136,6 +139,10 @@
 			}
 
 			const { EventsOn } = await import('$lib/wailsjs/runtime/runtime');
+			const { GetUsedPorts } = await import('$lib/wailsjs/go/bindings/App')
+			const usedPorts = await GetUsedPorts()
+			httpExternalPort = usedPorts.HTTP
+			whipPort = usedPorts.WHIP
 			unlistener = EventsOn('streaming-signal-client', (d) => {
 				if (d == "{}") canStartStreaming = true;
 			});
@@ -170,7 +177,7 @@
     </section>
     
     <section class:hidden={!whipEnabled} class="text-white">
-    	Whip URL: http://localhost:8082/whip
+    	Whip URL: http://localhost:{whipPort}/whip
     </section>
     
     <section class="w-full">
@@ -219,7 +226,7 @@
 <IsLinux>
 	<div class="w-full h-full">
 		<h3 class="text-4xl text-white">{$_('relay-title')}</h3>
-		<p class="text-gray-300">http://localhost:8080/mode/host/connection/</p>
+		<p class="text-gray-300">http://localhost:{httpExternalPort}/mode/host/connection/</p>
 		<p class="text-lg text-gray-400">{$_('go-browser')}</p>
 		<p class="text-error">{$_('warning-go-browser')}</p>
 	</div>

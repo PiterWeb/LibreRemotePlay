@@ -10,6 +10,10 @@ export function GetCurrentOS() {
   return window['go']['bindings']['App']['GetCurrentOS']();
 }
 
+export function GetUsedPorts() {
+  return window['go']['bindings']['App']['GetUsedPorts']();
+}
+
 export function IsGamepadEnabled() {
   return window['go']['bindings']['App']['IsGamepadEnabled']();
 }
