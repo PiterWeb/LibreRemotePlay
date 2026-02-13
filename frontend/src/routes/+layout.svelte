@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
 	import '../app.css';
 	import { onMount } from 'svelte';
 	import { page } from '$app/state';
@@ -11,8 +11,10 @@
 	import Loading from '$lib/loading/Loading.svelte';
 	import log from '$lib/logger/logger';
 	import Tooltip from '$lib/layout/Tooltip.svelte';
-	import onwebsite from '$lib/detection/onwebsite';
 	import PWAInstall from '$lib/pwa/PWAInstall.svelte';
+	import { onNavigate } from '$app/navigation';
+	import Modal from '$lib/layout/Modal.svelte';
+	import { EventsOn } from '$lib/wailsjs/runtime/runtime';
 
 	/** @type {{children?: import('svelte').Snippet}} */
 	let { children } = $props();
@@ -27,8 +29,31 @@
 				}
 			});
 		}
+		
+		const errorListener = EventsOn("ERROR", (err: string) => {
+            errorModal.openModal()
+            
+            errorText = err
+		})
+		
+		return errorListener
+		
 	})
+	
+	onNavigate((navigation) => {
+			if (!document.startViewTransition) return
 
+			return new Promise((resolve) => {
+				document.startViewTransition(async () => {
+					resolve()
+					await navigation.complete
+				})
+			})
+	})
+	
+	let errorModal: Modal;
+	let errorText = $state<string>()
+	
 </script>
 
 <svelte:head>
@@ -36,7 +61,15 @@
 	<meta name="description" content="LibreRemotePlay Web CLient" />
 </svelte:head>
 
-<nav class="navbar bg-primary text-primary-content">
+<Modal bind:this={errorModal}>
+   	<p class="text-xl capitalize">{$_('init-error')}</p>
+	<div class="flex gap-2">
+	    {errorText}
+		<button class="btn btn-neutral">{$_('lost-code-modal-close')}</button>
+	</div>
+</Modal>
+
+<nav id="navbar" class="navbar bg-primary text-primary-content">
 	<div class="flex-1">
 		<h1>
 				<a href="/" class="btn btn-ghost normal-case text-xl items-start content-center">
@@ -73,7 +106,7 @@
     <p>{$_('config_title')}</p>
 </Tooltip>
 
-<PageTransition key={page.url.toString()} duration={500}>
+<PageTransition key={page.url.toString()}>
 	<div class="hero min-h-[calc(100vh-4rem)] bg-gray-900">
 		<div class="hero-content flex-col w-full">
 			{@render children?.()}
@@ -84,3 +117,11 @@
 <Toast />
 
 <Loading />
+
+<style>
+    
+    #navbar {
+         view-transition-name: navbar;
+    }
+    
+</style>
