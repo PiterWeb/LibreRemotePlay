@@ -72,7 +72,7 @@ export async function CreateHost(options: CreateHostOptions) {
   					if (await isLinux()) {
               log("Connection stablished and isLinux")
   						const { BrowserOpenURL } = await import('$lib/wailsjs/runtime/runtime');
-  						BrowserOpenURL(BROWSER_BASE_URL);
+  						BrowserOpenURL(BROWSER_BASE_URL ?? "");
   					} else log("Connection stablished and not isLinux")
   					goto('/mode/host/connection');
   					break;
