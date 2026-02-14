@@ -14,7 +14,7 @@
 	import PWAInstall from '$lib/pwa/PWAInstall.svelte';
 	import { onNavigate } from '$app/navigation';
 	import Modal from '$lib/layout/Modal.svelte';
-	import { EventsOn } from '$lib/wailsjs/runtime/runtime';
+	import { IS_RUNNING_EXTERNAL } from '$lib/detection/onwebsite';
 
 	/** @type {{children?: import('svelte').Snippet}} */
 	let { children } = $props();
@@ -29,28 +29,33 @@
 				}
 			});
 		}
-		
-		const errorListener = EventsOn("ERROR", (err: string) => {
-            errorModal.openModal()
-            
-            errorText = err
-		})
-		
-		return errorListener
-		
-	})
-	
-	onNavigate((navigation) => {
-			if (!document.startViewTransition) return
 
-			return new Promise((resolve) => {
-				document.startViewTransition(async () => {
-					resolve()
-					await navigation.complete
-				})
-			})
-	})
-	
+		if (!IS_RUNNING_EXTERNAL) {
+			(async () => {
+			    try {
+    				const { EventsOn } = await import('$lib/wailsjs/runtime/runtime');
+    
+    				EventsOn('ERROR', (err: string) => {
+     					errorModal.openModal();
+      
+     					errorText = err;
+    				});
+				} catch {}
+			})();
+		}
+	});
+
+	onNavigate((navigation) => {
+		if (!document.startViewTransition) return;
+
+		return new Promise((resolve) => {
+			document.startViewTransition(async () => {
+				resolve();
+				await navigation.complete;
+			});
+		});
+	});
+
 	let errorModal: Modal;
 	let errorText = $state<string>()
 	
