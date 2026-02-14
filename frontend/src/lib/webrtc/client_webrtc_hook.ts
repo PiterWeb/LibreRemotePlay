@@ -277,7 +277,7 @@ function handleConnectionState() {
 			showToast(get(_)('connection-established-successfully'), ToastType.SUCCESS);
 			goto('/mode/client/connection');
 			// Inside try-catch cause in browser will not work
-			import('$lib/wailsjs/go/bindings/App').then((obj) => obj.NotifyCreateClient).catch();
+			import('$lib/wailsjs/go/bindings/App').then((obj) => obj.NotifyCreateClient()).catch();
 			break;
 		case 'disconnected':
 			showToast(get(_)('connection-lost'), ToastType.ERROR);
@@ -285,7 +285,7 @@ function handleConnectionState() {
 			CloseStreamClientConnection();
 			goto('/');
 			// Inside try-catch cause in browser will not work
-			import('$lib/wailsjs/go/bindings/App').then((obj) => obj.NotifyCloseClient).catch();
+			import('$lib/wailsjs/go/bindings/App').then((obj) => obj.NotifyCloseClient()).catch();
 			break;
 		case 'failed':
 			showToast(get(_)('connection-failed'), ToastType.ERROR);
@@ -293,7 +293,7 @@ function handleConnectionState() {
 			CloseStreamClientConnection();
 			goto('/');
 			// Inside try-catch cause in
-			import('$lib/wailsjs/go/bindings/App').then((obj) => obj.NotifyCloseClient).catch();
+			import('$lib/wailsjs/go/bindings/App').then((obj) => obj.NotifyCloseClient()).catch();
 			break;
 		case 'closed':
 			showToast(get(_)('connection-closed'), ToastType.ERROR);
@@ -301,7 +301,7 @@ function handleConnectionState() {
 			CloseStreamClientConnection();
 			goto('/');
 			// Inside try-catch cause in browser will not work
-			import('$lib/wailsjs/go/bindings/App').then((obj) => obj.NotifyCloseClient).catch();
+			import('$lib/wailsjs/go/bindings/App').then((obj) => obj.NotifyCloseClient()).catch();
 			break;
 	}
 }
