@@ -3,7 +3,7 @@
 	import { playAudio } from '$lib/audio/audio_player';
 	import loadingWritable from '$lib/loading/loading_hook';
 
-	let loadingModal: HTMLDialogElement | undefined = $state();
+	let loadingModal: HTMLDialogElement;
 	let title: string = $state('');
 	let message: string = $state('');
 
