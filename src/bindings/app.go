@@ -38,7 +38,7 @@ type App struct {
 	ctx    context.Context
 	assets embed.FS 
 	openPeer bool
-	openPeerMutex sync.Mutex
+	openPeerMutex *sync.Mutex
 	pidAudioChan chan uint32
 }
 
@@ -48,7 +48,7 @@ func NewApp(assets embed.FS) *App {
 		ctx:    context.Background(),
 		assets: assets,
 		openPeer: false,
-		openPeerMutex: sync.Mutex{},
+		openPeerMutex: &sync.Mutex{},
 		pidAudioChan: make(chan uint32),
 	}
 }
