@@ -40,6 +40,7 @@ type App struct {
 	openPeer bool
 	openPeerMutex *sync.Mutex
 	pidAudioChan chan uint32
+	triggerEnd chan struct{}
 }
 
 // NewApp creates a new App application struct
@@ -50,6 +51,7 @@ func NewApp(assets embed.FS) *App {
 		openPeer: false,
 		openPeerMutex: &sync.Mutex{},
 		pidAudioChan: make(chan uint32),
+		triggerEnd: make(chan struct{}),
 	}
 }
 
@@ -119,7 +121,7 @@ func (a *App) BeforeClose(ctx context.Context) (prevent bool) {
 func (a *App) Shutdown(ctx context.Context) {
 	// Perform your teardown here
 	a.TryClosePeerConnection()
-	close(triggerEnd)
+	close(a.triggerEnd)
 	if err := onfinish.Execute(); err != nil {
 		log.Printf("Error onfinish: %s", err.Error())
 	}
@@ -150,14 +152,14 @@ func (a *App) TryCreateHost(ICEServers []webrtc.ICEServer, offerEncoded string) 
 	defer a.openPeerMutex.Unlock()
 
 	if a.openPeer {
-		triggerEnd <- struct{}{}
+		a.triggerEnd <- struct{}{}
 	}
 
 	a.openPeer = true
 
 	answerResponse := make(chan string)
 
-	go net.InitHost(a.ctx, ICEServers, offerEncoded, answerResponse, triggerEnd, a.pidAudioChan)
+	go net.InitHost(a.ctx, ICEServers, offerEncoded, answerResponse, a.triggerEnd, a.pidAudioChan)
 
 	response := <-answerResponse
 
@@ -182,7 +184,7 @@ func (a *App) TryClosePeerConnection() bool {
 		return false
 	}
 
-	triggerEnd <- struct{}{}
+	a.triggerEnd <- struct{}{}
 
 	a.openPeer = false
 
