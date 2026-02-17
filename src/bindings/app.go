@@ -25,8 +25,6 @@ import (
 	wailsRuntime "github.com/wailsapp/wails/v2/pkg/runtime"
 )
 
-var triggerEnd chan struct{} = make(chan struct{})
-
 type UsedPorts struct {
 	HTTP uint16
 	EasyConnect uint16
