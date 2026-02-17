@@ -73,7 +73,7 @@
 </div>
 
 <div class="mt-0 grid md:grid-cols-5 gap-4 card rounded-lg shadow-xl border border-gray-800 p-2">
-    <EasyConnect />
+    <EasyConnect role="CLIENT"/>
     <section class="md:col-span-2 md:pt-8 card border rounded-lg shadow-xl bg-white border-gray-700">
         <div class="card-body">
             <section class="flex flex-col md:flex-row [&>ol]:px-4">
