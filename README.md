@@ -60,12 +60,12 @@ https://github.com/user-attachments/assets/f4a412fa-f403-4429-85fb-9c1e74bff458
 - [ ] Groups
 - [x] Remote Video Streaming
   - [x] Stream video quality Config (Codecs, FPS, resolution)
-  - [ ] WHIP streaming compatibility (Stream your screen using: Gstreamer, OBS, ...)
+  - [x] WHIP streaming compatibility (Stream your screen using: Gstreamer, OBS, ...)
 - [x] Client role works on browser
 - [x] Translated to multiple languages
 - [x] You can customize the STUN & TURN servers
 - [x] Keyboard support (Experimental)
-- [ ] Mouse support
+- [x] Mouse support (Experimental)
 - [x] Toogle gamepad/keyboard access
 - [x] [EasyConnect](https://github.com/PiterWeb/LibreRemotePlayEasyConnectServer) 
 
