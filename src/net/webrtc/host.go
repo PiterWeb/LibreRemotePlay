@@ -39,7 +39,8 @@ func InitHost(ctx context.Context, ICEServers []webrtc.ICEServer, offerEncodedWi
 		ICEServers: ICEServers,
 	}
 
-	closedConnChan := make(chan struct{})
+	// Buffer of 10 to avoid blocking
+	closedConnChan := make(chan struct{}, 10)
 
 	defer func() {
 		if err := recover(); err != nil {
