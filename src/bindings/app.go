@@ -155,7 +155,8 @@ func (a *App) TryCreateHost(ICEServers []webrtc.ICEServer, offerEncoded string) 
 
 	a.openPeer = true
 
-	answerResponse := make(chan string)
+	// Buffer 1 response to avoid thread block inside InitHost
+	answerResponse := make(chan string, 1)
 
 	go net.InitHost(a.ctx, ICEServers, offerEncoded, answerResponse, a.triggerEnd, a.pidAudioChan)
 
