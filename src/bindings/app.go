@@ -26,7 +26,6 @@ import (
 )
 
 var triggerEnd chan struct{} = make(chan struct{})
-var pidAudioChan chan uint32 = make(chan uint32)
 
 type UsedPorts struct {
 	HTTP uint16
@@ -40,6 +39,7 @@ type App struct {
 	assets embed.FS 
 	openPeer bool
 	openPeerMutex sync.Mutex
+	pidAudioChan chan uint32
 }
 
 // NewApp creates a new App application struct
@@ -47,6 +47,9 @@ func NewApp(assets embed.FS) *App {
 	return &App{
 		ctx:    context.Background(),
 		assets: assets,
+		openPeer: false,
+		openPeerMutex: sync.Mutex{},
+		pidAudioChan: make(chan uint32),
 	}
 }
 
@@ -154,7 +157,7 @@ func (a *App) TryCreateHost(ICEServers []webrtc.ICEServer, offerEncoded string) 
 
 	answerResponse := make(chan string)
 
-	go net.InitHost(a.ctx, ICEServers, offerEncoded, answerResponse, triggerEnd, pidAudioChan)
+	go net.InitHost(a.ctx, ICEServers, offerEncoded, answerResponse, triggerEnd, a.pidAudioChan)
 
 	response := <-answerResponse
 
@@ -239,7 +242,7 @@ func (a *App) LogPrintln(info string) {
 }
 
 func (a *App) SetAudioPid(pid uint32) {
-	pidAudioChan <- pid
+	a.pidAudioChan <- pid
 }
 
 func (a *App) GetAudioProcess() []audio.AudioProcess {
