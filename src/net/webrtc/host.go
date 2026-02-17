@@ -18,6 +18,8 @@ import (
 
 var defaultSTUNServers = []string{"stun:stun.l.google.com:19305", "stun:stun.l.google.com:19302", "stun:stun.ipfire.org:3478"}
 
+const ERROR_ANSWER = "ERROR"
+
 func InitHost(ctx context.Context, ICEServers []webrtc.ICEServer, offerEncodedWithCandidates string, answerResponse chan<- string, triggerEnd <-chan struct{}, pidChan <-chan uint32) {
 
 	candidates := []webrtc.ICECandidateInit{}
@@ -41,7 +43,7 @@ func InitHost(ctx context.Context, ICEServers []webrtc.ICEServer, offerEncodedWi
 
 	defer func() {
 		if err := recover(); err != nil {
-			answerResponse <- "ERROR"
+			answerResponse <- ERROR_ANSWER
 			closedConnChan <- struct{}{}
 		}
 	}()
@@ -157,17 +159,17 @@ func InitHost(ctx context.Context, ICEServers []webrtc.ICEServer, offerEncodedWi
 				continue
 			}
 			// audioCtx, cancelAudioCtx = context.WithCancel(context.WithValue(context.Background(), "pid", pid))
-			go func() {
+			// go func() {
 				// if err := audio.HandleAudio(audioCtx, audioTrack); err != nil {
 				// 	log.Println(err)
 				// }
-			}()
+			// }()
 		case <-triggerEnd: // Block until cancel by user
-			answerResponse <- "ERROR"
+			answerResponse <- ERROR_ANSWER
 			cancelAudioCtx()
 			return
 		case <-closedConnChan: // Block until failed/clossed peerconnection
-			answerResponse <- "ERROR"
+			answerResponse <- ERROR_ANSWER
 			cancelAudioCtx()
 			return
 		}
