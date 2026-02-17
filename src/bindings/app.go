@@ -28,9 +28,6 @@ import (
 var triggerEnd chan struct{} = make(chan struct{})
 var pidAudioChan chan uint32 = make(chan uint32)
 
-var openPeer bool = false
-var openPeerMutex sync.Mutex
-
 type UsedPorts struct {
 	HTTP uint16
 	EasyConnect uint16
@@ -41,6 +38,8 @@ type UsedPorts struct {
 type App struct {
 	ctx    context.Context
 	assets embed.FS 
+	openPeer bool
+	openPeerMutex sync.Mutex
 }
 
 // NewApp creates a new App application struct
@@ -82,10 +81,10 @@ func (a *App) Startup(ctx context.Context) {
 // Returning true will cause the application to continue, false will continue shutdown as normal.
 func (a *App) BeforeClose(ctx context.Context) (prevent bool) {
 
-	openPeerMutex.Lock()
-	defer openPeerMutex.Unlock()
+	a.openPeerMutex.Lock()
+	defer a.openPeerMutex.Unlock()
 
-	if !openPeer {
+	if !a.openPeer {
 		prevent = false
 		return prevent
 	}
@@ -125,33 +124,33 @@ func (a *App) Shutdown(ctx context.Context) {
 
 func (a *App) NotifyCreateClient() {
 
-	openPeerMutex.Lock()
-	defer openPeerMutex.Unlock()
+	a.openPeerMutex.Lock()
+	defer a.openPeerMutex.Unlock()
 
-	openPeer = true
+	a.openPeer = true
 	println("NotifyCreateClient")
 }
 
 func (a *App) NotifyCloseClient() {
 
-	openPeerMutex.Lock()
-	defer openPeerMutex.Unlock()
+	a.openPeerMutex.Lock()
+	defer a.openPeerMutex.Unlock()
 
-	openPeer = false
+	a.openPeer = false
 	println("NotifyCloseClient")
 }
 
 // Create a Host Peer, it receives the offer encoded and returns the encoded answer response
 func (a *App) TryCreateHost(ICEServers []webrtc.ICEServer, offerEncoded string) (value string) {
 
-	openPeerMutex.Lock()
-	defer openPeerMutex.Unlock()
+	a.openPeerMutex.Lock()
+	defer a.openPeerMutex.Unlock()
 
-	if openPeer {
+	if a.openPeer {
 		triggerEnd <- struct{}{}
 	}
 
-	openPeer = true
+	a.openPeer = true
 
 	answerResponse := make(chan string)
 
@@ -160,9 +159,9 @@ func (a *App) TryCreateHost(ICEServers []webrtc.ICEServer, offerEncoded string) 
 	response := <-answerResponse
 
 	if strings.Contains(response, "ERROR") {
-		openPeerMutex.Lock()
-		defer openPeerMutex.Unlock()
-		openPeer = false
+		a.openPeerMutex.Lock()
+		defer a.openPeerMutex.Unlock()
+		a.openPeer = false
 		log.Println("Error on WebRTC host connection")
 	}
 
@@ -173,16 +172,16 @@ func (a *App) TryCreateHost(ICEServers []webrtc.ICEServer, offerEncoded string) 
 // Closes the peer connection and returns a boolean indication if a connection existed and was closed or not
 func (a *App) TryClosePeerConnection() bool {
 
-	openPeerMutex.Lock()
-	defer openPeerMutex.Unlock()
+	a.openPeerMutex.Lock()
+	defer a.openPeerMutex.Unlock()
 
-	if !openPeer {
+	if !a.openPeer {
 		return false
 	}
 
 	triggerEnd <- struct{}{}
 
-	openPeer = false
+	a.openPeer = false
 
 	return true
 
