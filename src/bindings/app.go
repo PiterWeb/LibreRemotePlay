@@ -161,7 +161,7 @@ func (a *App) TryCreateHost(ICEServers []webrtc.ICEServer, offerEncoded string) 
 
 	response := <-answerResponse
 
-	if strings.Contains(response, "ERROR") {
+	if strings.Contains(response, net.ERROR_ANSWER) {
 		a.openPeerMutex.Lock()
 		defer a.openPeerMutex.Unlock()
 		a.openPeer = false
