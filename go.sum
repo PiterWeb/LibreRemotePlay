@@ -1,7 +1,7 @@
 github.com/BurntSushi/freetype-go v0.0.0-20160129220410-b763ddbfe298/go.mod h1:D+QujdIlUNfa0igpNMk6UIvlb6C252URs4yupRUV4lQ=
 github.com/BurntSushi/graphics-go v0.0.0-20160129215708-b43f31a4a966/go.mod h1:Mid70uvE93zn9wgF92A/r5ixgnvX8Lh68fxp9KQBaI0=
-github.com/PiterWeb/LibreRemotePlaySignals v1.2.0 h1:fu2FF9lQ7CK4UfqRBz/tYC6Nl5G8BwUQtG8n7yqfhbs=
-github.com/PiterWeb/LibreRemotePlaySignals v1.2.0/go.mod h1:3q+bqFEqfaJp5KOk5iUF2KVYFCQov5k+qt3g1ir6weA=
+github.com/PiterWeb/LibreRemotePlaySignals v1.3.0 h1:aNY0ovzZTQaAHKauTDO3UxXj3v585/0ZrUWmz3OhZG8=
+github.com/PiterWeb/LibreRemotePlaySignals v1.3.0/go.mod h1:LEz6J5QI0HK/XUxd/1jW103Ai+zdc5d1I/ZGzmtCtOM=
 github.com/bep/debounce v1.2.1 h1:v67fRdBA9UQu2NhLFXrSg0Brw7CexQekrBwDMM8bzeY=
 github.com/bep/debounce v1.2.1/go.mod h1:H8yggRPQKLUhUoqrJC1bO2xNya7vanpDl7xR3ISbCJ0=
 github.com/coder/websocket v1.8.12 h1:5bUXkEPPIbewrnkU8LTCLVaxi4N4J8ahufH2vlo4NAo=

@@ -25,7 +25,7 @@ require (
 )
 
 require (
-	github.com/PiterWeb/LibreRemotePlaySignals v1.2.0
+	github.com/PiterWeb/LibreRemotePlaySignals v1.3.0
 	github.com/bep/debounce v1.2.1 // indirect
 	github.com/dblohm7/wingoes v0.0.0-20250822163801-6d8e6105c62d // indirect
 	github.com/ebitengine/purego v0.9.1 // indirect
