@@ -1,5 +1,5 @@
 <script lang="ts">
-	import onwebsite from '$lib/detection/onwebsite';
+	import onwebsite, { IS_RUNNING_EXTERNAL } from '$lib/detection/onwebsite';
 	import { _ } from 'svelte-i18n';
 	import { StartTutorial } from '$lib/tutorial/driver';
 	import IsLinux from '$lib/detection/IsLinux.svelte';
@@ -27,7 +27,7 @@
 	>
 </h2>
 <div id="tutorial-play" class="flex gap-4 mt-4 md:flex-row flex-col">
-	{#if !onwebsite}
+	{#if !onwebsite && !IS_RUNNING_EXTERNAL}
 		<div
 			class="card md:w-96 md:h-52 bg-white rounded-lg shadow border-gray-200 border"
 		>
