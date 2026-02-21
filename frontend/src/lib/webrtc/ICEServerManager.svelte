@@ -96,6 +96,7 @@
 		}
 	};
 
+	// svelte-ignore state_referenced_locally
 	let servers = type === 'stun' ? stunServersStore : turnServersStore;
 
 	let groupToCreate: string | undefined = $state();

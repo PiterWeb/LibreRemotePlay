@@ -37,7 +37,8 @@
   	onOpenChange: (v) => {
   		open = v;
   	},
-  	placement: placement ?? "top",
+  	// svelte-ignore state_referenced_locally
+  	 placement: placement ?? "top",
   	get middleware() {
   		return [offset(10), flip(), elemArrow && arrow({ element: elemArrow })];
   	},
