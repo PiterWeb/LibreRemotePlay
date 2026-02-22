@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"io"
 	"log"
+	"net"
 	"net/http"
 	"sync/atomic"
 	"time"
@@ -34,7 +35,7 @@ var WhipConfig = &whipConfig{
 	ICEServers: atomic.Pointer[[]webrtc.ICEServer]{},
 }
 
-func InitWhipServer(config *whipConfig) error {
+func InitWhipServer(ctx context.Context, config *whipConfig) error {
 
 	var answerChan <-chan string = config.AnswerChan
 	var offerChan chan<- string = config.OfferChan
@@ -141,6 +142,9 @@ func InitWhipServer(config *whipConfig) error {
 		Addr:         fmt.Sprintf("127.0.0.1:%d", config.Port),
 		WriteTimeout: time.Second * 30,
 		ReadTimeout:  time.Second * 30,
+		BaseContext: func(l net.Listener) context.Context {
+			return ctx
+		},
 	}
 
 	err := httpServer.ListenAndServe()

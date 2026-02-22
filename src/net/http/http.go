@@ -2,17 +2,19 @@
 package http
 
 import (
+	"context"
 	"embed"
 	"errors"
 	"fmt"
 	"io/fs"
+	"net"
 	"net/http"
 	"strings"
 
 	"github.com/PiterWeb/RemoteController/src/cli"
 )
 
-func InitHTTPAssets(serverMux *http.ServeMux, assets embed.FS) error {
+func InitHTTPAssets(ctx context.Context,serverMux *http.ServeMux, assets embed.FS) error {
 
 	config := cli.GetConfig()
 	clientPort := config.GetHTTPPort()
@@ -36,6 +38,9 @@ func InitHTTPAssets(serverMux *http.ServeMux, assets embed.FS) error {
 	httpServer := &http.Server{
 		Handler: serverMux,
 		Addr:    addr,
+		BaseContext: func(l net.Listener) context.Context {
+			return ctx
+		},
 	}
 
 	err = httpServer.ListenAndServe()

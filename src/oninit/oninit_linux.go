@@ -1,6 +1,7 @@
 package oninit
 
 import (
+	"context"
 	"embed"
 	"errors"
 	"log"
@@ -12,7 +13,7 @@ import (
 	"github.com/PiterWeb/RemoteController/src/net/websocket"
 )
 
-func Execute(assets embed.FS) error {
+func Execute(ctx context.Context, assets embed.FS) error {
 
 	httpServerMux := http.NewServeMux()
 	
@@ -22,7 +23,7 @@ func Execute(assets embed.FS) error {
 	errChan := make(chan error, 2)
 
 	go func() {
-		err := net_http.InitHTTPAssets(httpServerMux, assets)
+		err := net_http.InitHTTPAssets(ctx, httpServerMux, assets)
 
 		if err != nil {
 			errChan <- err

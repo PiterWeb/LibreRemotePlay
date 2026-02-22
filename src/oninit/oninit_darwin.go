@@ -1,15 +1,15 @@
 package oninit
 
 import (
+	"context"
 	"embed"
 	"log"
-	
+
 	LRPSignals "github.com/PiterWeb/LibreRemotePlaySignals/v1"
 	"github.com/PiterWeb/RemoteController/src/cli"
-	
 )
 
-func Execute(assets embed.FS) error {
+func Execute(ctx context.Context, assets embed.FS) error {
 
 	ips_channel := make(chan []string, 1)
 	defer close(ips_channel)
@@ -17,9 +17,9 @@ func Execute(assets embed.FS) error {
 	options := LRPSignals.ServerOptions{
 		Port: cli.GetConfig().GetEasyConnectPort(),
 	}
-	
+
 	log.Printf("Easy Connect Server started on port %d\n", options.Port)
-	
+
 	err := LRPSignals.InitServer(options, ips_channel)
 
 	return err

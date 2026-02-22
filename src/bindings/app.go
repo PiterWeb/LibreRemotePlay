@@ -58,17 +58,15 @@ func (a *App) Startup(ctx context.Context) {
 	// Perform your setup here
 
 	go func() {
-
-		if err := oninit.Execute(a.assets); err != nil {
+		if err := oninit.Execute(a.ctx, a.assets); err != nil {
 			time.Sleep(time.Second * 5) // Add some time to load the UI
 			wailsRuntime.EventsEmit(ctx, "ERROR", err.Error())
 			log.Println(err)
 		}
-
 	}()
 	
 	go func () {
-		if err := streaming_signal.InitWhipServer(streaming_signal.WhipConfig); err != nil {
+		if err := streaming_signal.InitWhipServer(a.ctx, streaming_signal.WhipConfig); err != nil {
 			time.Sleep(time.Second * 5) // Add some time to load the UI
 			wailsRuntime.EventsEmit(ctx, "ERROR", err.Error())
 			log.Println(err)
