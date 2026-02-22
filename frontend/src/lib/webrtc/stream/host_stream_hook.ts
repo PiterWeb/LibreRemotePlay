@@ -76,8 +76,9 @@ export async function CreateHostStream(resolution: FIXED_RESOLUTIONS = FIXED_RES
 		direction: "sendonly"
 	});
 
-	monitorAndAdaptAudioCodec(audioTransceiver.sender)
+  monitorAndAdaptAudioCodec(audioTransceiver.sender)
 	videoTransceiver.setCodecPreferences(getSortedVideoCodecs());
+  adaptVideoCodec(videoTransceiver.sender)
 
 	peerConnection.onconnectionstatechange = async () => {
 		if (!peerConnection) return;
@@ -224,4 +225,29 @@ function monitorAndAdaptAudioCodec(audioSender: RTCRtpSender) {
   		audioSender.setParameters(parameters);
 	  }
 	}, 2000); // Check every 2 seconds
+}
+
+async function adaptVideoCodec(videoSender: RTCRtpSender) {
+  
+  const params = videoSender.getParameters()
+  
+  const encodings: RTCRtpEncodingParameters[] = params.encodings.map(e => {
+    return {
+      ...e,
+      priority: "high",
+    }
+  })
+  
+  try {
+    await videoSender.setParameters(
+      {
+        ...params,
+        encodings,
+        degradationPreference: "maintain-framerate"
+      }
+    )
+  } catch (e) {
+    log(e, {err: true})
+  }
+  
 }
