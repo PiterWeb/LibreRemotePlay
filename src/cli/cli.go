@@ -5,7 +5,7 @@ import (
 )
 
 func init() {
-	networkVisible := flag.Bool("network_visible", false, "Indicate to use all network interfaces (0.0.0.0) instead of loopback-only (127.0.0.1)")
+	networkVisible := flag.Bool("network-visible", false, "Indicate to use all network interfaces (0.0.0.0) instead of loopback-only (127.0.0.1)")
 	httpPort := flag.Uint("port", 8090, "Port used for serving http Web client")
 	easyConnectPort := flag.Uint("easyport", 8091, "Port used for Easy Connect Server")
 	whipServerPort := flag.Uint("whipport", 8092, "Port used for WHIP Server")
