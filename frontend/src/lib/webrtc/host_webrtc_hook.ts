@@ -17,6 +17,7 @@ import { isLinux } from '$lib/detection/detect_os';
 import { IS_RUNNING_EXTERNAL } from '$lib/detection/onwebsite';
 import log from '$lib/logger/logger';
 import LANMode from './lan_mode.svelte';
+import type Modal from '$lib/layout/Modal.svelte';
 
 const BROWSER_BASE_URL = IS_RUNNING_EXTERNAL ? null : `http://localhost:${(await GetUsedPorts()).HTTP}/mode/host/connection`;
 
@@ -30,12 +31,13 @@ enum ConnectionState {
 
 interface CreateHostOptions {
 	easyConnect: boolean;
-	clientCode: string;
+  clientCode: string;
+	lostCodeModalElement?: Modal
 }
 
 export async function CreateHost(options: CreateHostOptions) {
 	try {
-		const { clientCode: client, easyConnect } = options;
+		const { clientCode: client, easyConnect, lostCodeModalElement } = options;
 
 		const ICEServers: ICEServer[] = LANMode.enabled ? [] : [...exportStunServers(), ...exportTurnServers()];
 
@@ -47,7 +49,8 @@ export async function CreateHost(options: CreateHostOptions) {
 
 		if (!easyConnect && navigator && navigator.clipboard && navigator.clipboard.writeText) {
 			navigator.clipboard.writeText(hostCode).catch(() => {
-				showToast(get(_)('error-copying-host-code-to-clipboard'), ToastType.ERROR);
+        showToast(get(_)('error-copying-host-code-to-clipboard'), ToastType.ERROR);
+        lostCodeModalElement?.openModal()
 			});
 			showToast(get(_)('host-code-copied-to-clipboard'), ToastType.SUCCESS);
 		} else if (!easyConnect) {

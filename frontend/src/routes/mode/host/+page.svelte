@@ -13,8 +13,9 @@
 	import ConnectionOptions from '$lib/webrtc/ConnectionOptions.svelte';
 	import Modal from '$lib/layout/Modal.svelte';
 	import EasyConnect from '../EasyConnect.svelte';
+	import LostCodeModal from '../LostCodeModal.svelte';
 
-	let modalElement: Modal
+	let lostCodeModalElement = $state<Modal>()
 	
 	let hostCode = $state('')
 	let clientCode = $state('');
@@ -32,10 +33,9 @@
 		}
 
 		try {
-			const code = await CreateHost({ clientCode, easyConnect: false });
+			const code = await CreateHost({ clientCode, easyConnect: false, lostCodeModalElement: lostCodeModalElement! });
 			hostCode = code ?? ""
 			generatedCode = true;
-			modalElement.openModal()
 		} catch {
 			generatedCode = false;
 		}
@@ -52,13 +52,7 @@
 
 </script>
 
-<Modal bind:this={modalElement}>
-	<p class="text-xl">Did lost your code?</p>
-	<div class="flex gap-2">
-		<button onclick={copyCodeToClipboard} class="btn btn-primary">Copy to clipboard</button>
-		<button class="btn btn-neutral">Close</button>
-	</div>
-</Modal>
+<LostCodeModal copyCodeToClipboard={copyCodeToClipboard}  bind:lostCodeModalElement={lostCodeModalElement!}></LostCodeModal>
 
 <h2 class="text-center text-white text-[clamp(2rem,6vw,4.2rem)] font-black leading-[1.1] xl:text-left">
 		{$_('host_card_title')}

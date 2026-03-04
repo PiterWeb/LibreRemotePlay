@@ -4,7 +4,6 @@
 	import {
 		easyConnectServerIpDomain,
 		easyConnectID,
-		handleEasyConnectClient,
 		DEFAULT_EASY_CONNECT_ID,
 		DEFAULT_EASY_CONNECT_SERVER_IP_DOMAIN
 	} from '$lib/easy_connect/easy_connect.svelte';
@@ -14,8 +13,9 @@
 	import ConnectionOptions from '$lib/webrtc/ConnectionOptions.svelte';
 	import Modal from '$lib/layout/Modal.svelte';
 	import EasyConnect from '../EasyConnect.svelte';
+	import LostCodeModal from '../LostCodeModal.svelte';
 
-	let modalElement: Modal
+	let lostCodeModalElement = $state<Modal>()
 	
 	let hostCode = $state('');
 	let clientCode = $state('')
@@ -36,10 +36,9 @@
 	}
 
 	async function handleCreateClient() {
-		const code = await CreateClientWeb({ easyConnect: false });
+		const code = await CreateClientWeb({ easyConnect: false, lostCodeModalElement });
 		clientCreated = true;
 		clientCode = code ?? ""
-		modalElement.openModal()
 	}
 
 	async function copyCodeToClipboard() {
@@ -52,13 +51,7 @@
 	}
 </script>
 
-<Modal bind:this={modalElement}>
-	<p class="text-xl">{$_('lost-code-modal-title')}</p>
-	<div class="flex gap-2">
-		<button onclick={copyCodeToClipboard} class="btn btn-primary">{$_('lost-code-modal-copy')}</button>
-		<button class="btn btn-neutral">{$_('lost-code-modal-close')}</button>
-	</div>
-</Modal>
+<LostCodeModal copyCodeToClipboard={copyCodeToClipboard} bind:lostCodeModalElement={lostCodeModalElement!}></LostCodeModal>
 
 <h2 class="text-center text-white text-[clamp(2rem,6vw,4.2rem)] font-black leading-[1.1] xl:text-left">
 		{$_('client_card_title')}

@@ -15,11 +15,11 @@ import { _ } from 'svelte-i18n';
 import { exportStunServers } from './stun_servers';
 import { exportTurnServers } from './turn_servers';
 import { getConsumingStream, setConsumingStream } from './stream/stream_signal_hook.svelte';
-import Bowser from 'bowser';
 import log from '$lib/logger/logger';
 import LANMode from './lan_mode.svelte';
 import { videoSpeedOptimizationEnabled } from './stream/stream_config.svelte';
 import { handleClick, handleMove, unhandleClick, unhandleMove } from '$lib/devices/mouse/mouse_hook.svelte';
+import type Modal from '$lib/layout/Modal.svelte';
 
 enum DataChannelLabel {
 	StreamingSignal = 'streaming-signal',
@@ -29,11 +29,13 @@ enum DataChannelLabel {
 }
 
 interface CreateClientWebOptions {
-	easyConnect: boolean;
+  easyConnect: boolean;
+	lostCodeModalElement?: Modal
 }
 
 interface createClientCodeOptions {
-	clipboard: boolean;
+  clipboard: boolean;
+	lostCodeModalElement?: Modal
 }
 
 let peerConnection: RTCPeerConnection | undefined;
@@ -56,7 +58,7 @@ function CloseClientConnection(fn?: () => void) {
 }
 
 function createClientCode(options: createClientCodeOptions) {
-	const { clipboard } = options;
+	const { clipboard, lostCodeModalElement } = options;
 
 	return new Promise<string>((resolve, reject) => {
 		(async () => {
@@ -79,42 +81,19 @@ function createClientCode(options: createClientCodeOptions) {
 						// Disable spinner
 						toogleLoading();
 
-						const browser = Bowser.getParser(window.navigator.userAgent);
-						const engine = browser.getEngine();
-						const gecko = 'Gecko';
-						const clipboardClick = () => {
+						clientCode =
+							signalEncode(peerConnection?.localDescription) + ';' + signalEncode(candidates);
+
+						if (clipboard && navigator && navigator.clipboard && navigator.clipboard.writeText) {
 							navigator.clipboard
 								.writeText(clientCode)
 								.then(() => {
 									showToast(get(_)('client-code-copied-to-clipboard'), ToastType.SUCCESS);
 								})
 								.catch(() => {
-									showToast(get(_)('error-copying-client-code-to-clipboard'), ToastType.ERROR);
+                  showToast(get(_)('error-copying-client-code-to-clipboard'), ToastType.ERROR);
+                  lostCodeModalElement?.openModal()
 								});
-
-							document.removeEventListener('click', clipboardClick);
-						};
-
-						clientCode =
-							signalEncode(peerConnection?.localDescription) + ';' + signalEncode(candidates);
-
-						if (clipboard && navigator && navigator.clipboard && navigator.clipboard.writeText) {
-							if (engine.name === gecko) {
-								// Browsers that use gecko engine aka Firefox require user interaction
-								alert(
-									'Click ok and then click on the website to copy the client code to your clipboard.'
-								);
-								document.addEventListener('click', clipboardClick);
-							} else {
-								navigator.clipboard
-									.writeText(clientCode)
-									.then(() => {
-										showToast(get(_)('client-code-copied-to-clipboard'), ToastType.SUCCESS);
-									})
-									.catch(() => {
-										showToast(get(_)('error-copying-client-code-to-clipboard'), ToastType.ERROR);
-									});
-							}
 						} else if (clipboard) {
 							showToast(get(_)('error-copying-client-code-to-clipboard'), ToastType.ERROR);
 						}
@@ -134,7 +113,7 @@ function createClientCode(options: createClientCodeOptions) {
 }
 
 async function CreateClientWeb(options: CreateClientWebOptions) {
-	const { easyConnect } = options;
+	const { easyConnect, lostCodeModalElement } = options;
 
 	initPeerConnection();
 
@@ -240,7 +219,7 @@ async function CreateClientWeb(options: CreateClientWebOptions) {
         clearInterval(intervalSignalChannel);
 	};
 
-	return await createClientCode({ clipboard: !easyConnect });
+	return await createClientCode({ clipboard: !easyConnect, lostCodeModalElement});
 }
 
 async function ConnectToHostWeb(hostAndCandidatesCode: string) {
