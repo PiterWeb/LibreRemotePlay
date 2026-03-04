@@ -32,7 +32,7 @@
       }
     }
     
-    $inspect(canInstall)
+    $inspect(`CanInstall PWA: ${canInstall}`)
 </script>
 
 {#if canInstall}
