@@ -4,6 +4,7 @@ package webrtc
 import (
 	"context"
 	"log"
+	"runtime"
 	"strings"
 
 	// "github.com/PiterWeb/RemoteController/src/plugins"
@@ -13,15 +14,17 @@ import (
 	"github.com/PiterWeb/RemoteController/src/devices/mouse"
 	"github.com/PiterWeb/RemoteController/src/net/webrtc/streaming_signal"
 	"github.com/pion/webrtc/v4"
-	"github.com/wailsapp/wails/v2/pkg/runtime"
+	wailsRuntime "github.com/wailsapp/wails/v2/pkg/runtime"
 )
 
 var defaultSTUNServers = []string{"stun:stun.l.google.com:19305", "stun:stun.l.google.com:19302", "stun:stun.ipfire.org:3478"}
 
 const ERROR_ANSWER = "ERROR"
 
-func InitHost(ctx context.Context, ICEServers []webrtc.ICEServer, offerEncodedWithCandidates string, answerResponse chan<- string, triggerEnd <-chan struct{}, pidChan <-chan uint32) {
+func InitHost(wailsCtx context.Context, ctx context.Context, ICEServers []webrtc.ICEServer, offerEncodedWithCandidates string, answerResponse chan<- string, pidChan <-chan uint32) {
 
+	connCtx, cancelConn := context.WithCancel(ctx)
+	
 	candidates := []webrtc.ICECandidateInit{}
 
 	if len(ICEServers) == 0 {
@@ -39,19 +42,16 @@ func InitHost(ctx context.Context, ICEServers []webrtc.ICEServer, offerEncodedWi
 		ICEServers: ICEServers,
 	}
 
-	// Buffer of 10 to avoid blocking
-	closedConnChan := make(chan struct{}, 10)
-
 	defer func() {
 		if err := recover(); err != nil {
 			answerResponse <- ERROR_ANSWER
-			closedConnChan <- struct{}{}
+			cancelConn()
 		}
 	}()
 
 	peerConnection, err := webrtc.NewPeerConnection(config)
 	if err != nil {
-		return
+		panic(err)
 	}
 
 	defer func() {
@@ -69,7 +69,7 @@ func InitHost(ctx context.Context, ICEServers []webrtc.ICEServer, offerEncodedWi
 	// }
 
 	// Defer close of the wails signaling channel
-	defer runtime.EventsOff(ctx, "streaming-signal-server")
+	defer wailsRuntime.EventsOff(wailsCtx, "streaming-signal-server")
 
 	// Reload plugins in case a new plugin was added or configuration changed
 	// plugins.ReloadPlugins()
@@ -78,7 +78,11 @@ func InitHost(ctx context.Context, ICEServers []webrtc.ICEServer, offerEncodedWi
 	peerConnection.OnDataChannel(func(d *webrtc.DataChannel) {
 
 		gamepad.HandleGamepad(d)
-		streaming_signal.HandleStreamingSignal(ctx, d)
+		if runtime.GOOS == "linux" {
+			streaming_signal.HandleStreamingSignal(connCtx, d)
+		} else {
+			streaming_signal.HandleStreamingSignal(wailsCtx, d)
+		}
 		keyboard.HandleKeyboard(d)
 		mouse.HandleMouse(d)
 		// plugins.HandleServerPlugins(d)
@@ -101,17 +105,15 @@ func InitHost(ctx context.Context, ICEServers []webrtc.ICEServer, offerEncodedWi
 	peerConnection.OnConnectionStateChange(func(s webrtc.PeerConnectionState) {
 		log.Printf("Peer Connection State has changed: %s\n", s.String())
 
-		runtime.EventsEmit(ctx, "connection_state", s.String())
+		wailsRuntime.EventsEmit(wailsCtx, "connection_state", s.String())
 
 		if s == webrtc.PeerConnectionStateFailed {
-			closedConnChan <- struct{}{}
-
+			cancelConn()
 			peerConnection.Close()
-
 		}
 
 		if s == webrtc.PeerConnectionStateClosed {
-			closedConnChan <- struct{}{}
+			cancelConn()
 		}
 	})
 
@@ -165,11 +167,7 @@ func InitHost(ctx context.Context, ICEServers []webrtc.ICEServer, offerEncodedWi
 				// 	log.Println(err)
 				// }
 			// }()
-		case <-triggerEnd: // Block until cancel by user
-			answerResponse <- ERROR_ANSWER
-			cancelAudioCtx()
-			return
-		case <-closedConnChan: // Block until failed/clossed peerconnection
+		case <-connCtx.Done(): // Block until failed/clossed/canceled by user peerconnection
 			answerResponse <- ERROR_ANSWER
 			cancelAudioCtx()
 			return

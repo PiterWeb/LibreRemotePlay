@@ -26,7 +26,8 @@ let host: boolean = false;
 enum ConnectionState {
 	Connected = 'CONNECTED',
 	Failed = 'FAILED',
-	Disconnected = 'DISCONNECTED'
+  Disconnected = 'DISCONNECTED',
+  Closed = 'CLOSED',
 }
 
 interface CreateHostOptions {
@@ -82,7 +83,11 @@ export async function CreateHost(options: CreateHostOptions) {
   				case ConnectionState.Failed:
   					showToast(get(_)('connection-failed'), ToastType.ERROR);
   					goto('/');
-  					break;
+            break;
+          case ConnectionState.Closed:
+            showToast(get(_)('connection-closed'), ToastType.INFO)
+            goto('/')
+            break;
   				default:
   					showToast(get(_)('unknown-connection-state'), ToastType.ERROR);
   					break;
@@ -122,7 +127,8 @@ export async function ListenForConnectionChanges() {
 
 	const connectionStateCancelEventListener = EventsOn(
 		'connection_state',
-		(state: ConnectionState) => {
+    (state: ConnectionState) => {
+      log(`WebRTC connection - state (${state})`)
 			switch (state.toUpperCase()) {
 				case ConnectionState.Connected:
 					showToast(get(_)('connected'), ToastType.SUCCESS);
@@ -131,10 +137,13 @@ export async function ListenForConnectionChanges() {
 					break;
 				case ConnectionState.Failed:
 					showToast(get(_)('connection-failed'), ToastType.ERROR);
-					goto('/');
+          goto('/');
+          connectionStateCancelEventListener();
+					EventsOff('connection_state');
 					break;
+        case ConnectionState.Closed:
 				case ConnectionState.Disconnected:
-					showToast(get(_)('connection-lost'), ToastType.ERROR);
+					showToast(get(_)('connection-lost'), ToastType.INFO);
 					host = false;
 					goto('/');
 					connectionStateCancelEventListener();

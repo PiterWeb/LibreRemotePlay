@@ -16,7 +16,7 @@ func HandleStreamingSignal(ctx context.Context, streamingSignalChannel *webrtc.D
 		return
 	}
 
-	wsClient, _, err := websocket.Dial(context.Background(), fmt.Sprintf("ws://localhost:%d/ws", cli.GetConfig().GetHTTPPort()), nil)
+	wsClient, _, err := websocket.Dial(ctx, fmt.Sprintf("ws://localhost:%d/ws", cli.GetConfig().GetHTTPPort()), nil)
 
 	if err != nil {
 		log.Println(err)
@@ -36,23 +36,28 @@ func HandleStreamingSignal(ctx context.Context, streamingSignalChannel *webrtc.D
 		defer wsClient.Close(websocket.StatusInternalError, "Client terminated")
 
 		for {
-			t, data, err := wsClient.Read(context.Background())
-
-			if err != nil {
-				log.Println(err)
-				continue
+			select {
+				case <-ctx.Done():
+					return
+				default:
+					t, data, err := wsClient.Read(ctx)
+	
+					if err != nil {
+						
+						log.Println(err)
+						continue
+					}
+	
+					if WhipConfig.Enabled.IsEnabled() {
+						continue
+					}
+	
+					if t != websocket.MessageText {
+						continue
+					}
+	
+					streamingSignalChannel.SendText(string(data))
 			}
-
-			if WhipConfig.Enabled.IsEnabled() {
-				continue
-			}
-
-			if t != websocket.MessageText {
-				continue
-			}
-
-			streamingSignalChannel.SendText(string(data))
-
 		}
 	}()
 
@@ -61,7 +66,7 @@ func HandleStreamingSignal(ctx context.Context, streamingSignalChannel *webrtc.D
 		if WhipConfig.Enabled.IsEnabled() {
 			handleWhipAnswer(msg.Data)
 		} else {
-			wsClient.Write(context.Background(), websocket.MessageText, msg.Data)
+			wsClient.Write(ctx, websocket.MessageText, msg.Data)
 		}
 
 	})

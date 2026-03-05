@@ -36,9 +36,9 @@ type App struct {
 	ctx    context.Context
 	assets embed.FS 
 	openPeer bool
-	openPeerMutex *sync.Mutex
+	mutex *sync.Mutex
 	pidAudioChan chan uint32
-	triggerEnd chan struct{}
+	cancelConn context.CancelFunc
 }
 
 // NewApp creates a new App application struct
@@ -47,9 +47,8 @@ func NewApp(assets embed.FS) *App {
 		ctx:    context.Background(),
 		assets: assets,
 		openPeer: false,
-		openPeerMutex: &sync.Mutex{},
+		mutex: &sync.Mutex{},
 		pidAudioChan: make(chan uint32),
-		triggerEnd: make(chan struct{}),
 	}
 }
 
@@ -57,6 +56,8 @@ func NewApp(assets embed.FS) *App {
 func (a *App) Startup(ctx context.Context) {
 	// Perform your setup here
 
+	a.ctx = ctx
+	
 	go func() {
 		if err := oninit.Execute(a.ctx, a.assets); err != nil {
 			time.Sleep(time.Second * 5) // Add some time to load the UI
@@ -73,8 +74,6 @@ func (a *App) Startup(ctx context.Context) {
 		}
 	}()
 
-	a.ctx = ctx
-
 }
 
 // BeforeClose is called when the application is about to quit,
@@ -82,8 +81,8 @@ func (a *App) Startup(ctx context.Context) {
 // Returning true will cause the application to continue, false will continue shutdown as normal.
 func (a *App) BeforeClose(ctx context.Context) (prevent bool) {
 
-	a.openPeerMutex.Lock()
-	defer a.openPeerMutex.Unlock()
+	a.mutex.Lock()
+	defer a.mutex.Unlock()
 
 	if !a.openPeer {
 		prevent = false
@@ -117,7 +116,6 @@ func (a *App) BeforeClose(ctx context.Context) (prevent bool) {
 func (a *App) Shutdown(ctx context.Context) {
 	// Perform your teardown here
 	a.TryClosePeerConnection()
-	close(a.triggerEnd)
 	if err := onfinish.Execute(); err != nil {
 		log.Printf("Error onfinish: %s", err.Error())
 	}
@@ -125,8 +123,8 @@ func (a *App) Shutdown(ctx context.Context) {
 
 func (a *App) NotifyCreateClient() {
 
-	a.openPeerMutex.Lock()
-	defer a.openPeerMutex.Unlock()
+	a.mutex.Lock()
+	defer a.mutex.Unlock()
 
 	a.openPeer = true
 	println("NotifyCreateClient")
@@ -134,8 +132,8 @@ func (a *App) NotifyCreateClient() {
 
 func (a *App) NotifyCloseClient() {
 
-	a.openPeerMutex.Lock()
-	defer a.openPeerMutex.Unlock()
+	a.mutex.Lock()
+	defer a.mutex.Unlock()
 
 	a.openPeer = false
 	println("NotifyCloseClient")
@@ -144,25 +142,28 @@ func (a *App) NotifyCloseClient() {
 // Create a Host Peer, it receives the offer encoded and returns the encoded answer response
 func (a *App) TryCreateHost(ICEServers []webrtc.ICEServer, offerEncoded string) (value string) {
 
-	a.openPeerMutex.Lock()
-	defer a.openPeerMutex.Unlock()
+	a.mutex.Lock()
+	defer a.mutex.Unlock()
 
 	if a.openPeer {
-		a.triggerEnd <- struct{}{}
+		a.cancelConn()
 	}
 
 	a.openPeer = true
 
-	// Buffer 1 response to avoid thread block inside InitHost
-	answerResponse := make(chan string, 1)
+	answerResponse := make(chan string)
 
-	go net.InitHost(a.ctx, ICEServers, offerEncoded, answerResponse, a.triggerEnd, a.pidAudioChan)
+	connCtx, cancelConn := context.WithCancel(a.ctx)
+	
+	a.cancelConn = cancelConn
+	
+	go net.InitHost(a.ctx, connCtx, ICEServers, offerEncoded, answerResponse, a.pidAudioChan)
 
 	response := <-answerResponse
 
-	if strings.Contains(response, net.ERROR_ANSWER) {
-		a.openPeerMutex.Lock()
-		defer a.openPeerMutex.Unlock()
+	if response == net.ERROR_ANSWER {
+		a.mutex.Lock()
+		defer a.mutex.Unlock()
 		a.openPeer = false
 		log.Println("Error on WebRTC host connection")
 	}
@@ -174,14 +175,14 @@ func (a *App) TryCreateHost(ICEServers []webrtc.ICEServer, offerEncoded string) 
 // Closes the peer connection and returns a boolean indication if a connection existed and was closed or not
 func (a *App) TryClosePeerConnection() bool {
 
-	a.openPeerMutex.Lock()
-	defer a.openPeerMutex.Unlock()
+	a.mutex.Lock()
+	defer a.mutex.Unlock()
 
 	if !a.openPeer {
 		return false
 	}
 
-	a.triggerEnd <- struct{}{}
+	a.cancelConn()
 
 	a.openPeer = false
 
