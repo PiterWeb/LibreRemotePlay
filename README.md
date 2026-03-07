@@ -13,7 +13,7 @@
 
 - Website 🌐: https://libreremoteplay.vercel.app/
 
-- Wiki 📖: [PiterWeb/LibreRemotePlay/wiki](/PiterWeb/LibreRemotePlay/wiki)
+- Wiki 📖: https://codeberg.org/PiterWeb/LibreRemotePlay/wiki
 
 - Discord Community 👥: https://discord.gg/v7qd7nU3fJ
 
@@ -33,8 +33,8 @@
 ## Resources 📚
 
 - [Docs](./docs/) 📘
-- [Linux Docs](/PiterWeb/LibreRemotePlay/wiki/Installation-&-Execution#execute-in-linux) 📘
-- [Wiki](/PiterWeb/LibreRemotePlay/wiki) (Guides, FAQ, ...)
+- [Linux Docs](https://codeberg.org/PiterWeb/LibreRemotePlay/wiki/Installation-&-Execution#execute-in-linux) 📘
+- [Wiki](https://codeberg.org/PiterWeb/LibreRemotePlay/wiki) (Guides, FAQ, ...)
 - [Discord Community](https://discord.gg/v7qd7nU3fJ)
 
 ### Videos 📹
