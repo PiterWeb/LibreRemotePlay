@@ -13,7 +13,7 @@
 
 - Website 🌐: https://libreremoteplay.vercel.app/
 
-- Wiki 📖: https://github.com/PiterWeb/LibreRemotePlay/wiki
+- Wiki 📖: https://codeberg.org/PiterWeb/LibreRemotePlay/wiki
 
 - Discord Community 👥: https://discord.gg/v7qd7nU3fJ
 
