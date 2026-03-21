@@ -8,9 +8,10 @@
   - frontend/src/lib/i18n (All the translations of the project)
 
 ## Requisites (only apply to code contributions)
-  - If you want to contribute first you need to check the issues, them if you like any of the open issues work on it and merge it to the project (obviously you can open a new issue to enhance the features or correct any bug you found to work on it later)
+  - If you want to contribute first you need to check the issues, then if you like any of the open issues work on it and merge it to the project (obviously you can open a new issue to enhance the features or correct any bug you found to work on it later)
   - Try to do self-explanatory code (if cannot be you can comment to enhance the comprehension)
-
+  - No AI (Vibecoding): If you try to submit code that it was made by AI simply don't do it. This project is written by humans for humans. 
+  
 ## Resources of interest
 
   - [LibreRemotePlay Docs](./docs/README.md)
