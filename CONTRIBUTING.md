@@ -8,9 +8,9 @@
   - frontend/src/lib/i18n (All the translations of the project)
 
 ## Requisites (only apply to code contributions)
-  - If you want to contribute first you need to check the issues, then if you like any of the open issues work on it and merge it to the project (obviously you can open a new issue to enhance the features or correct any bug you found to work on it later)
-  - Try to do self-explanatory code (if cannot be you can comment to enhance the comprehension)
-  - No AI (Vibecoding): If you try to submit code that it was made by AI simply don't do it. This project is written by humans for humans. If there are any evidence of Claude / Cursor / Antigravity / Copilot / ...  the pull request will be rejected.
+  - If you want to contribute first you need to check the issues, then if you like any of the open issues work on it and merge it to the project. Obviously you can open a new issue to enhance the features or correct any bug you found to work on it later.
+  - Try to do self-explanatory code. If cannot be you can comment to enhance the comprehension.
+  - No AI (Vibe-coding): If you try to submit code that it was made by AI simply don't do it. This project is written by humans for humans. If there are any evidence of Claude / Cursor / Antigravity / Copilot / ... the pull request will be rejected.
   
 ## Resources of interest
 
@@ -22,7 +22,7 @@
 
 ## How to
 
-  1. Fork this repository from codeberg https://codeberg.org/PiterWeb/LibreRemotePlay
+  1. Fork this repository from Codeberg https://codeberg.org/PiterWeb/LibreRemotePlay
   2. Clone it
   3. Work on the issue
   4. When you have finished make a pull request to merge it with the main branch
@@ -45,4 +45,4 @@ By default English is the language of reference so you can check if there are en
   7. Done
 
 
-## Thank you for reading this and also for your interest on contributing
+## Thank You for Reading This and for Your Interest on Contributing
