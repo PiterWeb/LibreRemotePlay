@@ -29,7 +29,7 @@ func HandleStreamingSignal(ctx context.Context, streamingSignalChannel *webrtc.D
 		}
 	}()
 
-	go handleWhipOffer(streamingSignalChannel)
+	go handleWhipOffer(ctx, streamingSignalChannel)
 
 	go func() {
 

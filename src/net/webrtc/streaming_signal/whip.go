@@ -157,14 +157,14 @@ func InitWhipServer(ctx context.Context, config *whipConfig) error {
 
 }
 
-func handleWhipOffer(streamingSignalChannel *webrtc.DataChannel) {
+func handleWhipOffer(ctx context.Context, streamingSignalChannel *webrtc.DataChannel) {
 
 	for offer := range WhipConfig.OfferChan {
 		if WhipConfig.Enabled.IsEnabled() {
 
 			offerMap := map[string]any{}
 
-			ctx, cancelCtx :=  context.WithTimeout(context.Background(), time.Second)
+			ctx, cancelCtx :=  context.WithTimeout(ctx, time.Second)
 			
 			defer cancelCtx()
 			

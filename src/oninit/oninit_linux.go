@@ -17,7 +17,7 @@ func Execute(ctx context.Context, assets embed.FS) error {
 
 	httpServerMux := http.NewServeMux()
 	
-	websocket.SetupWebsocketHandler(httpServerMux)
+	websocket.SetupWebsocketHandler(ctx, httpServerMux)
 
 	ips_channel := make(chan []string, 1)
 	errChan := make(chan error, 2)

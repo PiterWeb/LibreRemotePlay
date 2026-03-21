@@ -169,6 +169,7 @@ func InitHost(wailsCtx context.Context, ctx context.Context, ICEServers []webrtc
 			// }()
 		case <-connCtx.Done(): // Block until failed/clossed/canceled by user peerconnection
 			answerResponse <- ERROR_ANSWER
+			peerConnection.Close()
 			cancelAudioCtx()
 			return
 		}

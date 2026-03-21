@@ -12,7 +12,7 @@ import (
 
 var conns = map[string]*websocket.Conn{}
 
-func SetupWebsocketHandler(serverMux *http.ServeMux) {
+func SetupWebsocketHandler(ctx context.Context, serverMux *http.ServeMux) {
 
 	serverMux.HandleFunc("GET /ws", func(w http.ResponseWriter, r *http.Request) {
 
@@ -30,9 +30,7 @@ func SetupWebsocketHandler(serverMux *http.ServeMux) {
 			}
 		}()
 
-		// Set the context as needed. Use of r.Context() is not recommended
-		// to avoid surprising behavior (see http.Hijacker).
-		ctx, cancel := context.WithCancel(context.Background())
+		ctx, cancel := context.WithCancel(ctx)
 		defer cancel()
 
 		wsBroadcast(ctx, r, c)
