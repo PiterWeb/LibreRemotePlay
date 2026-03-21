@@ -15,7 +15,6 @@
 		"cy:parallel": "cypress-parallel -s cy:open -t 2 -m false"
 	},
 	"devDependencies": {
-		"@rollup/plugin-json": "6.1.0",
 		"@sveltejs/adapter-static": "3.0.10",
 		"@sveltejs/kit": "2.55.0",
 		"@sveltejs/vite-plugin-svelte": "7.0.0",
