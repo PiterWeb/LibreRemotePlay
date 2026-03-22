@@ -22,7 +22,7 @@
 
 ## How to
 
-  1. Fork this repository from Codeberg https://codeberg.org/PiterWeb/LibreRemotePlay
+  1. Fork this repository
   2. Clone it
   3. Work on the issue
   4. When you have finished make a pull request to merge it with the main branch
