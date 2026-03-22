@@ -5,6 +5,8 @@
 	import { _ } from 'svelte-i18n';
 	import LanguageSelector from '$lib/i18n/LanguageSelector.svelte';
 	import TurnServers from './TurnServers.svelte';
+	import Mouse from './Mouse.svelte';
+	import IsDesktop from '$lib/detection/IsDesktop.svelte';
 </script>
 
 <h2 class="text-center text-white text-[clamp(2rem,6vw,4.2rem)] font-black leading-[1.1] xl:text-left">
@@ -15,7 +17,10 @@
 	<LanguageSelector />
 	<StunServers />
 	<TurnServers />
-
+	
+	<IsDesktop>
+	    <Mouse />
+	</IsDesktop>
 	<IsWindows>
 		<ViGEmDownload />
 	</IsWindows>
