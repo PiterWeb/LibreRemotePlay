@@ -106,5 +106,6 @@
   "codec-list": "Lista de codificadores",
   "codec-list-preference": "Preferencia ascendente",
   "restore-codecs": "Restaurar el orden de los codificadores",
-  "install_pwa": "Instalar PWA"
+  "install_pwa": "Instalar PWA",
+  "enable": "Activar"
 }

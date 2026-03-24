@@ -9,8 +9,11 @@ const defaultStunServers = [
 ];
 
 const defaultStunConfig: Readonly<ServersConfig> = {
-	default: {
-		urls: defaultStunServers
+  default: {
+    server: {
+      urls: defaultStunServers
+    },
+    enable: true
 	}
 };
 
@@ -24,19 +27,20 @@ stunServersStore.subscribe((stunServers) =>
 
 function removeServerFromGroup(group: string, url: string) {
 	stunServersStore.update((stunServers) => {
-		stunServers[group].urls = stunServers[group].urls.filter((server) => server !== url);
+		stunServers[group].server.urls = stunServers[group].server.urls.filter((server) => server !== url);
 		return stunServers;
 	});
 }
 
-function modifyGroup(name: string, newName?: string, username?: string, credential?: string) {
+function modifyGroup(name: string, enable?:boolean, newName?: string, username?: string, credential?: string) {
 
-	log({name, newName, username, credential});
+	log({name, enable, newName, username, credential});
 	if (newName) {
 		stunServersStore.update((stunServers) => {
 			stunServers[newName] = stunServers[name];
-			if (username) stunServers[newName].username = username;
-			if (credential) stunServers[newName].credential = credential;
+			if (username) stunServers[newName].server.username = username;
+      if (credential) stunServers[newName].server.credential = credential;
+			if (enable !== undefined) stunServers[newName].enable = enable
 			delete stunServers[name];
 			return stunServers;
 		});
@@ -45,25 +49,29 @@ function modifyGroup(name: string, newName?: string, username?: string, credenti
 	}
 
 	stunServersStore.update((stunServers) => {
-		stunServers[name].username = username;
-		stunServers[name].credential = credential;
+		stunServers[name].server.username = username;
+    stunServers[name].server.credential = credential;
+		if (enable !== undefined) stunServers[name].enable = enable
 		return stunServers;
 	});
 }
 
 function addServerToGroup(group: string, url: string) {
 	stunServersStore.update((stunServers) => {
-		stunServers[group].urls.push('stun:' + url);
+		stunServers[group].server.urls.push('stun:' + url);
 		return stunServers;
 	});
 }
 
 function createServerGroup(name: string, username?: string, credential?: string) {
-	const newServer = {
-		[name]: {
-			urls: [],
-			username: username,
-			credential: credential
+	const newServer: ServersConfig = {
+    [name]: {
+      server: {    
+   			urls: [],
+   			username: username,
+   			credential: credential
+      },
+      enable: true
 		}
 	};
 	stunServersStore.update((stunServers) => {
@@ -83,11 +91,13 @@ function deleteServerGroup(name: string) {
 
 function exportStunServers(): ICEServer[] {
 	const servers = get(stunServersStore);
-	const serversArray = Object.keys(servers).map((key) => {
+  const serversArray = Object.keys(servers).filter((key) => {
+    return servers[key].enable
+  }).map((key) => {
 		return {
-			urls: servers[key].urls,
-			...(servers[key].username && { username: servers[key].username }),
-			...(servers[key].credential && { credential: servers[key].credential })
+			urls: servers[key].server.urls,
+			...(servers[key].server.username && { username: servers[key].server.username }),
+			...(servers[key].server.credential && { credential: servers[key].server.credential })
 		};
 	});
 

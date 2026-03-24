@@ -29,6 +29,8 @@
 
 	import { _ } from 'svelte-i18n';
 	import log from '$lib/logger/logger';
+	import Tooltip from '$lib/layout/Tooltip.svelte';
+	import { get } from 'svelte/store';
 	interface Props {
 		type?: 'stun' | 'turn';
 	}
@@ -63,14 +65,15 @@
 
 	const modifyGroup = (
 		server_group: string,
+		enable?: boolean,
 		new_group?: string,
 		username?: string,
 		credential?: string
 	) => {
 		if (type === 'stun') {
-			modifyGroupSTUN(server_group, new_group, username, credential);
+			modifyGroupSTUN(server_group, enable, new_group, username, credential);
 		} else {
-			modifyGroupTURN(server_group, new_group, username, credential);
+			modifyGroupTURN(server_group, enable, new_group, username, credential);
 		}
 
 		showToast($_('server-group-update'), ToastType.SUCCESS );
@@ -162,7 +165,14 @@
 		{/if}
 		{#each Object.keys($servers) as server_group, i}
 			<li class="w-[75vw] p-4 my-4 border rounded-lg shadow sm:p-6 bg-white border-gray-200">
-				<div class="flex justify-end h-0 mb-4 lg:mb-1">
+				<div class="flex justify-end items-center h-0 my-4 lg:my-1 gap-1">
+    				<input
+                        id="enable-group"
+    					type="checkbox"
+    					class="checkbox checkbox-primary checkbox-sm"
+                        bind:checked={$servers[server_group].enable}
+     				/>
+    				
 					<button
 						type="button"
 						class="btn btn-circle btn-sm btn-ghost text-white"
@@ -188,7 +198,7 @@
 						contenteditable="false"
 						id="group-{server_group}-{i}"
 						oninput={(e) =>
-							e.currentTarget.textContent && modifyGroup(server_group, e.currentTarget.textContent)}
+							e.currentTarget.textContent && modifyGroup(server_group, undefined, e.currentTarget.textContent)}
 						onfocusout={() => editNameGroup(server_group, i)}
 					>
 						{server_group}
@@ -223,9 +233,9 @@
 					</form>
 
 					<ul use:autoAnimate class="max-w-md mx-auto divide-y divide-gray-700 w-full">
-						{#if ($servers[server_group]?.urls ?? []).length === 0}
+						{#if ($servers[server_group]?.server?.urls ?? []).length === 0}
 							<div>
-								<p class="text-white text-center text-lg font-medium my-auto h-full">
+								<p class="text-gray-900 text-center text-lg font-medium my-auto h-full">
 									{$_('no_servers')}
 								</p>
 								<p class="text-red-400 text-center text-lg font-medium my-auto h-full">
@@ -233,7 +243,7 @@
 								</p>
 							</div>
 						{/if}
-						{#each $servers[server_group]?.urls ?? [] as server, j}
+						{#each $servers[server_group]?.server?.urls ?? [] as server, j}
 							<li class="pb-3 sm:pb-4">
 								<div class="flex items-center space-x-4 rtl:space-x-reverse">
 									<div class="flex-1 min-w-0">
@@ -269,8 +279,8 @@
 								class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
 								placeholder="username"
 								required
-								value={$servers[server_group]?.username ?? ''}
-								onchange={(e) => modifyGroup(server_group, undefined, e.currentTarget.value)}
+								value={$servers[server_group]?.server?.username ?? ''}
+								onchange={(e) => modifyGroup(server_group, undefined, undefined, e.currentTarget.value)}
 							/>
 
 							<label
@@ -285,12 +295,12 @@
 								class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
 								placeholder="•••••••••"
 								required
-								value={$servers[server_group]?.credential ?? ''}
+								value={$servers[server_group]?.server?.credential ?? ''}
 								onfocusin={e => e.currentTarget.type = 'text'}
 								onfocusout={e => e.currentTarget.type = 'password'}
 								onchange={e => {
 									e.preventDefault()
-									const username = $servers[server_group]?.username;
+									const username = $servers[server_group]?.server?.username;
 									log(username);
 									log(e.currentTarget.value);
 									modifyGroup(server_group, undefined, username, e.currentTarget.value);
@@ -303,3 +313,7 @@
 		{/each}
 	</ul>
 </section>
+
+<Tooltip ref="enable-group" placement="top">
+    <p>{$_('enable')}</p>
+</Tooltip>

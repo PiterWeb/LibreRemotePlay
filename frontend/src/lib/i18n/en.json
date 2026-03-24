@@ -106,5 +106,6 @@
   "codec-list": "Codec list",
   "codec-list-preference": "Up to down preference",
   "restore-codecs": "Restore codec order",
-  "install_pwa": "Install PWA"
+  "install_pwa": "Install PWA",
+  "enable": "Enable"
 }

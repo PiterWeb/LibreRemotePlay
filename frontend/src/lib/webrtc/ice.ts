@@ -1,6 +1,9 @@
 
 export interface ServersConfig {
-	[group: string]: ICEServer;
+  [group: string]: {
+    enable: boolean;
+    server: ICEServer;
+  };
 }
 
 export interface ICEServer {
