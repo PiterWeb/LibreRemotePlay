@@ -143,19 +143,19 @@ func (a *App) NotifyCloseClient() {
 func (a *App) TryCreateHost(ICEServers []webrtc.ICEServer, offerEncoded string) (value string) {
 
 	a.mutex.Lock()
-	defer a.mutex.Unlock()
 
 	if a.openPeer {
 		a.cancelConn()
 	}
 
 	a.openPeer = true
-
-	answerResponse := make(chan string)
+	
+	answerResponse := make(chan string, 1) // Buffer of 1 to not block thread on cancel
 
 	connCtx, cancelConn := context.WithCancel(a.ctx)
 	
 	a.cancelConn = cancelConn
+	a.mutex.Unlock()
 	
 	go net.InitHost(a.ctx, connCtx, ICEServers, offerEncoded, answerResponse, a.pidAudioChan)
 
