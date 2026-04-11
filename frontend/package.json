@@ -16,7 +16,7 @@
 	},
 	"devDependencies": {
 		"@sveltejs/adapter-static": "3.0.10",
-		"@sveltejs/kit": "2.55.0",
+		"@sveltejs/kit": "2.57.1",
 		"@sveltejs/vite-plugin-svelte": "7.0.0",
 		"@types/sortablejs": "1.15.9",
 		"@typescript-eslint/eslint-plugin": "8.57.1",
@@ -32,7 +32,7 @@
 		"tailwindcss": "3.4.19",
 		"tslib": "2.8.1",
 		"typescript": "5.9.3",
-		"vite": "8.0.1"
+		"vite": "8.0.5"
 	},
 	"type": "module",
 	"dependencies": {
