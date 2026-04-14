@@ -201,6 +201,8 @@ func (a *App) GetUsedPorts() UsedPorts {
 	}
 }
 
+// Gamepad
+
 func (a *App) ToogleGamepad() {
 	gamepad.GamepadEnabled.Toogle()
 }
@@ -208,6 +210,8 @@ func (a *App) ToogleGamepad() {
 func (a *App) IsGamepadEnabled() bool {
 	return gamepad.GamepadEnabled.IsEnabled()
 }
+
+// Keyboard
 
 func (a *App) ToogleKeyboard() {
 	keyboard.KeyboardEnabled.Toogle()
@@ -217,6 +221,8 @@ func (a *App) IsKeyboardEnabled() bool {
 	return keyboard.KeyboardEnabled.IsEnabled()
 }
 
+// Mouse
+
 func (a *App) ToogleMouse() {
 	mouse.MouseEnabled.Toogle()
 }
@@ -224,6 +230,8 @@ func (a *App) ToogleMouse() {
 func (a *App) IsMouseEnabled() bool {
 	return mouse.MouseEnabled.IsEnabled()
 }
+
+// WHIP
 
 func (a *App) ToogleWhip() {
 	streaming_signal.WhipConfig.Enabled.Toogle()
@@ -233,13 +241,19 @@ func (a *App) IsWhipEnabled() bool {
 	return streaming_signal.WhipConfig.Enabled.IsEnabled()
 }
 
+// OS Detection
+
 func (a *App) GetCurrentOS() string {
 	return strings.ToUpper(runtime.GOOS)
 }
 
+// Log
+
 func (a *App) LogPrintln(info string) {
 	log.Println(info)
 }
+
+// Audio
 
 func (a *App) SetAudioPid(pid uint32) {
 	a.pidAudioChan <- pid
