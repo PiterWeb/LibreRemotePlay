@@ -50,7 +50,7 @@
 
 {@render children?.()}
 
-<media-theme-microvideo bind:this={media} class:hidden={!consumingStream.value}>
+<media-theme-microvideo id="mouse-element" bind:this={media} class:hidden={!consumingStream.value}>
 <!-- svelte-ignore a11y_media_has_caption -->
 <video
     bind:this={videoElement}

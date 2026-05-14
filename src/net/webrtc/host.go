@@ -35,8 +35,6 @@ func InitHost(wailsCtx context.Context, ctx context.Context, ICEServers []webrtc
 		}
 	}
 
-	streaming_signal.WhipConfig.ICEServers.Store(&ICEServers)
-
 	// Prepare the configuration
 	config := webrtc.Configuration{
 		ICEServers: ICEServers,
@@ -84,7 +82,7 @@ func InitHost(wailsCtx context.Context, ctx context.Context, ICEServers []webrtc
 			streaming_signal.HandleStreamingSignal(wailsCtx, d)
 		}
 		keyboard.HandleKeyboard(d)
-		mouse.HandleMouse(d)
+		mouse.HandleMouse(wailsCtx, d)
 		// plugins.HandleServerPlugins(d)
 
 	})

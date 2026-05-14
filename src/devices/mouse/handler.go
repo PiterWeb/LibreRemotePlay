@@ -2,29 +2,42 @@ package mouse
 
 import (
 	"bytes"
+	"context"
 	"encoding/binary"
 	"log"
 
 	"github.com/PiterWeb/RemoteController/src/devices"
 	"github.com/go-vgo/robotgo"
 	"github.com/pion/webrtc/v4"
+	"github.com/wailsapp/wails/v2/pkg/runtime"
 )
 
 var MouseEnabled = new(devices.DeviceEnabled).Disable()
 
-func HandleMouse(d *webrtc.DataChannel) {
+func HandleMouse(ctx context.Context, d *webrtc.DataChannel) {
 
 	if d.Label() != "mouse" {
 		return
 	}
 
 	d.OnOpen(func() {
-		
-		robotgo.MouseSleep = 100
-		
 		log.Println("mouse data channel is open")
 	})
 
+	screens, err := runtime.ScreenGetAll(ctx)
+	
+	if err != nil {
+		return
+	}
+	
+	moveFun, unregisterMouse := moveMouseHandler(screens)
+
+	d.OnClose(func() {
+		if err := unregisterMouse(); err != nil {
+			log.Printf("Mouse error: %s", err)
+		}
+	})
+	
 	d.OnMessage(func(msg webrtc.DataChannelMessage) {
 
 		if !MouseEnabled.IsEnabled() {
@@ -96,12 +109,28 @@ func HandleMouse(d *webrtc.DataChannel) {
 				return
 			}
 			
+			videoW := make([]byte, 2)
+			_, err = msgBuf.Read(videoW)
+			
+			if err != nil {
+				return
+			}
+			
+			videoH := make([]byte, 2)
+			_, err = msgBuf.Read(videoH)
+			
+			if err != nil {
+				return
+			}
+			
 			xNum := binary.BigEndian.Uint16(x)
 			yNum := binary.BigEndian.Uint16(y)
+			videoWNum := binary.BigEndian.Uint16(videoW)
+			videoHNum := binary.BigEndian.Uint16(videoH)
 			
-			// log.Printf("Mouse x: %d, y:%d\n", int(xNum), int(yNum))
+			log.Printf("Mouse x: %d, y:%d\n", int(xNum), int(yNum))
 			
-			robotgo.Move(int(xNum), int(yNum))
+			moveFun(int32(xNum), int32(yNum), int32(videoWNum), int32(videoHNum))
 			
 		}
 
