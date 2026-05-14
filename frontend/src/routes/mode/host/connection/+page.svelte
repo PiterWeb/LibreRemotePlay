@@ -138,6 +138,9 @@
 				return;
 			}
 
+			const { IsWhipEnabled } = await import('$lib/wailsjs/go/bindings/App');
+			whipEnabled = await IsWhipEnabled();
+			
 			const { EventsOn } = await import('$lib/wailsjs/runtime/runtime');
 			const { GetUsedPorts } = await import('$lib/wailsjs/go/bindings/App');
 			const usedPorts = await GetUsedPorts();
