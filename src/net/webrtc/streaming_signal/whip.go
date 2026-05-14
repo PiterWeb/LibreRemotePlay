@@ -76,6 +76,8 @@ func InitWhipServer(ctx context.Context, config *whipConfig) error {
 		w.Header().Add("Access-Control-Allow-Headers", "*")
 		w.Header().Add("Access-Control-Allow-Headers", "Authorization")
 
+		log.Println(*WhipConfig.ICEServers.Load())
+		
 		for _, s := range *WhipConfig.ICEServers.Load() {
 			for _, url := range s.URLs {
 				w.Header().Add("Link", fmt.Sprintf("<%s>; rel=\"ice-server\"", url))
@@ -90,21 +92,21 @@ func InitWhipServer(ctx context.Context, config *whipConfig) error {
 		}
 
 		if len(offer) == 0 {
-			log.Println("Offer received in whip is too short")
+			log.Println("WHIP - Offer received is too short")
 			w.WriteHeader(http.StatusInternalServerError)
 			_, _ = w.Write([]byte("Error request body too short"))
 			return
 		}
 		
-		log.Printf("Offer received in whip: %s\n", string(offer))
+		log.Println("WHIP - Offer received")
 		offerChan <- string(offer)
 
-		log.Println("Waiting for answer in whip")
+		log.Println("WHIP - Waiting for answer")
 		
 		rawAnswer, ok := <-answerChan
 
 		if !ok {
-			log.Println("Answer channel closed in whip")
+			log.Println("WHIP - Answer channel closed")
 			w.WriteHeader(http.StatusInternalServerError)
 			_, _ = w.Write([]byte("Error getting an answer"))
 			return
@@ -121,13 +123,13 @@ func InitWhipServer(ctx context.Context, config *whipConfig) error {
 		err = json.Unmarshal([]byte(rawAnswer), &answerStruct)
 
 		if err != nil {
-			log.Printf("Error parsing answer on whip %s\n", err)
+			log.Printf("WHIP - Error parsing answer: %s\n", err)
 			w.WriteHeader(http.StatusInternalServerError)
 			_, _ = w.Write([]byte("Error getting an answer"))
 			return
 		}
 
-		log.Printf("Sending answer for whip: %s\n", answerStruct.Answer.SDP)
+		log.Println("WHIP - Sending answer")
 
 		w.Header().Set("Content-Type", "application/sdp")
 		w.Header().Add("Location", fmt.Sprintf("http://localhost:%d/whip", config.Port))
@@ -181,7 +183,7 @@ func handleWhipOffer(ctx context.Context, streamingSignalChannel *webrtc.DataCha
 			offerJSONBytes, err := json.Marshal(offerMap)
 
 			if err != nil {
-				log.Printf("Error encoding whip offer: %s\n", err)
+				log.Printf("WHIP - Error encoding offer: %s\n", err)
 				continue
 			}
 
