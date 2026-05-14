@@ -157,6 +157,9 @@ func (a *App) TryCreateHost(ICEServers []webrtc.ICEServer, offerEncoded string) 
 	a.cancelConn = cancelConn
 	a.mutex.Unlock()
 	
+	log.Println(ICEServers)
+	streaming_signal.WhipConfig.ICEServers.Store(&ICEServers)
+	
 	go net.InitHost(a.ctx, connCtx, ICEServers, offerEncoded, answerResponse, a.pidAudioChan)
 
 	response := <-answerResponse
