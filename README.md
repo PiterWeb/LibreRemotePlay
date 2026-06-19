@@ -138,7 +138,11 @@ Go to the root project folder and run
 - For Linux builds:
 
     `$ task build-linux`
-    
+
+- For Linux Flatpak builds:
+  
+    `$ task build-linux-flatpak`
+
 - For Linux AppImage builds (experimental):
   
     `$ task build-linux`
