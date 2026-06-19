@@ -1,0 +1,66 @@
+id: io.github.PiterWeb.LibreRemotePlay
+runtime: org.gnome.Platform
+runtime-version: "41"
+sdk: org.gnome.Sdk
+
+command: LibreRemotePlay
+finish-args:
+  - --share=ipc # Share IPC namespace with the host (necessary for X11).
+  - --socket=x11
+  - --socket=wayland
+  - --socket=fallback-x11
+  - --device=dri # OpenGL rendering support.
+  - --talk-name=org.freedesktop.Notifications
+  # - --filesystem=home
+  # - --filesystem=host
+  - --share=network
+  - --talk-name=org.kde.StatusNotifierWatcher
+
+build-options:
+  build-args:
+    - --share=network
+  env:
+    - GOROOT=/app/sdk/golang
+    - GOBIN=/app/go/bin
+    - CGO_ENABLED=1
+    - NODEROOT=/app/sdk/node
+
+modules:
+  # - shared-modules/libappindicator/libappindicator-gtk3-12.10.json
+  - name: golang
+    buildsystem: simple
+    build-commands:
+      - mkdir -p $GOROOT
+      - mv $(pwd)/* $GOROOT
+    sources:
+      - type: archive
+        url: https://go.dev/dl/go1.25.3.linux-amd64.tar.gz
+        sha256: 0335f314b6e7bfe08c3d0cfaa7c19db961b7b99fb20be62b0a826c992ad14e0f
+  - name: nodejs
+    buildsystem: simple
+    build-commands:
+      - mkdir -p $NODEROOT
+      - mv $(pwd)/* $NODEROOT
+    sources:
+      - type: archive
+        url: https://nodejs.org/dist/v24.17.0/node-v24.17.0-linux-x64.tar.xz
+        sha256: ab343a1b747c7cbf3630dfd7dbf818c5423fab2eb4f5ad1afc896f6bd121a917
+  - name: pnpm
+    buildsystem: simple
+    build-commands:
+      - PATH=$PATH:$NODEROOT/bin $NODEROOT/bin/npm install -g pnpm@latest-11
+  - name: wails
+    buildsystem: simple
+    build-commands:
+      - $GOROOT/bin/go install github.com/wailsapp/wails/v2/cmd/wails@v2.12.0
+  - name: libreremoteplay
+    buildsystem: simple
+    build-commands:
+      - PATH=$PATH:$GOROOT/bin:$NODEROOT/bin $GOBIN/wails build -s
+      - install -Dm00755 build/bin/LibreRemotePlay $FLATPAK_DEST/bin/LibreRemotePlay
+      - install -Dm00644 packaging/$FLATPAK_ID.png $FLATPAK_DEST/share/icons/hicolor/256x256/apps/$FLATPAK_ID.png
+      - install -Dm00644 packaging/$FLATPAK_ID.desktop $FLATPAK_DEST/share/applications/$FLATPAK_ID.desktop
+      - install -Dm00644 packaging/flatpak/$FLATPAK_ID.appdata.xml $FLATPAK_DEST/share/appdata/$FLATPAK_ID.appdata.xml
+    sources:
+      - type: dir
+        path: ../../

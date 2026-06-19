@@ -7,3 +7,6 @@ LibreRemotePlay.log
 linuxdeploy*
 *.AppImage
 AppDir/
+repo/
+builddir/
+.flatpak-builder/

@@ -37,6 +37,10 @@ tasks:
     cmds:
       - wails build -debug -s -platform=linux/amd64
     desc: Build the debug application for Linux
+  build-linux-flatpak:
+    deps: [build-front]
+    cmds:
+      - flatpak-builder --force-clean --user --install-deps-from=flathub --repo=repo --install builddir packaging/flatpak/io.github.PiterWeb.LibreRemotePlay.yml
   build-linux-appimage:
     deps: [build-linux, install-linuxdeploy]
     # env:

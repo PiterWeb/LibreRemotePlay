@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component type="desktop-application">
+  <id>io.github.PiterWeb.LibreRemotePlay</id>
+
+  <name>LibreRemotePlay</name>
+  <developer_name>PiterWeb</developer_name>
+  <summary>Free and OpenSource Steam RemotePlay alternative</summary>
+
+  <metadata_license>CC0-1.0</metadata_license>
+  <project_license>GPL-3.0</project_license>
+
+  <recommends>
+    <control>pointing</control>
+    <control>keyboard</control>
+    <control>touch</control>
+  </recommends>
+
+  <description>
+    <p> An open source, free (as in freedom) and P2P alternative to Steam Remote Play </p>
+  </description>
+
+  <launchable type="desktop-id">io.github.PiterWeb.LibreRemotePlay.desktop</launchable>
+  <screenshots>
+    <screenshot type="default">
+      <image>https://raw.githubusercontent.com/ad-on-is/resticity/main/images/resticity_screenshot.png</image>
+      <caption>Preview</caption>
+    </screenshot>
+  </screenshots>
+
+  <url type="bugtracker">https://github.com/PiterWeb/LibreRemotePlay/issues</url>
+  <!-- <url type="donation">https://github.com/sponsors/ad-on-is</url> -->
+  <url type="homepage">https://github.com/PiterWeb/LibreRemotePlay</url>
+
+  <!-- Generate the oars rating at: https://hughsie.github.io/oars/generate.html -->
+  <content_rating type="oars-1.1" />
+
+  <releases>
+    <release version="1.0.44" date="2024-03-10" type="stable"></release>
+  </releases>
+
+</component>
