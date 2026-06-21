@@ -1,18 +1,18 @@
 id: io.github.PiterWeb.LibreRemotePlay
 runtime: org.gnome.Platform
-runtime-version: "41"
+runtime-version: "50"
 sdk: org.gnome.Sdk
 
 command: LibreRemotePlay
 finish-args:
   - --share=ipc # Share IPC namespace with the host (necessary for X11).
-  - --socket=x11
   - --socket=wayland
   - --socket=fallback-x11
   - --device=dri # OpenGL rendering support.
   - --talk-name=org.freedesktop.Notifications
-  # - --filesystem=home
-  # - --filesystem=host
+  - --filesystem=home
+  - --filesystem=host
+  - --device=usb
   - --share=network
   - --talk-name=org.kde.StatusNotifierWatcher
 
@@ -56,7 +56,7 @@ modules:
   - name: libreremoteplay
     buildsystem: simple
     build-commands:
-      - PATH=$PATH:$GOROOT/bin:$NODEROOT/bin $GOBIN/wails build -s
+      - PATH=$PATH:$GOROOT/bin:$NODEROOT/bin $GOBIN/wails build -s -devtools -tags webkit2_41
       - install -Dm00755 build/bin/LibreRemotePlay $FLATPAK_DEST/bin/LibreRemotePlay
       - install -Dm00644 packaging/$FLATPAK_ID.png $FLATPAK_DEST/share/icons/hicolor/256x256/apps/$FLATPAK_ID.png
       - install -Dm00644 packaging/$FLATPAK_ID.desktop $FLATPAK_DEST/share/applications/$FLATPAK_ID.desktop

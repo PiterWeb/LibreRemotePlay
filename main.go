@@ -11,6 +11,7 @@ import (
 	"github.com/wailsapp/wails/v2/pkg/logger"
 	"github.com/wailsapp/wails/v2/pkg/options"
 	"github.com/wailsapp/wails/v2/pkg/options/assetserver"
+	"github.com/wailsapp/wails/v2/pkg/options/linux"
 	"github.com/wailsapp/wails/v2/pkg/options/windows"
 )
 
@@ -52,6 +53,9 @@ func main() {
 		EnableDefaultContextMenu: true,
 		Bind: []interface{}{
 			app,
+		},
+		Linux: &linux.Options{
+			WebviewGpuPolicy: linux.WebviewGpuPolicyOnDemand,
 		},
 		// Windows platform specific options
 		Windows: &windows.Options{
