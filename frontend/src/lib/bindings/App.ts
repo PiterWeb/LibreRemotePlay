@@ -67,11 +67,11 @@ export function LogPrintln(info: string): Promise<void> {
 }
 
 export function NotifyCloseClient(): Promise<void> {
-  return callBinding("/notify/peer/close", "PUT")
+  return callBinding("/notify/peer/close", "POST")
 }
 
 export function NotifyCreateClient(): Promise<void> {
-  return callBinding("/notify/peer/open", "PUT");
+  return callBinding("/notify/peer/open", "POST");
 }
 
 export function OpenViGEmWizard(): Promise<void> {
@@ -79,19 +79,19 @@ export function OpenViGEmWizard(): Promise<void> {
 }
 
 export function ToogleGamepad(): Promise<void> {
-  return callBinding("/gamepad", "PUT")
+  return callBinding("/gamepad", "POST")
 }
 
 export function ToogleKeyboard(): Promise<void> {
-  return callBinding("/keyboard", "PUT");
+  return callBinding("/keyboard", "POST");
 }
 
 export function ToogleMouse(): Promise<void> {
-  return callBinding("/mouse", "PUT");
+  return callBinding("/mouse", "POST");
 }
 
 export function ToogleWhip(): Promise<void> {
-  return callBinding("/whip", "PUT");
+  return callBinding("/whip", "POST");
 }
 
 export function TryClosePeerConnection(): Promise<void> {

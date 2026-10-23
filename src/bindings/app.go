@@ -37,8 +37,8 @@ func SetupBindings(app state.App, mux *http.ServeMux) {
 		w.Write([]byte("Bindings OK"))
 	})
 
-	mux.Handle("PUT /notify/peer/open", notifyOpenPeer(app))
-	mux.Handle("PUT /notify/peer/close", notifyClosePeer(app))
+	mux.Handle("POST /notify/peer/open", notifyOpenPeer(app))
+	mux.Handle("POST /notify/peer/close", notifyClosePeer(app))
 
 	mux.Handle("POST /conn/host", tryCreateHost(app))
 	mux.Handle("DELETE /conn/host", tryClosePeerConnection(app))
@@ -46,16 +46,16 @@ func SetupBindings(app state.App, mux *http.ServeMux) {
 	mux.Handle("GET /ports", getUsedPorts())
 	
 	mux.Handle("GET /gamepad", isGamepadEnabled())
-	mux.Handle("PUT /gamepad", toogleGamepad())
+	mux.Handle("POST /gamepad", toogleGamepad())
 
 	mux.Handle("GET /keyboard", isKeyboardEnabled())
-	mux.Handle("PUT /keyboard", toogleKeyboard())
+	mux.Handle("POST /keyboard", toogleKeyboard())
 
 	mux.Handle("GET /mouse", isMouseEnabled())
-	mux.Handle("PUT /mouse", toogleMouse())
+	mux.Handle("POST /mouse", toogleMouse())
 
 	mux.Handle("GET /whip", isWhipEnabled())
-	mux.Handle("PUT /whip", toogleWhip())
+	mux.Handle("POST /whip", toogleWhip())
 
 	mux.Handle("GET /os", getCurrentOS())
 
@@ -131,7 +131,7 @@ func tryCreateHost(app state.App) http.HandlerFunc {
 		if answer == net_webrtc.ERROR_ANSWER {
 			app.Conn.Peer.Close()
 			log.Println("Error on WebRTC host connection")
-			w.WriteHeader(500)
+			// w.WriteHeader(500)
 		}
 
 		res := Res[string]{
