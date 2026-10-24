@@ -8,6 +8,7 @@ import (
 	"io"
 	"log"
 	"net/http"
+	"sync"
 
 	"github.com/coder/websocket"
 )
@@ -15,6 +16,7 @@ import (
 type addrStrT string
 
 var conns = map[topicT]map[addrStrT]*websocket.Conn{}
+var connsMutex = sync.RWMutex{} 
 
 func SetupWebsocketHandler(app state.App, mux *http.ServeMux) {
 
@@ -62,23 +64,27 @@ func wsBroadcast(ctx context.Context, r *http.Request, ws *websocket.Conn) {
 	addrStr := addrStrT(r.RemoteAddr)
 	topic := topicT(r.PathValue("topic"))
 
+	connsMutex.Lock()
 	if _, ok := conns[topic]; !ok {
 		conns[topic] = map[addrStrT]*websocket.Conn{}
 	}
 	
 	conns[topic][addrStr] = ws
-
+	connsMutex.Unlock()
+	
 	defer func() {
 
 		// If panic it will recover and liberate resources
 		_ = recover()
 
+		connsMutex.Lock()
 		for addr := range conns[topic] {
 			if addrStr == addr {
 				delete(conns[topic], addr)
 				break
 			}
 		}
+		connsMutex.Unlock()
 
 	}()
 
@@ -89,6 +95,8 @@ func wsBroadcast(ctx context.Context, r *http.Request, ws *websocket.Conn) {
 			break
 		}
 
+		connsMutex.RLock()
+		defer connsMutex.RUnlock()
 		for addr, con := range conns[topic] {
 
 			if addrStr == addr {
