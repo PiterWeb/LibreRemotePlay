@@ -2,11 +2,10 @@ package streaming_signal
 
 import (
 	"context"
-	"fmt"
 	"log"
 
-	"LibreRemotePlay/src/cli"
-	"github.com/coder/websocket"
+	"LibreRemotePlay/src/net/events"
+
 	"github.com/pion/webrtc/v4"
 )
 
@@ -16,65 +15,38 @@ func HandleStreamingSignal(ctx context.Context, streamingSignalChannel *webrtc.D
 		return
 	}
 
-	wsClient, _, err := websocket.Dial(ctx, fmt.Sprintf("ws://localhost:%d/ws/streaming-signal-client", cli.GetConfig().GetHTTPPort()), nil)
-
-	if err != nil {
-		log.Println(err)
-		return
-	}
-
-	wsServer, _, err := websocket.Dial(ctx, fmt.Sprintf("ws://localhost:%d/ws/streaming-signal-server", cli.GetConfig().GetHTTPPort()), nil)
-
-	if err != nil {
-		log.Println(err)
-		return
-	}
-	
-	defer func() {
-		if err := recover(); err != nil {
-			wsClient.Close(websocket.StatusInternalError, "Fatal error on client")
-			wsServer.Close(websocket.StatusInternalError, "Fatal error on server")
-		}
-	}()
-
 	go handleWhipOffer(ctx, streamingSignalChannel)
-
-	go func() {
-
-		defer wsServer.Close(websocket.StatusInternalError, "Client terminated")
-
-		for {
-			select {
-				case <-ctx.Done():
-					return
-				default:
-					t, data, err := wsServer.Read(ctx)
 	
-					if err != nil {
-						
-						log.Println(err)
-						continue
-					}
+	localCtx, cancelLocalCtx := context.WithCancel(ctx)
+	defer cancelLocalCtx()
 	
-					if WhipConfig.Enabled.IsEnabled() {
-						continue
-					}
-	
-					if t != websocket.MessageText {
-						continue
-					}
-	
-					streamingSignalChannel.SendText(string(data))
-			}
+	events.EventsOn(localCtx, events.EVENT_STREAMING_SIGNAL_SERVER, func(data []byte) {
+		if WhipConfig.Enabled.IsEnabled() {
+			return
 		}
-	}()
 
+		err := streamingSignalChannel.SendText(string(data))
+		if err != nil {
+			log.Println(err)
+			cancelLocalCtx()
+			return
+		}
+	})
+	
 	streamingSignalChannel.OnMessage(func(msg webrtc.DataChannelMessage) {
 
+		// TODO: see if msg is reaching here ****
+		
+		log.Println(string(msg.Data))
+		
 		if WhipConfig.Enabled.IsEnabled() {
 			handleWhipAnswer(msg.Data)
 		} else {
-			wsClient.Write(ctx, websocket.MessageText, msg.Data)
+			err := events.EventsEmit(ctx, events.EVENT_STREAMING_SIGNAL_CLIENT ,msg.Data)
+			if err != nil {
+				log.Println(err)
+				return
+			}
 		}
 
 	})

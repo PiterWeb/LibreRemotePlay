@@ -5,12 +5,14 @@ export enum Events {
   streaming_signal_server = "streaming-signal-server"
 }
 
-function createWS(path: Events) {
-  const baseUrl = location.port === "5173" ? `ws://${location.hostname}:8090` : location.origin.replace("http", "ws")
-  return new WebSocket(`${baseUrl}/ws/${path}`)
+const baseUrl = () => location.port === "5173" ? `http://${location.hostname}:8090/events` : `${location.origin}/events`
+
+function createWS(topic: Events) {
+  console.log(`${baseUrl()}/listen/${topic}`)
+  return new WebSocket(`${baseUrl()}/listen/${topic}`)
 }
 
-type Clbk = (...data: any) => void
+type Clbk = (data: any) => void
 
 function createListener(callback: Clbk, onceCancel = () => {}) {
   return ({ data }: { data: any }) => {
@@ -21,56 +23,58 @@ function createListener(callback: Clbk, onceCancel = () => {}) {
 
 const eventsListenersMap = new Map<Events, WebSocket[]>()
 
-function addWSEventToMap(e: Events, ws: WebSocket) {
-  eventsListenersMap.set(e, [...eventsListenersMap.get(e) ?? [], ws])
+function addEventSourceToMap(e: Events, eventSource: WebSocket) {
+  eventsListenersMap.set(e, [...eventsListenersMap.get(e) ?? [], eventSource])
 }
 
-function removeWSEventToMap(e: Events, ws: WebSocket) {
-  eventsListenersMap.set(e, eventsListenersMap.get(e)?.filter(w => w !== ws) ?? [])
+function removeWSEventToMap(e: Events, eventSource: WebSocket) {
+  eventsListenersMap.set(e, eventsListenersMap.get(e)?.filter(es => es !== eventSource) ?? [])
 }
 
-export function EventsOn(e: Events, callback: Clbk): () => () => void {  
+export function EventsOn(e: Events, callback: Clbk): () => void {  
   try {
 
     let closedByUser = false
     
     const ws = createWS(e)
-    addWSEventToMap(e, ws)
+    addEventSourceToMap(e, ws)
       
     const listener = createListener(callback)
 
     let unlistener = () => {
       closedByUser = true
       removeWSEventToMap(e, ws)
+      ws.send("")
       ws.removeEventListener("message", listener)
       ws.close()
     }
     
     ws.addEventListener("message", listener)
     ws.addEventListener("close", (ev) => {
-      if (closedByUser || ev.reason === "EventsOff") return
+      if (closedByUser) return
 
       unlistener = EventsOn(e, callback)
     })
     
-    return () => unlistener
+    return unlistener
     
   } finally {
-    return () => () => {}
+    return () => {}
   }
 }
 
-export function EventsOnce(e: Events, callback: Clbk): () => () => void {
+export function EventsOnce(e: Events, callback: Clbk): () => void {
   try {
 
     let closedByUser = false
     
     const ws = createWS(e)
-    addWSEventToMap(e, ws)
+    addEventSourceToMap(e, ws)
     
     let unlistener = () => {
       closedByUser = true
       removeWSEventToMap(e, ws)
+      ws.send("")
       ws.removeEventListener("message", listener)
       ws.close()
     }
@@ -79,39 +83,42 @@ export function EventsOnce(e: Events, callback: Clbk): () => () => void {
     
     ws.addEventListener("message", listener)
     ws.addEventListener("close", (ev) => {
-      if (closedByUser || ev.reason === "EventsOff") return
+      if (closedByUser) return
 
       unlistener = EventsOn(e, callback)
     })
     
-    return () => unlistener
+    return unlistener
     
   } finally {
-    return () => () => {}
+    return () => {}
   }
 }
 
 export function EventsOff(e: Events, ...additionalEventNames: Events[]): void {
-  eventsListenersMap.get(e)?.forEach((w) => {
-    w.close(200, "EventsOff")
+  eventsListenersMap.get(e)?.forEach((ws) => {
+    ws.send("")
+    ws.close()
   })
 
   eventsListenersMap.set(e, [])
 
   additionalEventNames.forEach((aEvent) => {
-    eventsListenersMap.get(aEvent)?.forEach((w) => {
-      w.close(200, "EventsOff")
+    eventsListenersMap.get(aEvent)?.forEach((ws) => {
+      ws.send("")
+      ws.close()
     })
 
     eventsListenersMap.set(aEvent, [])
   })
 }
 
-export function EventsEmit(e: Events, ...data: any): void {
-  const ws = createWS(e)
-
-  ws.addEventListener("open", () => {
-    ws.send(JSON.stringify(data))
-    ws.close()
+export async function EventsEmit(topic: Events, data: any) {
+  console.log(`${baseUrl()}/emmit/${topic}`)
+  const res = await fetch(`${baseUrl()}/emmit/${topic}`, {
+    method: "POST",
+    body: JSON.stringify(data)
   })
+    
+  return res.ok
 }

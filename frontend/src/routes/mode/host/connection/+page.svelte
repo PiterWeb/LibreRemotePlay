@@ -71,7 +71,6 @@
 	let gamepadEnabled = $state(true);
 	let mouseEnabled = $state(false);
 
-	let httpExternalPort = $state(8090);
 	let whipPort = $state(8092);
 
 	function createStream() {
@@ -123,7 +122,7 @@
 			// audio_srcs = (await GetAudioProcess()).map(MapAudioSrcs)
 		}, 5000);
 
-		let unlistener = () => () => {};
+		let unlistener = () => {};
 
 		// Handle start streaming button
 		(async () => {
@@ -133,7 +132,6 @@
 			const { EventsOn, Events } = await import('$lib/events/events');
 			const { GetUsedPorts } = await import('$lib/bindings/App');
 			const usedPorts = await GetUsedPorts();
-			httpExternalPort = usedPorts.HTTP;
 			whipPort = usedPorts.WHIP;
 			unlistener = EventsOn(Events.streaming_signal_client, (d) => {
 				if (d == '{}') canStartStreaming = true;
@@ -141,7 +139,7 @@
 		})();
 
 		return () => {
-			unlistener()();
+			unlistener();
 			clearInterval(interval);
 		};
 	});

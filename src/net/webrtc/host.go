@@ -24,6 +24,7 @@ const ERROR_ANSWER = "ERROR"
 func InitHost(ctx context.Context, ICEServers []webrtc.ICEServer, offerEncodedWithCandidates string, answerResponse chan<- string, pidChan <-chan uint32) {
 
 	connCtx, cancelConn := context.WithCancel(ctx)
+	defer cancelConn()
 	
 	candidates := []webrtc.ICECandidateInit{}
 

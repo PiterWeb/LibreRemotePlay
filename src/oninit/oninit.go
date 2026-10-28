@@ -28,9 +28,9 @@ func Execute(app state.App) error {
 	httpServerMux.Handle("/bindings/", http.StripPrefix("/bindings", ContentLenghtMiddleware(bindingsServerMux)))
 	bindings.SetupBindings(app, bindingsServerMux)
 
-	wsServerMux := http.NewServeMux()
-	httpServerMux.Handle("/ws/", http.StripPrefix("/ws", wsServerMux))
-	events.SetupWebsocketHandler(app, wsServerMux)
+	eventsServerMux := http.NewServeMux()
+	httpServerMux.Handle("/events/", http.StripPrefix("/events", eventsServerMux))
+	events.SetupEventHandler(app, eventsServerMux)
 
 	ips_channel := make(chan []string, 1)
 	errChan := make(chan error, 2)

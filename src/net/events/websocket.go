@@ -5,7 +5,6 @@ import (
 	"LibreRemotePlay/src/cli"
 	"LibreRemotePlay/src/state"
 	"context"
-	"io"
 	"log"
 	"net/http"
 	"sync"
@@ -13,12 +12,7 @@ import (
 	"github.com/coder/websocket"
 )
 
-type addrStrT string
-
-var conns = map[topicT]map[addrStrT]*websocket.Conn{}
-var connsMutex = sync.RWMutex{} 
-
-func SetupWebsocketHandler(app state.App, mux *http.ServeMux) {
+func setupListenHandler(app state.App, eventChan chan internalEvent, mux *http.ServeMux) {
 
 	acceptOptions := &websocket.AcceptOptions{}
 	
@@ -30,8 +24,18 @@ func SetupWebsocketHandler(app state.App, mux *http.ServeMux) {
 		acceptOptions.OriginPatterns = []string{}
 		acceptOptions.InsecureSkipVerify = true	
 	}
+
+	type topicSlice struct {
+		M sync.RWMutex
+		Map map[uint16]*websocket.Conn
+		N uint16
+	}
+	
+	topics := sync.Map{}
 	
 	mux.HandleFunc("GET /{topic}", func(w http.ResponseWriter, r *http.Request) {
+
+		clientGone := r.Context().Done()
 		
 		c, err := websocket.Accept(w, r, acceptOptions)
 		
@@ -40,93 +44,65 @@ func SetupWebsocketHandler(app state.App, mux *http.ServeMux) {
 			return
 		}
 
+		defer c.CloseNow()
+		
+		topic := topicT(r.PathValue("topic"))
+		log.Println("Init listener topic: ", topic)
+		
+		topicSliceAny, _ := topics.LoadOrStore(topic, &topicSlice{Map: map[uint16]*websocket.Conn{}})
+		topicMap := topicSliceAny.(*topicSlice)
+
+		topicMap.M.Lock()
+		
+		log.Printf("Topic %s: %d\n", topic, topicMap.N)
+		topicN := topicMap.N
+		topicMap.N += 1
+		topicMap.Map[topicN] = c
+		
+		topicMap.M.Unlock()
+		
 		defer func() {
-			err := c.CloseNow()
+			topicMap.M.Lock()
+			defer topicMap.M.Unlock()
 
-			if err != nil {
-				log.Println(err)
-			}
+			delete(topicMap.Map, topicN)
 		}()
-
-		ctx, cancel := context.WithCancel(app.Ctx)
-		defer cancel()
-
-		wsBroadcast(ctx, r, c)
-
-		c.Close(websocket.StatusNormalClosure, "Client connection closed")
+		
+	    for {
+	        select {
+	        case <-clientGone:
+	            log.Println("Client disconnected from event ", topic)
+	            return
+			case <-app.Ctx.Done():
+				return
+			default:
+				c.Read(app.Ctx)
+				return
+			}
+	    }
 
 	})
 
-}
+	go func() {
+		for e := range eventChan {
+			topicMapAny, _ := topics.LoadOrStore(e.event, &topicSlice{Map: map[uint16]*websocket.Conn{}})		
+			topicMap := topicMapAny.(*topicSlice)
+			log.Printf("Received event %s: %s\n", e.event, e.payload)
 
-func wsBroadcast(ctx context.Context, r *http.Request, ws *websocket.Conn) {
-
-	addrStr := addrStrT(r.RemoteAddr)
-	topic := topicT(r.PathValue("topic"))
-
-	connsMutex.Lock()
-	if _, ok := conns[topic]; !ok {
-		conns[topic] = map[addrStrT]*websocket.Conn{}
-	}
-	
-	conns[topic][addrStr] = ws
-	connsMutex.Unlock()
-	
-	defer func() {
-
-		// If panic it will recover and liberate resources
-		_ = recover()
-
-		connsMutex.Lock()
-		for addr := range conns[topic] {
-			if addrStr == addr {
-				delete(conns[topic], addr)
-				break
-			}
+			func() {
+				topicMap.M.RLock()
+				defer topicMap.M.RUnlock()
+				log.Println(topicMap.Map)
+				for _, c := range topicMap.Map {
+					err := c.Write(context.Background(), websocket.MessageText, e.payload)
+					
+					if err != nil {
+						log.Println(err)
+						return
+					}
+				}
+			}()
 		}
-		connsMutex.Unlock()
-
 	}()
 
-	for {
-		typ, reader, err := ws.Reader(ctx)
-		if err != nil {
-			log.Println(err)
-			break
-		}
-
-		connsMutex.RLock()
-		defer connsMutex.RUnlock()
-		for addr, con := range conns[topic] {
-
-			if addrStr == addr {
-				continue
-			}
-
-			writer, err := con.Writer(ctx, typ)
-
-			if err != nil {
-				log.Println(err)
-				continue
-			}
-
-			_, err = io.Copy(writer, reader)
-
-			if err != nil {
-				log.Println(err)
-				continue
-			}
-
-			// log.Println("Message sended to ", addr)
-
-			err = writer.Close()
-
-			if err != nil {
-				log.Println(err)
-				continue
-			}
-
-		}
-
-	}
 }
