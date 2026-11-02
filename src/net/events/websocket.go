@@ -7,101 +7,138 @@ import (
 	"context"
 	"log"
 	"net/http"
+	"strconv"
 	"sync"
+	"sync/atomic"
 
-	"github.com/coder/websocket"
+	"github.com/gorilla/websocket"
 )
+
+type EventListener struct {
+	EventCond *sync.Cond
+	EventData []byte
+}
 
 func setupListenHandler(app state.App, eventChan chan internalEvent, mux *http.ServeMux) {
 
-	acceptOptions := &websocket.AcceptOptions{}
-	
-	if app.Dev {
-		acceptOptions.OriginPatterns = []string{"localhost:5173"}
+	upgrader := websocket.Upgrader{
+	    ReadBufferSize:  1024,
+	    WriteBufferSize: 1024,
+	    CheckOrigin: func(r *http.Request) bool {
+			if cli.GetConfig().GetNetworkVisible() {
+				return true
+			}
+					
+			if app.Dev {
+				return r.URL.Host == "localhost:5173"
+			}
+			
+			return r.URL.Port() == strconv.FormatUint(uint64(cli.GetConfig().GetHTTPPort()), 10)
+		},
 	}
 
-	if cli.GetConfig().GetNetworkVisible() {
-		acceptOptions.OriginPatterns = []string{}
-		acceptOptions.InsecureSkipVerify = true	
-	}
-
-	type topicSlice struct {
-		M sync.RWMutex
-		Map map[uint16]*websocket.Conn
-		N uint16
-	}
+	topicsMap := map[topicT]*EventListener{}
+	topicsMapLock := sync.RWMutex{}
 	
-	topics := sync.Map{}
-	
-	mux.HandleFunc("GET /{topic}", func(w http.ResponseWriter, r *http.Request) {
+	mux.HandleFunc("GET /{topic}", func(w http.ResponseWriter, r *http.Request) {	
+		once := r.URL.Query().Get("once") == "true"
 
-		clientGone := r.Context().Done()
-		
-		c, err := websocket.Accept(w, r, acceptOptions)
+		c, err := upgrader.Upgrade(w, r ,nil)
 		
 		if err != nil {
 			log.Println(err)
 			return
 		}
 
-		defer c.CloseNow()
+		defer c.Close()
 		
 		topic := topicT(r.PathValue("topic"))
 		log.Println("Init listener topic: ", topic)
-		
-		topicSliceAny, _ := topics.LoadOrStore(topic, &topicSlice{Map: map[uint16]*websocket.Conn{}})
-		topicMap := topicSliceAny.(*topicSlice)
+		defer log.Println("Client disconnected from event ", topic)
 
-		topicMap.M.Lock()
-		
-		log.Printf("Topic %s: %d\n", topic, topicMap.N)
-		topicN := topicMap.N
-		topicMap.N += 1
-		topicMap.Map[topicN] = c
-		
-		topicMap.M.Unlock()
-		
-		defer func() {
-			topicMap.M.Lock()
-			defer topicMap.M.Unlock()
+		topicsMapLock.Lock()
 
-			delete(topicMap.Map, topicN)
+		listener, ok := topicsMap[topic]
+		if !ok {
+			listener = &EventListener{
+				EventCond: sync.NewCond(&sync.Mutex{}),
+				EventData: []byte{},
+			}
+			topicsMap[topic] = listener
+		}
+		
+		topicsMapLock.Unlock()
+
+		closed := atomic.Bool{}
+		
+		localCtx, cancelLocalCtx := context.WithCancel(r.Context())
+		defer cancelLocalCtx()
+
+		go func() {
+			<-localCtx.Done()
+			closed.Store(true)
+			c.Close()
+		}()
+		
+		go func() {
+			for {
+				select {
+					case <-localCtx.Done():
+						return
+					default:
+						func() {
+							listener.EventCond.L.Lock()
+							defer listener.EventCond.L.Unlock()
+						
+							listener.EventCond.Wait()
+							if closed.Load() {
+								return
+							}
+							
+							err = c.WriteMessage(websocket.TextMessage, listener.EventData)
+							if err != nil {
+								cancelLocalCtx()
+							}
+							
+							if once {
+								cancelLocalCtx()
+							}
+						}()
+				}
+			}
 		}()
 		
 	    for {
 	        select {
-	        case <-clientGone:
-	            log.Println("Client disconnected from event ", topic)
-	            return
-			case <-app.Ctx.Done():
+			case <-localCtx.Done():
 				return
 			default:
-				c.Read(app.Ctx)
+				_, a, _ := c.ReadMessage()
+				log.Printf("Received cancel(%s) from topic %s\n", string(a), topic)
 				return
 			}
 	    }
-
+				
 	})
-
+	
 	go func() {
 		for e := range eventChan {
-			topicMapAny, _ := topics.LoadOrStore(e.event, &topicSlice{Map: map[uint16]*websocket.Conn{}})		
-			topicMap := topicMapAny.(*topicSlice)
-			log.Printf("Received event %s: %s\n", e.event, e.payload)
+			func(e internalEvent) {
+				topicsMapLock.RLock()
+				defer topicsMapLock.RUnlock()
 
-			func() {
-				topicMap.M.RLock()
-				defer topicMap.M.RUnlock()
-				log.Println(topicMap.Map)
-				for _, c := range topicMap.Map {
-					err := c.Write(context.Background(), websocket.MessageText, e.payload)
-					
-					if err != nil {
-						log.Println(err)
-						return
-					}
+				listener, ok := topicsMap[e.event]
+				if !ok {
+					return
 				}
-			}()
+
+				listener.EventCond.L.Lock()
+				listener.EventData = e.payload
+				listener.EventCond.L.Unlock()	
+				
+				listener.EventCond.Broadcast()
+				
+			}(e)	
 		}
 	}()
 

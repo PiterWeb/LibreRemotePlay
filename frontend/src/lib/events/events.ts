@@ -7,9 +7,10 @@ export enum Events {
 
 const baseUrl = () => location.port === "5173" ? `http://${location.hostname}:8090/events` : `${location.origin}/events`
 
-function createWS(topic: Events) {
+function createWS(topic: Events, once = false) {
   console.log(`${baseUrl()}/listen/${topic}`)
-  return new WebSocket(`${baseUrl()}/listen/${topic}`)
+  if (once) return new WebSocket(`${baseUrl()}/listen/${topic}?once=true`)
+  else return new WebSocket(`${baseUrl()}/listen/${topic}`)
 }
 
 type Clbk = (data: any) => void
@@ -27,7 +28,7 @@ function addEventSourceToMap(e: Events, eventSource: WebSocket) {
   eventsListenersMap.set(e, [...eventsListenersMap.get(e) ?? [], eventSource])
 }
 
-function removeWSEventToMap(e: Events, eventSource: WebSocket) {
+function removeWSEventFromMap(e: Events, eventSource: WebSocket) {
   eventsListenersMap.set(e, eventsListenersMap.get(e)?.filter(es => es !== eventSource) ?? [])
 }
 
@@ -39,12 +40,15 @@ export function EventsOn(e: Events, callback: Clbk): () => void {
     const ws = createWS(e)
     addEventSourceToMap(e, ws)
       
-    const listener = createListener(callback)
+    const listener = createListener((data) => {
+      if (closedByUser) return
+      callback(data)
+    })
 
     let unlistener = () => {
       closedByUser = true
-      removeWSEventToMap(e, ws)
-      ws.send("")
+      removeWSEventFromMap(e, ws)
+      ws.send("cancel")
       ws.removeEventListener("message", listener)
       ws.close()
     }
@@ -68,18 +72,21 @@ export function EventsOnce(e: Events, callback: Clbk): () => void {
 
     let closedByUser = false
     
-    const ws = createWS(e)
+    const ws = createWS(e, true)
     addEventSourceToMap(e, ws)
     
     let unlistener = () => {
       closedByUser = true
-      removeWSEventToMap(e, ws)
-      ws.send("")
+      removeWSEventFromMap(e, ws)
+      ws.send("cancel")
       ws.removeEventListener("message", listener)
       ws.close()
     }
     
-    const listener = createListener(callback, unlistener)
+    const listener = createListener((data) => {
+      if (closedByUser) return
+      callback(data)
+    }, unlistener)
     
     ws.addEventListener("message", listener)
     ws.addEventListener("close", (ev) => {
@@ -97,7 +104,7 @@ export function EventsOnce(e: Events, callback: Clbk): () => void {
 
 export function EventsOff(e: Events, ...additionalEventNames: Events[]): void {
   eventsListenersMap.get(e)?.forEach((ws) => {
-    ws.send("")
+    ws.send("cancel")
     ws.close()
   })
 
@@ -105,7 +112,7 @@ export function EventsOff(e: Events, ...additionalEventNames: Events[]): void {
 
   additionalEventNames.forEach((aEvent) => {
     eventsListenersMap.get(aEvent)?.forEach((ws) => {
-      ws.send("")
+      ws.send("cancel")
       ws.close()
     })
 

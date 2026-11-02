@@ -3,7 +3,9 @@ package events
 import (
 	"LibreRemotePlay/src/cli"
 	"LibreRemotePlay/src/state"
+	"bytes"
 	"context"
+	"errors"
 	"fmt"
 	"log"
 	"net/http"
@@ -14,7 +16,6 @@ import (
 type internalEvent struct {
 	event topicT
 	payload []byte
-	n uint16
 }
 
 type topicT string
@@ -47,7 +48,7 @@ func SetupEventHandler(app state.App, mux *http.ServeMux) {
 }
 
 func createWS(ctx context.Context, eventName topicT) (*websocket.Conn, error) {
-	wsUrl := fmt.Sprintf("ws://localhost:%d/ws/%s", cli.GetConfig().GetHTTPPort(), eventName)
+	wsUrl := fmt.Sprintf("ws://localhost:%d/events/listen/%s", cli.GetConfig().GetHTTPPort(), eventName)
 
 	wsClient, _, err := websocket.Dial(ctx, wsUrl, nil)
 	if err != nil {
@@ -60,14 +61,21 @@ func createWS(ctx context.Context, eventName topicT) (*websocket.Conn, error) {
 
 func EventsEmit(ctx context.Context, eventName topicT, data []byte) error {
 
-	ws, err := createWS(ctx, eventName)
+	url := fmt.Sprintf("http://localhost:%d/events/emmit/%s", cli.GetConfig().GetHTTPPort(), eventName)
+	
+	resp, err := http.Post(url, "text/plain", bytes.NewReader(data))
+	
 	if err != nil {
 		return err
 	}
 
-	defer ws.Close(websocket.StatusNormalClosure, "")
-	
-	return ws.Write(ctx, websocket.MessageText, data)
+	defer resp.Body.Close()
+
+	if resp.StatusCode == 500 {
+		return errors.New("500")
+	}
+
+	return nil
 
 }
 
@@ -80,7 +88,7 @@ func EventsOn(ctx context.Context, eventName topicT, callback func (data []byte)
 
 	go func() {
 
-		defer ws.Close(websocket.StatusNormalClosure, "")
+		defer ws.CloseNow()
 		
 		for {
 			t, msg ,err := ws.Read(ctx)

@@ -134,7 +134,7 @@ export async function ListenForConnectionChanges() {
 				case ConnectionState.Failed:
 					showToast(get(_)('connection-failed'), ToastType.ERROR);
           goto('/');
-          connectionStateCancelEventListener()();
+          connectionStateCancelEventListener();
 					EventsOff(Events.connection_state);
 					break;
         case ConnectionState.Closed:
@@ -142,7 +142,7 @@ export async function ListenForConnectionChanges() {
 					showToast(get(_)('connection-lost'), ToastType.INFO);
 					host = false;
 					goto('/');
-					connectionStateCancelEventListener()();
+					connectionStateCancelEventListener();
 					EventsOff(Events.connection_state);
 					break;
 			}

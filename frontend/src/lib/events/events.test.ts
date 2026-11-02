@@ -37,6 +37,7 @@ test('event listen, emit and then cancel', async (t) => {
   
   unlisten()
   
+  await delay(500)
   
   // Unhandled events
   EventsEmit(Events.error, JSON.stringify({}))
@@ -72,6 +73,8 @@ test('once listener cancel before emit event', async (t) => {
   const unlistener = EventsOnce(Events.error, () => i++)
 
   unlistener()
+
+  await delay(500)
   
   EventsEmit(Events.error, JSON.stringify({}))
 
