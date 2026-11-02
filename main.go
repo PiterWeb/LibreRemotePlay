@@ -12,13 +12,13 @@ import (
 
 	"LibreRemotePlay/src/cli"
 	_ "LibreRemotePlay/src/cli"
+	"LibreRemotePlay/src/icon"
 	appLogger "LibreRemotePlay/src/logger"
 	"LibreRemotePlay/src/onfinish"
 	"LibreRemotePlay/src/oninit"
 	"LibreRemotePlay/src/state"
 
 	"fyne.io/systray"
-	"fyne.io/systray/example/icon"
 	"github.com/pkg/browser"
 )
 
