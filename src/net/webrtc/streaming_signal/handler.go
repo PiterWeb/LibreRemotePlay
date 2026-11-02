@@ -17,10 +17,10 @@ func HandleStreamingSignal(ctx context.Context, streamingSignalChannel *webrtc.D
 
 	go handleWhipOffer(ctx, streamingSignalChannel)
 	
-	localCtx, cancelLocalCtx := context.WithCancel(ctx)
-	defer cancelLocalCtx()
-	
-	events.EventsOn(localCtx, events.EVENT_STREAMING_SIGNAL_SERVER, func(data []byte) {
+	events.EventsOn(ctx, events.EVENT_STREAMING_SIGNAL_SERVER, func(data []byte) {
+
+		log.Println("STREAMING SIGNAL SERVER arrived")
+
 		if WhipConfig.Enabled.IsEnabled() {
 			return
 		}
@@ -28,7 +28,6 @@ func HandleStreamingSignal(ctx context.Context, streamingSignalChannel *webrtc.D
 		err := streamingSignalChannel.SendText(string(data))
 		if err != nil {
 			log.Println(err)
-			cancelLocalCtx()
 			return
 		}
 	})
