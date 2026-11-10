@@ -47,7 +47,6 @@ test('event listen, emit and then cancel', async (t) => {
 
   await delay(500)
   t.expect(i).toBe(2)
-  
 
 })
 
@@ -76,7 +75,7 @@ test('once listener cancel before emit event', async (t) => {
 
   await delay(500)
   
-  EventsEmit(Events.error, JSON.stringify({}))
+  await EventsEmit(Events.error, JSON.stringify({}))
 
   await delay(500)
   
@@ -106,6 +105,8 @@ test("multiple on listener", async (t) => {
   EventsOn(Events.streaming_signal_client, () => i++)
   EventsOn(Events.streaming_signal_client, () => i++)
 
+  await delay(500)
+  
   EventsEmit(Events.streaming_signal_client, JSON.stringify({}))
   EventsEmit(Events.streaming_signal_client, JSON.stringify({}))
   EventsEmit(Events.streaming_signal_client, JSON.stringify({}))

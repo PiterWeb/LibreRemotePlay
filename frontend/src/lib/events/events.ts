@@ -46,11 +46,14 @@ export function EventsOn(e: Events, callback: Clbk): () => void {
     })
 
     let unlistener = () => {
+      ws.removeEventListener("message", listener)
+      if (ws.readyState === ws.OPEN) {
+        ws.close()        
+      } else {
+        ws.addEventListener("open", () => ws.close())
+      }
       closedByUser = true
       removeWSEventFromMap(e, ws)
-      ws.send("cancel")
-      ws.removeEventListener("message", listener)
-      ws.close()
     }
     
     ws.addEventListener("message", listener)
@@ -62,7 +65,7 @@ export function EventsOn(e: Events, callback: Clbk): () => void {
     
     return unlistener
     
-  } finally {
+  } catch {
     return () => {}
   }
 }
@@ -76,11 +79,14 @@ export function EventsOnce(e: Events, callback: Clbk): () => void {
     addEventSourceToMap(e, ws)
     
     let unlistener = () => {
+      ws.removeEventListener("message", listener)
+      if (ws.readyState === ws.OPEN) {
+        ws.close()        
+      } else {
+        ws.addEventListener("open", () => ws.close())
+      }
       closedByUser = true
       removeWSEventFromMap(e, ws)
-      ws.send("cancel")
-      ws.removeEventListener("message", listener)
-      ws.close()
     }
     
     const listener = createListener((data) => {
@@ -97,7 +103,7 @@ export function EventsOnce(e: Events, callback: Clbk): () => void {
     
     return unlistener
     
-  } finally {
+  } catch {
     return () => {}
   }
 }

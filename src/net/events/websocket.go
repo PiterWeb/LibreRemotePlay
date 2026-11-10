@@ -77,7 +77,6 @@ func setupListenHandler(app state.App, eventChan chan internalEvent, mux *http.S
 		go func() {
 			<-localCtx.Done()
 			closed.Store(true)
-			c.Close()
 		}()
 		
 		go func() {
@@ -86,24 +85,22 @@ func setupListenHandler(app state.App, eventChan chan internalEvent, mux *http.S
 					case <-localCtx.Done():
 						return
 					default:
-						func() {
-							listener.EventCond.L.Lock()
-							defer listener.EventCond.L.Unlock()
+						listener.EventCond.L.Lock()
+						listener.EventCond.Wait()
+						listener.EventCond.L.Unlock()
 						
-							listener.EventCond.Wait()
-							if closed.Load() {
-								return
-							}
-							
-							err = c.WriteMessage(websocket.TextMessage, listener.EventData)
-							if err != nil {
-								cancelLocalCtx()
-							}
-							
-							if once {
-								cancelLocalCtx()
-							}
-						}()
+						if closed.Load() {
+							return
+						}	
+						
+						err = c.WriteMessage(websocket.TextMessage, listener.EventData)
+						if err != nil {
+							cancelLocalCtx()
+						}
+						
+						if once {
+							cancelLocalCtx()
+						}
 				}
 			}
 		}()
@@ -113,8 +110,8 @@ func setupListenHandler(app state.App, eventChan chan internalEvent, mux *http.S
 			case <-localCtx.Done():
 				return
 			default:
-				_, a, _ := c.ReadMessage()
-				log.Printf("Received cancel(%s) from topic %s\n", string(a), topic)
+				_, _, _ = c.ReadMessage()
+				log.Printf("Received cancel from topic %s\n", topic)
 				return
 			}
 	    }
@@ -123,22 +120,21 @@ func setupListenHandler(app state.App, eventChan chan internalEvent, mux *http.S
 	
 	go func() {
 		for e := range eventChan {
-			func(e internalEvent) {
-				topicsMapLock.RLock()
-				defer topicsMapLock.RUnlock()
+			topicsMapLock.RLock()
 
-				listener, ok := topicsMap[e.event]
-				if !ok {
-					return
-				}
+			listener, ok := topicsMap[e.event]
+			if !ok {
+				topicsMapLock.RUnlock()
+				continue
+			}
+			
+			topicsMapLock.RUnlock()
 
-				listener.EventCond.L.Lock()
-				listener.EventData = e.payload
-				listener.EventCond.L.Unlock()	
-				
-				listener.EventCond.Broadcast()
-				
-			}(e)	
+			listener.EventCond.L.Lock()
+			listener.EventData = e.payload
+			listener.EventCond.L.Unlock()	
+			
+			listener.EventCond.Broadcast()
 		}
 	}()
 
