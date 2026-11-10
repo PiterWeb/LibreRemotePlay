@@ -132,7 +132,7 @@
 			const { EventsOn, Events } = await import('$lib/events/events');
 			const { GetUsedPorts } = await import('$lib/bindings/App');
 			const usedPorts = await GetUsedPorts();
-			whipPort = usedPorts.WHIP;
+			whipPort = usedPorts.whip;
 			unlistener = EventsOn(Events.streaming_signal_client, (d) => {
 				if (d == '{}') canStartStreaming = true;
 			});

@@ -19,7 +19,7 @@ import log from '$lib/logger/logger';
 import LANMode from './lan_mode.svelte';
 import type Modal from '$lib/layout/Modal.svelte';
 
-const BROWSER_BASE_URL = IS_RUNNING_EXTERNAL ? null : `http://localhost:${(await GetUsedPorts()).HTTP}/mode/host/connection`;
+const BROWSER_BASE_URL = IS_RUNNING_EXTERNAL ? null : `http://localhost:${(await GetUsedPorts()).http}/mode/host/connection`;
 
 let host: boolean = false;
 

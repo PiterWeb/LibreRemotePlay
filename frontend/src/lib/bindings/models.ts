@@ -20,9 +20,9 @@ export namespace audio {
 export namespace bindings {
 	
 	export class UsedPorts {
-	    HTTP: number;
-	    EasyConnect: number;
-	    WHIP: number;
+	    http: number;
+	    easy_connect: number;
+	    whip: number;
 	
 	    static createFrom(source: any = {}) {
 	        return new UsedPorts(source);
@@ -30,9 +30,9 @@ export namespace bindings {
 	
 	    constructor(source: any = {}) {
 	        if ('string' === typeof source) source = JSON.parse(source);
-	        this.HTTP = source["HTTP"];
-	        this.EasyConnect = source["EasyConnect"];
-	        this.WHIP = source["WHIP"];
+	        this.http = source["HTTP"];
+	        this.easy_connect = source["EasyConnect"];
+	        this.whip = source["WHIP"];
 	    }
 	}
 
