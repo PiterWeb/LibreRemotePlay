@@ -39,6 +39,11 @@ func HandleStreamingSignal(ctx context.Context, streamingSignalChannel *webrtc.D
 		log.Println(string(msg.Data))
 		
 		if WhipConfig.Enabled.IsEnabled() {
+			if string(msg.Data) == "{}" {
+				return
+			}
+			
+			log.Println("Handling msg as WHIP signal")
 			handleWhipAnswer(msg.Data)
 		} else {
 			err := events.EventsEmit(ctx, events.EVENT_STREAMING_SIGNAL_CLIENT ,msg.Data)
