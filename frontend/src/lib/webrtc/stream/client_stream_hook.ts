@@ -108,11 +108,10 @@ async function CreateClientStream(
 	signalingChannel.onmessage = async (e) => {
 		if (!peerConnection) return;
 
-		console.log(e.data)
 		
-		try {
-  		const { type, offer, candidate, role } = JSON.parse(e.data) as SignalingData;
-  
+    try {
+  		const { type, offer, candidate, role }: SignalingData = JSON.parse(e.data);
+      
   		if (role !== 'host') return;
   
   		if (type == "candidate") {
@@ -125,10 +124,9 @@ async function CreateClientStream(
   		
   		offerArrived = true;
 
-
 			await peerConnection?.setRemoteDescription(offer);
-            const answer = await peerConnection?.createAnswer();
-            await peerConnection?.setLocalDescription(answer);
+      const answer = await peerConnection?.createAnswer();
+      await peerConnection?.setLocalDescription(answer);
 
 		} catch (e) {
 			// TODO: manage error

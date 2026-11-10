@@ -103,7 +103,7 @@ export async function CreateHostStream(resolution: FIXED_RESOLUTIONS = FIXED_RES
 			};
 			
 			const { EventsEmit, Events } = await import('$lib/events/events');
-			EventsEmit(Events.streaming_signal_server, JSON.stringify(data));
+			EventsEmit(Events.streaming_signal_server, data);
 			return;
 		}
 
@@ -138,7 +138,7 @@ export async function CreateHostStream(resolution: FIXED_RESOLUTIONS = FIXED_RES
 	};
 	
 	const { EventsEmit, Events } = await import('$lib/events/events');
-	EventsEmit(Events.streaming_signal_server, JSON.stringify(data));
+	EventsEmit(Events.streaming_signal_server, data);
 
 	async function onSignalArrive(data: string) {
 		if (!peerConnection) return;
