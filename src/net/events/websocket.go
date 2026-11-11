@@ -7,6 +7,7 @@ import (
 	"context"
 	"log"
 	"net/http"
+	"net/url"
 	"strconv"
 	"sync"
 	"sync/atomic"
@@ -28,12 +29,19 @@ func setupListenHandler(app state.App, eventChan chan internalEvent, mux *http.S
 			if cli.GetConfig().GetNetworkVisible() {
 				return true
 			}
-					
-			if app.Dev {
-				return r.URL.Host == "localhost:5173"
+
+			origin := r.Header.Get("Origin")
+
+			originUrl, err := url.Parse(origin)
+			if err != nil {
+				return false
 			}
 			
-			return r.URL.Port() == strconv.FormatUint(uint64(cli.GetConfig().GetHTTPPort()), 10)
+			if app.Dev {
+				return originUrl.Host == "localhost:5173"
+			}
+			
+			return originUrl.Port() == strconv.FormatUint(uint64(cli.GetConfig().GetHTTPPort()), 10)
 		},
 	}
 
