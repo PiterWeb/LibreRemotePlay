@@ -50,7 +50,13 @@ func SetupEventHandler(app state.App, mux *http.ServeMux) {
 func createWS(ctx context.Context, eventName topicT) (*websocket.Conn, error) {
 	wsUrl := fmt.Sprintf("ws://localhost:%d/events/listen/%s", cli.GetConfig().GetHTTPPort(), eventName)
 
-	wsClient, _, err := websocket.Dial(ctx, wsUrl, nil)
+	httpHeaders := http.Header{}
+	httpHeaders.Set("Origin", fmt.Sprintf("http://localhost:%d", cli.GetConfig().GetHTTPPort()))
+	
+	wsClient, _, err := websocket.Dial(ctx, wsUrl, &websocket.DialOptions{
+		HTTPHeader: httpHeaders,
+	})
+	
 	if err != nil {
 		log.Println(err)
 		return nil, err
