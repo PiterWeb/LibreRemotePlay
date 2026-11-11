@@ -1,7 +1,6 @@
 import {
 	TryCreateHost as createHostFn,
   TryClosePeerConnection as closeConnectionFn,
-	GetUsedPorts
 } from '$lib/bindings/App';
 
 import { _ } from 'svelte-i18n';
@@ -13,13 +12,10 @@ import { StopStreaming } from '$lib/webrtc/stream/host_stream_hook';
 import type { ICEServer } from '$lib/webrtc/ice';
 import { exportStunServers } from './stun_servers';
 import { exportTurnServers } from './turn_servers';
-import { isLinux } from '$lib/detection/detect_os';
-import { IS_RUNNING_EXTERNAL } from '$lib/detection/onwebsite';
 import log from '$lib/logger/logger';
 import LANMode from './lan_mode.svelte';
 import type Modal from '$lib/layout/Modal.svelte';
-
-const BROWSER_BASE_URL = IS_RUNNING_EXTERNAL ? null : `http://localhost:${(await GetUsedPorts()).http}/mode/host/connection`;
+import { Events, EventsOff, EventsOn, EventsOnce } from '$lib/events/events';
 
 let host: boolean = false;
 
@@ -62,8 +58,6 @@ export async function CreateHost(options: CreateHostOptions) {
 		toogleLoading();
 		setLoadingMessage(get(_)('waiting-for-client-to-connect'));
 		setLoadingTitle(get(_)('make-sure-to-pass-the-code-to-the-client'));
-
-		const { EventsOnce, Events } = await import('$lib/events/events');
 
 		EventsOnce(Events.connection_state, async (state: ConnectionState) => {
 			toogleLoading();
@@ -117,9 +111,6 @@ export function CloseHostConnection(fn?: () => void) {
 }
 
 export async function ListenForConnectionChanges() {
-	if (IS_RUNNING_EXTERNAL) return;
-
-	const { EventsOn, EventsOff, Events } = await import('$lib/events/events');
 
 	const connectionStateCancelEventListener = EventsOn(
 		Events.connection_state,

@@ -14,8 +14,9 @@
 	import PWAInstall from '$lib/pwa/PWAInstall.svelte';
 	import { onNavigate } from '$app/navigation';
 	import Modal from '$lib/layout/Modal.svelte';
-	import { IS_RUNNING_EXTERNAL } from '$lib/detection/onwebsite';
-
+	import { IS_CLIENT_ONLY } from '$lib/detection/onwebsite';
+	import { Events, EventsOn } from '$lib/events/events';
+	
 	/** @type {{children?: import('svelte').Snippet}} */
 	let { children } = $props();
 
@@ -30,19 +31,17 @@
 			});
 		}
 
-		if (!IS_RUNNING_EXTERNAL) {
-			(async () => {
-			    try {
-    				const { EventsOn, Events } = await import('$lib/events/events');
-    
-    				EventsOn(Events.error, (err: string) => {
-     					errorModal.openModal();
-      
-     					errorText = err;
-    				});
-				} catch {}
-			})();
-		}
+		(async () => {
+	        if (!(await IS_CLIENT_ONLY())) {
+   			    try {
+      				EventsOn(Events.error, (err: string) => {
+       					errorModal.openModal();
+        
+       					errorText = err;
+      				});
+  				} catch {}
+			}
+		})();
 	});
 
 	onNavigate((navigation) => {

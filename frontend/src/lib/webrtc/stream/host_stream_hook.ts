@@ -7,6 +7,7 @@ import { exportTurnServers } from '../turn_servers';
 import { DEFAULT_IDEAL_FRAMERATE, DEFAULT_MAX_FRAMERATE, FIXED_RESOLUTIONS, getSortedVideoCodecs, RESOLUTIONS } from './stream_config.svelte';
 import log from '$lib/logger/logger';
 import LANMode from '$lib/webrtc/lan_mode.svelte';
+import { Events, EventsEmit, EventsOn } from '$lib/events/events';
 
 let peerConnection: RTCPeerConnection | undefined;
 
@@ -102,7 +103,6 @@ export async function CreateHostStream(resolution: FIXED_RESOLUTIONS = FIXED_RES
 				role: 'host'
 			};
 			
-			const { EventsEmit, Events } = await import('$lib/events/events');
 			EventsEmit(Events.streaming_signal_server, data);
 			return;
 		}
@@ -137,7 +137,6 @@ export async function CreateHostStream(resolution: FIXED_RESOLUTIONS = FIXED_RES
 		role: 'host'
 	};
 	
-	const { EventsEmit, Events } = await import('$lib/events/events');
 	EventsEmit(Events.streaming_signal_server, data);
 
 	async function onSignalArrive(data: string) {
@@ -166,7 +165,6 @@ export async function CreateHostStream(resolution: FIXED_RESOLUTIONS = FIXED_RES
 	}
 
 	(async () => {
-		const { EventsOn, Events } = await import('$lib/events/events');
 		unlistenerStreamingSignal = EventsOn(Events.streaming_signal_client, (data: string) => onSignalArrive(data));
 	})()
 

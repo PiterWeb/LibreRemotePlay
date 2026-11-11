@@ -14,13 +14,13 @@
 
 	import { onMount } from 'svelte';
 	import CodecList from '$lib/webrtc/stream/CodecList.svelte';
-	import IsLinux from '$lib/detection/IsLinux.svelte';
 	import KeyboardIcon from '$lib/layout/icons/KeyboardIcon.svelte';
 	import GamepadIcon from '$lib/layout/icons/GamepadIcon.svelte';
 	import type { audio } from '$lib/bindings/models';
 	import Tooltip from '$lib/layout/Tooltip.svelte';
 	import MouseIcon from '$lib/layout/icons/MouseIcon.svelte';
-	import IsRunningExternal from '$lib/detection/IsRunningExternal.svelte';
+	import { GetUsedPorts, IsGamepadEnabled, IsKeyboardEnabled, IsMouseEnabled, IsWhipEnabled, ToogleGamepad, ToogleKeyboard, ToogleMouse, ToogleWhip } from '$lib/bindings/App';
+	import { Events, EventsOn } from '$lib/events/events';
 	// import { GetAudioProcess, SetAudioPid } from '$lib/bindings/App';
 
 	let selected_audio_src = $state(0);
@@ -80,28 +80,21 @@
 	}
 
 	async function toogleWhip() {
-		const { IsWhipEnabled, ToogleWhip } = await import('$lib/bindings/App');
-
 		await ToogleWhip();
 		whipEnabled = await IsWhipEnabled();
 	}
 
 	async function toogleKeyboard() {
-		const { IsKeyboardEnabled, ToogleKeyboard } = await import('$lib/bindings/App');
-
 		await ToogleKeyboard();
 		keyboardEnabled = await IsKeyboardEnabled();
 	}
 
 	async function toogleGamepad() {
-		const { IsGamepadEnabled, ToogleGamepad } = await import('$lib/bindings/App');
-
 		await ToogleGamepad();
 		gamepadEnabled = await IsGamepadEnabled();
 	}
 
 	async function toogleMouse() {
-		const { IsMouseEnabled, ToogleMouse } = await import('$lib/bindings/App');
 		await ToogleMouse();
 		mouseEnabled = await IsMouseEnabled();
 	}
@@ -126,11 +119,8 @@
 
 		// Handle start streaming button
 		(async () => {
-			const { IsWhipEnabled } = await import('$lib/bindings/App');
 			whipEnabled = await IsWhipEnabled();
 
-			const { EventsOn, Events } = await import('$lib/events/events');
-			const { GetUsedPorts } = await import('$lib/bindings/App');
 			const usedPorts = await GetUsedPorts();
 			whipPort = usedPorts.whip;
 			unlistener = EventsOn(Events.streaming_signal_client, (d) => {
