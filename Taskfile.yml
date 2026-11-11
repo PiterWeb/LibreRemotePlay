@@ -16,10 +16,18 @@ tasks:
     desc: Run the backend in development mode 
   build:
     deps: [build-front]
+    platforms: [linux]
     cmds:
       - for: [amd64, arm64]
-        cmd: GOOS=linux GOOARCH={{.ITEM}} go build -o ./build/bin/LibreRemotePlay-{{.ITEM}} .
-      - GOOS=windows GOOARCH=amd64 go build -o ./build/bin/LibreRemotePlay.exe .
+        platforms: [linux]
+        cmd: CGO_ENABLED=0 GOOS=linux GOOARCH={{.ITEM}} go build -tags purego -o ./build/bin/LibreRemotePlay-{{.ITEM}} .
+      - cmd: CGO_ENABLED=0 GOOS=windows GOOARCH=amd64 go build -tags win -o ./build/bin/LibreRemotePlay.exe .
+        platforms: [linux]
+      - for: [amd64, arm64] # Windows not tested
+        platforms: [windows/amd64]
+        cmd: pwsh -Command { $env:CGO_ENABLED = "0"; $env:GOOS = "linux"; $env:GOOARCH = "{{.ITEM}}"; go build -tags purego -o ./build/bin/LibreRemotePlay-{{.ITEM}} . }
+      - cmd: go build -tags win -o ./build/bin/LibreRemotePlay.exe . # Windows not tested
+        platforms: [windows/amd64]
     desc: Build the application for all platforms
   build-linux-flatpak:
     deps: [build-front]

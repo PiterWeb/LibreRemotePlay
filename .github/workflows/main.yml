@@ -13,13 +13,11 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
+        go-version: [ '1.27.2' ]
         include:
           - name: LibreRemotePlay-linux-amd64
             platform: linux/amd64
             os: ubuntu-latest
-          - name: LibreRemotePlay-amd64.exe
-            platform: windows/amd64
-            os: windows-latest
 
     runs-on: ${{ matrix.os }}
 
@@ -30,16 +28,19 @@ jobs:
           submodules: recursive
 
       - name: Setup pnpm
-        uses: pnpm/action-setup@v4
+        uses: pnpm/setup@v1
         with:
-          version: 10
-      - name: Wails build
-        uses: dAppServer/wails-build-action@main
+          version: 11
+          runtime: node@24
+          cache: true
+      - name: Setup Go ${{ matrix.go-version }}
+        uses: actions/setup-go@v5
         with:
-          build-name: ${{ matrix.name }}
-          build-platform: ${{ matrix.platform }}
-          package: false
-          go-version: 1.24.2
+          go-version: ${{ matrix.go-version }}
+      - name: Setup Task
+        run: pnpm i -g @go-task/cli
+      - name: Build binaries
+        run: task build
       - name: Upload release
         uses: softprops/action-gh-release@v1
         with:
