@@ -39,13 +39,6 @@ tasks:
     deps: [build-front]
     cmds:
       - flatpak-builder --force-clean --user --install-deps-from=flathub --repo=repo --install builddir packaging/flatpak/io.github.PiterWeb.LibreRemotePlay.yml
-  build-linux-appimage:
-    deps: [build-linux, install-linuxdeploy]
-    # env:
-    #   NO_STRIP: true
-    cmds:
-      - ./linuxdeploy-x86_64.AppImage --appdir AppDir --desktop-file assets/LibreRemotePlay.desktop --executable build/bin/LibreRemotePlay --plugin gtk -i assets/remotecontroller.png -d assets/LibreRemotePlay.desktop --output appimage
-    desc: (Experimental) Build AppImage for Linux based on previously generated binaries (wget required)
   build-wasm-front:
     dir: frontend/static/wasm
     env:
@@ -70,15 +63,6 @@ tasks:
       - package.json
     status:
       - test -d node_modules
-  install-linuxdeploy:
-    cmds:
-      - wget https://github.com/linuxdeploy/linuxdeploy/releases/download/continuous/linuxdeploy-x86_64.AppImage
-      - chmod +x linuxdeploy-x86_64.AppImage
-      - wget -c "https://raw.githubusercontent.com/linuxdeploy/linuxdeploy-plugin-gtk/master/linuxdeploy-plugin-gtk.sh"
-      - chmod +x linuxdeploy-plugin-gtk.sh
-    sources:
-      - linuxdeploy-x86_64.AppImage
-      - linuxdeploy-plugin-gtk.sh
   build-front:
     deps: [install-front, build-wasm-front]
     dir: frontend
