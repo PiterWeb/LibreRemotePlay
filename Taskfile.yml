@@ -18,14 +18,20 @@ tasks:
     deps: [build-front]
     platforms: [linux]
     cmds:
-      - for: [amd64, arm64]
+      - for: 
+          matrix: 
+            ARCH: [amd64, arm64]
+            W: [wayland, x11, libei]
         platforms: [linux]
-        cmd: CGO_ENABLED=0 GOOS=linux GOOARCH={{.ITEM}} go build -tags purego -o ./build/bin/LibreRemotePlay-{{.ITEM}} .
+        cmd: CGO_ENABLED=0 GOOS=linux GOOARCH={{.ITEM.ARCH}} go build -tags {{.ITEM.W}} -o ./build/bin/LibreRemotePlay-{{.ITEM.ARCH}}-{{.ITEM.W}} .
       - cmd: CGO_ENABLED=0 GOOS=windows GOOARCH=amd64 go build -tags win -o ./build/bin/LibreRemotePlay.exe .
         platforms: [linux]
-      - for: [amd64, arm64] # Windows not tested
+      - for: # Windows not tested
+          matrix: 
+            ARCH: [amd64, arm64]
+            W: [wayland, x11, libei]
         platforms: [windows/amd64]
-        cmd: pwsh -Command { $env:CGO_ENABLED = "0"; $env:GOOS = "linux"; $env:GOOARCH = "{{.ITEM}}"; go build -tags purego -o ./build/bin/LibreRemotePlay-{{.ITEM}} . }
+        cmd: pwsh -Command { $env:CGO_ENABLED = "0"; $env:GOOS = "linux"; $env:GOOARCH = "{{.ITEM.ARCH}}"; go build -tags {{.ITEM.W}} -o ./build/bin/LibreRemotePlay-{{.ITEM.ARCH}}-{{.ITEM.W}} . }
       - cmd: go build -tags win -o ./build/bin/LibreRemotePlay.exe . # Windows not tested
         platforms: [windows/amd64]
     desc: Build the application for all platforms
