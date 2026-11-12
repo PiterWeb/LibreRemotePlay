@@ -1,13 +1,10 @@
 id: io.github.PiterWeb.LibreRemotePlay
-runtime: org.gnome.Platform
-runtime-version: "50"
-sdk: org.gnome.Sdk
+runtime: org.freedesktop.Platform
+runtime-version: '25.08'
+sdk: org.freedesktop.Sdk
 
 command: LibreRemotePlay
 finish-args:
-  - --share=ipc # Share IPC namespace with the host (necessary for X11).
-  - --socket=wayland
-  - --socket=fallback-x11
   - --device=dri # OpenGL rendering support.
   - --talk-name=org.freedesktop.Notifications
   - --filesystem=home
@@ -34,8 +31,8 @@ modules:
       - mv $(pwd)/* $GOROOT
     sources:
       - type: archive
-        url: https://go.dev/dl/go1.25.3.linux-amd64.tar.gz
-        sha256: 0335f314b6e7bfe08c3d0cfaa7c19db961b7b99fb20be62b0a826c992ad14e0f
+        url: https://go.dev/dl/go1.27.4.linux-amd64.tar.gz
+        sha256: 7226736c2339719cda28fbf3a54d71aa63bcefe376e98cef00034268dab24840
   - name: nodejs
     buildsystem: simple
     build-commands:
@@ -52,12 +49,12 @@ modules:
   - name: wails
     buildsystem: simple
     build-commands:
-      - $GOROOT/bin/go install github.com/wailsapp/wails/v2/cmd/wails@v2.12.0
+      - $GOROOT/bin/go install github.com/go-task/task/v3/cmd/task@latest
   - name: libreremoteplay
     buildsystem: simple
     build-commands:
-      - PATH=$PATH:$GOROOT/bin:$NODEROOT/bin $GOBIN/wails build -s -devtools -tags webkit2_41
-      - install -Dm00755 build/bin/LibreRemotePlay $FLATPAK_DEST/bin/LibreRemotePlay
+      - PATH=$PATH:$GOROOT/bin:$NODEROOT/bin $GOBIN/task build
+      - install -Dm00755 build/bin/LibreRemotePlay-amd64-wayland $FLATPAK_DEST/bin/LibreRemotePlay
       - install -Dm00644 packaging/$FLATPAK_ID.png $FLATPAK_DEST/share/icons/hicolor/256x256/apps/$FLATPAK_ID.png
       - install -Dm00644 packaging/$FLATPAK_ID.desktop $FLATPAK_DEST/share/applications/$FLATPAK_ID.desktop
       - install -Dm00644 packaging/flatpak/$FLATPAK_ID.appdata.xml $FLATPAK_DEST/share/appdata/$FLATPAK_ID.appdata.xml
