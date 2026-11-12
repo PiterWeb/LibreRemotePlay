@@ -38,7 +38,7 @@ jobs:
         with:
           go-version: ${{ matrix.go-version }}
       - name: Setup Task
-        run: pnpm i -g @go-task/cli
+        uses: go-task/setup-task@v2
       - name: Build binaries
         run: task build
       - name: Upload release
