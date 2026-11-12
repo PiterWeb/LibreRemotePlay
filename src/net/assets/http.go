@@ -1,9 +1,8 @@
 // HTTP server
-package http
+package assets
 
 import (
 	"context"
-	"embed"
 	"errors"
 	"fmt"
 	"io/fs"
@@ -11,10 +10,13 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/PiterWeb/RemoteController/src/cli"
+	"LibreRemotePlay/src/cli"
+	"LibreRemotePlay/src/state"
+
+	"github.com/rs/cors"
 )
 
-func InitHTTPAssets(ctx context.Context,serverMux *http.ServeMux, assets embed.FS) error {
+func ServeHTTPAssets(app state.App, serverMux *http.ServeMux) error {
 
 	config := cli.GetConfig()
 	clientPort := config.GetHTTPPort()
@@ -27,19 +29,19 @@ func InitHTTPAssets(ctx context.Context,serverMux *http.ServeMux, assets embed.F
 		addr = fmt.Sprintf("127.0.0.1:%d", clientPort)
 	}
 
-	staticFS, err := fs.Sub(assets, "frontend/build")
+	staticFS, err := fs.Sub(app.Assets, "frontend/build")
 
 	if err != nil {
 		return err
 	}
-
-	serverMux.Handle("GET /", FileMiddleware(staticFS, http.FileServer(http.FS(staticFS))))
+	
+	serverMux.Handle("/", FileMiddleware(staticFS, http.FileServer(http.FS(staticFS))))
 
 	httpServer := &http.Server{
-		Handler: serverMux,
+		Handler: cors.Default().Handler(serverMux),
 		Addr:    addr,
 		BaseContext: func(l net.Listener) context.Context {
-			return ctx
+			return app.Ctx
 		},
 	}
 

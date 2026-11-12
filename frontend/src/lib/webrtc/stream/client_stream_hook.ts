@@ -108,25 +108,25 @@ async function CreateClientStream(
 	signalingChannel.onmessage = async (e) => {
 		if (!peerConnection) return;
 
-		const { type, offer, candidate, role } = JSON.parse(e.data) as SignalingData;
-
-		if (role !== 'host') return;
-
-		if (type == "candidate") {
-			try {await peerConnection?.addIceCandidate(candidate)} catch {/** */}
-			return
-		}
-
-		if (type !== 'offer') return;
-		if (!offer || offerArrived) return;
 		
-		offerArrived = true;
-
-		try {
+    try {
+  		const { type, offer, candidate, role }: SignalingData = JSON.parse(e.data);
+      
+  		if (role !== 'host') return;
+  
+  		if (type == "candidate") {
+  			try {await peerConnection?.addIceCandidate(candidate)} catch {/** */}
+  			return
+  		}
+  
+  		if (type !== 'offer') return;
+  		if (!offer || offerArrived) return;
+  		
+  		offerArrived = true;
 
 			await peerConnection?.setRemoteDescription(offer);
-            const answer = await peerConnection?.createAnswer();
-            await peerConnection?.setLocalDescription(answer);
+      const answer = await peerConnection?.createAnswer();
+      await peerConnection?.setLocalDescription(answer);
 
 		} catch (e) {
 			// TODO: manage error

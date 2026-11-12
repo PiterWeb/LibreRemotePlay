@@ -2,7 +2,7 @@ package streaming_signal
 
 import (
 	"context"
-	"encoding/json"
+	"encoding/json/v2"
 	"errors"
 	"fmt"
 	"io"
@@ -12,8 +12,10 @@ import (
 	"sync/atomic"
 	"time"
 
-	"github.com/PiterWeb/RemoteController/src/cli"
-	"github.com/PiterWeb/RemoteController/src/devices"
+	"LibreRemotePlay/src/cli"
+	"LibreRemotePlay/src/devices"
+	"LibreRemotePlay/src/state"
+
 	"github.com/pion/webrtc/v4"
 )
 
@@ -35,10 +37,7 @@ var WhipConfig = &whipConfig{
 	ICEServers: atomic.Pointer[[]webrtc.ICEServer]{},
 }
 
-func InitWhipServer(ctx context.Context, config *whipConfig) error {
-
-	var answerChan <-chan string = config.AnswerChan
-	var offerChan chan<- string = config.OfferChan
+func InitWhipServer(app state.App, config *whipConfig) error {
 
 	defer func() {
 		close(config.OfferChan)
@@ -66,7 +65,7 @@ func InitWhipServer(ctx context.Context, config *whipConfig) error {
 			if err := recover(); err != nil {
 				log.Printf("Fatal error %s\n", err)
 				w.WriteHeader(http.StatusInternalServerError)
-				_, _ =w.Write([]byte("Fatal error"))
+				_, _ = w.Write([]byte("Fatal error"))
 				return
 			}
 		}()
@@ -99,11 +98,11 @@ func InitWhipServer(ctx context.Context, config *whipConfig) error {
 		}
 		
 		log.Println("WHIP - Offer received")
-		offerChan <- string(offer)
+		WhipConfig.OfferChan <- string(offer)
 
 		log.Println("WHIP - Waiting for answer")
 		
-		rawAnswer, ok := <-answerChan
+		rawAnswer, ok := <-config.AnswerChan
 
 		if !ok {
 			log.Println("WHIP - Answer channel closed")
@@ -114,8 +113,8 @@ func InitWhipServer(ctx context.Context, config *whipConfig) error {
 
 		type answerT struct {
 			Answer struct {
-				SDP string
-			}
+				SDP string `json:"sdp"`
+			} `json:"answer"`
 		}
 
 		answerStruct := answerT{}
@@ -135,8 +134,12 @@ func InitWhipServer(ctx context.Context, config *whipConfig) error {
 		w.Header().Add("Location", fmt.Sprintf("http://localhost:%d/whip", config.Port))
 
 		w.WriteHeader(http.StatusCreated)
-		_, _ = w.Write([]byte(answerStruct.Answer.SDP))
-
+		_, err = w.Write([]byte(answerStruct.Answer.SDP))
+		if err != nil {
+			log.Println("WHIP - Failed to send answer: ", err)
+		}
+		
+		log.Println("WHIP - Answer sended")
 	})
 
 	httpServer := &http.Server{
@@ -145,7 +148,7 @@ func InitWhipServer(ctx context.Context, config *whipConfig) error {
 		WriteTimeout: time.Second * 30,
 		ReadTimeout:  time.Second * 30,
 		BaseContext: func(l net.Listener) context.Context {
-			return ctx
+			return app.Ctx
 		},
 	}
 
@@ -211,7 +214,7 @@ func getFinalOffer(ctx context.Context, offer string) string {
 func handleWhipAnswer(msg []byte) {
 
 	type dataT struct {
-		Type string
+		Type string `json:"type"`
 	}
 
 	dataStruct := dataT{}
@@ -219,6 +222,7 @@ func handleWhipAnswer(msg []byte) {
 	err := json.Unmarshal(msg, &dataStruct)
 
 	if err != nil {
+		log.Println("Error unmarshalling struct")
 		return
 	}
 

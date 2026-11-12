@@ -2,6 +2,7 @@ import { toogleLoading } from '$lib/loading/loading_hook';
 import log from '$lib/logger/logger';
 import { showToast, ToastType } from '$lib/toast/toast_hook';
 import { ConnectToHostWeb, CreateClientWeb } from '$lib/webrtc/client_webrtc_hook';
+import { CreateHost } from '$lib/webrtc/host_webrtc_hook';
 import { SendClientCode, server, ReceiveClientCode, SendHostCode } from '@libreremoteplay/signals';
 import { _ } from 'svelte-i18n';
 import { get } from 'svelte/store';
@@ -44,8 +45,8 @@ export async function handleEasyConnectClient() {
 			{ data: clientCode },
 			easyConnectID.value
 		);
-
-		log(`Host Code: ${hostCode}`);
+		
+		log(`Host Code: ${hostCode.data}`);
 
 		const { data: hostCodeStr } = hostCode;
 
@@ -87,8 +88,6 @@ export async function handleEasyConnectHost() {
 			showToast(get(_)('code-is-empty'), ToastType.ERROR);
 			throw new Error('Failed to receive client code from host');
 		}
-
-		const { CreateHost } = await import('$lib/webrtc/host_webrtc_hook');
 
 		// Pending to return hostCode from CreateHost
 		const hostCode = await CreateHost({ clientCode: clientCodeData, easyConnect: true });
