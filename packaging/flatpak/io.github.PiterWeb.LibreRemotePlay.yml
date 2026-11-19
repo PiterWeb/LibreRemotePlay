@@ -9,7 +9,7 @@ finish-args:
   - --talk-name=org.freedesktop.Notifications
   - --filesystem=home
   - --filesystem=host
-  - --device=usb
+  - --device=all
   - --share=network
   - --talk-name=org.kde.StatusNotifierWatcher
 
@@ -19,11 +19,10 @@ build-options:
   env:
     - GOROOT=/app/sdk/golang
     - GOBIN=/app/go/bin
-    - CGO_ENABLED=1
+    - CGO_ENABLED=0
     - NODEROOT=/app/sdk/node
 
 modules:
-  # - shared-modules/libappindicator/libappindicator-gtk3-12.10.json
   - name: golang
     buildsystem: simple
     build-commands:
@@ -46,7 +45,7 @@ modules:
     buildsystem: simple
     build-commands:
       - PATH=$PATH:$NODEROOT/bin $NODEROOT/bin/npm install -g pnpm@latest-11
-  - name: wails
+  - name: task
     buildsystem: simple
     build-commands:
       - $GOROOT/bin/go install github.com/go-task/task/v3/cmd/task@latest

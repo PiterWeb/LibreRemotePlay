@@ -22,7 +22,7 @@
   <launchable type="desktop-id">io.github.PiterWeb.LibreRemotePlay.desktop</launchable>
   <screenshots>
     <screenshot type="default">
-      <image>https://raw.githubusercontent.com/ad-on-is/resticity/main/images/resticity_screenshot.png</image>
+      <image>https://raw.githubusercontent.com/PiterWeb/LibreRemotePlay-Landing/e148c9992b29a1a69b921d7ca56630350ecde8e1/static/showcase.jpg</image>
       <caption>Preview</caption>
     </screenshot>
   </screenshots>
@@ -32,10 +32,10 @@
   <url type="homepage">https://github.com/PiterWeb/LibreRemotePlay</url>
 
   <!-- Generate the oars rating at: https://hughsie.github.io/oars/generate.html -->
-  <content_rating type="oars-1.1" />
+  <!-- <content_rating type="oars-1.1" /> -->
 
   <releases>
-    <release version="1.0.44" date="2024-03-10" type="stable"></release>
+    <release version="0.10.1" date="2026-11-19" type="stable"></release>
   </releases>
 
 </component>
