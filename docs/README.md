@@ -20,7 +20,7 @@ DisplayMedia is for capturing video/audio from desktop/aplications and them stre
 
 ### Wails 
 
-This project is using Wails so it might be important to know how wails works.
+This project was using Wails but replaced by Web techonologies and a Web Browser. For a better transition features like Bindings and Events were recreated using HTTP and WebSockets so it might still be important to know how Wails works.
 
 Wails is like Electron but for Go, and instead of embed a Chromium Browser you will use the existent browser of you OS (webview2, gtkwebview, ...). 
 
@@ -32,32 +32,47 @@ You will have two parts:
 
 #### Bindings
 
-Wails can generate bindings in JS for Go generated functions. <br>
+Wails can generate bindings in JS for Go generated functions. 
+In our case the bindings are made by hand in the frontend but are very easy to create. <br>
 
-In the project all bindings are located in [/src/desktop/](../src/desktop/)
+In the project all bindings are located in [/src/bindings/](../src/bindings/)
 
 Real example:
 
-This function located in [/src/desktop/app.go](../src/desktop/app.go)
+This function located in [/src/bindings/app.go](../src/bindings/app.go)
 
 ```go
-func (a *App) GetCurrentOS() string {
-  return strings.ToUpper(runtime.GOOS)
+func getCurrentOS() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+
+		res := Res[string]{
+			Result: strings.ToUpper(runtime.GOOS),
+		}
+
+		err := json.MarshalWrite(w, res)
+		if err != nil {
+			log.Println("Error mashalling res: ", err)
+			w.WriteHeader(500)
+			return
+		}
+		
+	}
 }
 ```
 will appear as
 
 ```js
-export function GetCurrentOS() {
-  return window['go']['desktop']['App']['GetCurrentOS']();
+export function GetCurrentOS(): Promise<string> {
+  return callBinding("/os")
 }
 ```
 
-in the path [/frontend/src/lib/wailsjs/go/desktop/App.js](../frontend/src/lib/wailsjs/go/desktop/App.js)
+in the path [/frontend/src/lib/bindings/App.ts](../frontend/src/lib/bindings/App.ts)
 
 #### Events
 
 Wails have listeners and event dispatchers to send data between JS <-> GO in a bidirectional flow (this are contained in the wails runtime pkg)
+To replace Wails events the project uses HTTP to emit and WebSocket to listen and have an almost identic API
 
 ## Roles
 
@@ -66,7 +81,7 @@ First make sure to read the Wails section above.
 We are going to start with ¿ How the two roles communicate ?.
 
 To not enter in WebRTC matery we are going to say that each peer needs to need some information from the other after the connection begins so we need to pass that information.<br><br>
-To do that we share codes, this codes are simply the data needed by WebRTC but encoded and compressed to be the most portable it can, to not require the use of a signaling server. This way you will not have to self-host any serice.
+To do that we share codes, this codes are simply the data needed by WebRTC but encoded and compressed to be the most portable it can, to not require the use of a signaling server. This way you will not have to self-host any service.
 
 Note: all the "codes" encoding & compression is done in Go or Wasm (generated from the Go code).
 
@@ -82,7 +97,7 @@ If there is an available Screen + Audio stream we can connect to it creating a n
 Host is the most complex role cause part of the logic of webrtc code is on the "Browser" and other in "Desktop APP".
 
 This division of logic is because we need:
-  - Go: A WebRTC connection that goes directly to the ViGEm driver (which is loaded as a DLL in Go) to insert the gamepad data or a similar situation with keyboard.
+  - Go: A WebRTC connection that goes directly to the ViGEm/uinput driver to insert the gamepad data or a similar situation with keyboard.
 
   - JS/TS: We need to send the Screen + Audio stream to the client. To do that we need the WebRTC stream in the "Browser", one way of achieve this could have been doing a rtp stream proxy and use the Go WebRTC connection but that would have add latency and use of more resources. Because of that it is created a new WebRTC connection only for the stream on the "Browser", this connection is auto created and uses as signaling service the normal WebRTC connection used for Gamepad data.
 
@@ -102,7 +117,6 @@ WebRTC code: [/frontend/src/lib/webrtc/](../frontend/src/lib/webrtc)
 - 💅 DaisyUI  (Tailwind Framework)
 - 🔢 WASM (for Go compatibility) 
 - 🔠 Svelte i18n (Translations) 
-- 📦 Wails (Golang bindings for desktop)
 
 ## Backend (Dekstop APP Logic)
 
@@ -115,6 +129,10 @@ WebRTC code: [/src/net/](../src/net) + [/src/streaming_signal/](../src/streaming
 ### Stack:
 
 - 💻 Go
-- 📦 Wails (Desktop APP)
+- 💻 fyne.io/systray
+- 💻 pkg/browser
 - 🌐 Pion/Webrtc
-- 🎮 ViGEm (binary & dll for gamepad virtualization)
+- 🌐 gorilla/websocket
+- 🎮 ViGEm (binary & dll for gamepad virtualization in Windows)
+- 🎮 jbdemonte/virtual-device
+- 🎮 go-vgo/robotgo

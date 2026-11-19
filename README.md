@@ -99,17 +99,15 @@ There is no way to self-host the infrastructure of LibreRemotePlay because it ha
 
 ### Prerequisites
 
-- You must have [Task CLI](https://taskfile.dev/installation/), [Wails CLI](https://wails.io/docs/gettingstarted/installation#installing-wails), [NodeJS (~v20.x.x)](https://nodejs.org/en/download), [pnpm](https://pnpm.io/en/installation) and [Golang (min v1.22.4)](https://go.dev/doc/install) installed.
-
-- Make sure to run `wails doctor` and [install all the required dependencies for your system](https://wails.io/docs/gettingstarted/installation#system-check), also take a look at [platform specific dependencies](https://wails.io/docs/gettingstarted/installation/#platform-specific-dependencies)
+- You must have [Task CLI](https://taskfile.dev/installation/), [NodeJS (~v20.x.x)](https://nodejs.org/en/download), [pnpm](https://pnpm.io/en/installation) and [Golang (min v1.22.4)](https://go.dev/doc/install) installed.
 
 ### How to
 
 Go to the root project folder and run
 
-  - Full App :
+  - Backend :
 
-    `$ task dev-all`
+    `$ task dev-back`
 
   - Frontend:
 
@@ -119,9 +117,7 @@ Go to the root project folder and run
 
 ### Prerequisites
 
-- You must have [Task CLI](https://taskfile.dev/installation/), [Wails CLI](https://wails.io/docs/gettingstarted/installation#installing-wails), [NodeJS (~v20.x.x)](https://nodejs.org/en/download), [pnpm](https://pnpm.io/en/installation) and [Golang (min v1.22.4)](https://go.dev/doc/install) installed.
-
-- Make sure to run `wails doctor` and [install all the required dependencies for your system](https://wails.io/docs/gettingstarted/installation#system-check), also take a look at [platform specific dependencies](https://wails.io/docs/gettingstarted/installation/#platform-specific-dependencies)
+- You must have [Task CLI](https://taskfile.dev/installation/), [NodeJS (~v20.x.x)](https://nodejs.org/en/download), [pnpm](https://pnpm.io/en/installation) and [Golang (min v1.22.4)](https://go.dev/doc/install) installed.
 
 ### How to
 
@@ -131,23 +127,9 @@ Go to the root project folder and run
 
     `$ task build`
 
-- For Windows builds:
-
-    `$ task build-win`
-
-- For Linux builds:
-
-    `$ task build-linux`
-
 - For Linux Flatpak builds:
   
     `$ task build-linux-flatpak`
-
-- For Linux AppImage builds (experimental):
-  
-    `$ task build-linux`
-    and then
-    `$ task build-linux-appimage`
 
 finally go to the build/bin folder and your executables will be there.
 
@@ -163,17 +145,18 @@ These projects are making LibreRemotePlay a reality.
 
 ### Thanks to jbdemonte/virtual-device
 [jbdemonte/virtual-device](https://github.com/jbdemonte/virtual-device) is the source of magic that enables LibreRemotePlay to generate virtual gamepads on Linux, is very fast and made in pure Go.
+
 ### Thanks to the ViGEm project
 [ViGEmBus](https://github.com/nefarius/ViGEmBus) is the source of magic that enables LibreRemotePlay to generate virtual gamepads on Windows. We embed ViGEmBus Installation Wizard and ViGEmBus Client DLLS within the executable for Windows
-
-### Thanks to Wails
-[Wails](https://github.com/wailsapp/wails) makes easy creating desktop experiences using Go and Web tecnologies.
 
 ### Thanks to pion/webrtc
 [Pion/Webrtc](https://github.com/pion/webrtc) is a implementation of WebRTC made in pure Go, it enables LibreRemotePlay to use WebRTC in a crossplatform way.
 
 ### Thanks to robotgo
 [robotgo](https://github.com/go-vgo/robotgo) makes easy controling/simulating a keyboard (and anything related to desktop) using a simple syntax in Go.
+
+### Thanks to Wails (Now is not used but was very important for the project)
+[Wails](https://github.com/wailsapp/wails) makes easy creating desktop experiences using Go and Web tecnologies.
 
 ## Did you like the project 👍 ?
 You can give us a star and join our [Discord Community](https://discord.gg/v7qd7nU3fJ), the project is always looking for feedback :)
