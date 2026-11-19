@@ -15,14 +15,13 @@ func openViGEmWizard() http.HandlerFunc {
 			Result: gamepad.OpenViGEmWizard().Error(),
 		}
 
-		rawRes, err := json.Marshal(res)
+		err := json.MarshalWrite(w, res)
 		if err != nil {
 			log.Println("Error mashalling res: ", err)
 			w.WriteHeader(500)
 			return
 		}
 		
-		w.Write(rawRes)
 	}
 	
 }

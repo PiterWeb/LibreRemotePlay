@@ -5,7 +5,6 @@ package bindings
 import (
 	"context"
 	"encoding/json/v2"
-	"io"
 	"log"
 	"net/http"
 	"runtime"
@@ -104,15 +103,8 @@ func tryCreateHost(app state.App) http.HandlerFunc {
 		app.Conn.CancelCtx = cancelConn
 		app.Conn.Ctx = connCtx
 
-		rawReq, err := io.ReadAll(r.Body)
-		if err != nil {
-			log.Println("Error reading req body: ", err)
-			w.WriteHeader(500)
-			return
-		}
-
 		var req Req[Args]
-		err = json.Unmarshal(rawReq, &req)
+		err := json.UnmarshalRead(r.Body, &req)
 		if err != nil {
 			log.Println("Error unmarshalling req body: ", err)
 			w.WriteHeader(400)
@@ -138,14 +130,13 @@ func tryCreateHost(app state.App) http.HandlerFunc {
 			Result: answer,
 		}
 
-		resRaw, err := json.Marshal(res)
+		err = json.MarshalWrite(w, res)
 		if err != nil {
 			log.Println("Error marshaling response: ", err)
 			w.WriteHeader(500)
 			return
 		}
 		
-		w.Write(resRaw)
 	}
 }
 
@@ -190,14 +181,13 @@ func getUsedPorts() http.HandlerFunc {
 			Result: usedPorts,
 		}
 
-		rawRes, err := json.Marshal(res)
+		err := json.MarshalWrite(w, res)
 		if err != nil {
 			log.Println("Error mashalling res: ", err)
 			w.WriteHeader(500)
 			return
 		}
 
-		w.Write(rawRes)
 	} 
 }
 
@@ -214,14 +204,13 @@ func isEnabledHelper(isEnabled func() bool) http.HandlerFunc {
 			Result: isEnabled(),
 		}
 
-		rawRes, err := json.Marshal(res)
+		err := json.MarshalWrite(w, res)
 		if err != nil {
 			log.Println("Error mashalling res: ", err)
 			w.WriteHeader(500)
 			return
 		}
 
-		w.Write(rawRes)
 	}
 }
 
@@ -274,14 +263,13 @@ func getCurrentOS() http.HandlerFunc {
 			Result: strings.ToUpper(runtime.GOOS),
 		}
 
-		rawRes, err := json.Marshal(res)
+		err := json.MarshalWrite(w, res)
 		if err != nil {
 			log.Println("Error mashalling res: ", err)
 			w.WriteHeader(500)
 			return
 		}
-
-		w.Write(rawRes)
+		
 	}
 }
 
@@ -291,15 +279,8 @@ func logPrintln() http.HandlerFunc {
 
 	return func(w http.ResponseWriter, r *http.Request) {
 
-		rawBody, err := io.ReadAll(r.Body)
-		if err != nil {
-			log.Println("Error reading req body: ", err)
-			w.WriteHeader(500)
-			return
-		}
-
 		var req Req[string]
-		err = json.Unmarshal(rawBody, &req)
+		err := json.UnmarshalRead(r.Body, &req)
 		if err != nil {
 			log.Println("Error unmarshalling req: ", err)
 			w.WriteHeader(400)
