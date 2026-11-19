@@ -65,7 +65,6 @@ func InitWhipServer(app state.App, config *whipConfig) error {
 			if err := recover(); err != nil {
 				log.Printf("Fatal error %s\n", err)
 				w.WriteHeader(http.StatusInternalServerError)
-				_, _ = w.Write([]byte("Fatal error"))
 				return
 			}
 		}()
@@ -98,17 +97,23 @@ func InitWhipServer(app state.App, config *whipConfig) error {
 		}
 		
 		log.Println("WHIP - Offer received")
-		WhipConfig.OfferChan <- string(offer)
+		config.OfferChan <- string(offer)
 
 		log.Println("WHIP - Waiting for answer")
-		
-		rawAnswer, ok := <-config.AnswerChan
 
-		if !ok {
-			log.Println("WHIP - Answer channel closed")
-			w.WriteHeader(http.StatusInternalServerError)
-			_, _ = w.Write([]byte("Error getting an answer"))
-			return
+		var rawAnswer string
+		
+		select {
+			case tempRawAnswer, ok := <-config.AnswerChan:
+				if !ok {
+					log.Println("WHIP - Answer channel closed")
+					w.WriteHeader(http.StatusInternalServerError)
+					_, _ = w.Write([]byte("Error getting an answer"))
+					return
+				}
+				rawAnswer = getFinalMsgFromChan(r.Context(), config.AnswerChan, tempRawAnswer)
+			case <-r.Context().Done():
+				return
 		}
 
 		type answerT struct {
@@ -167,17 +172,13 @@ func handleWhipOffer(ctx context.Context, streamingSignalChannel *webrtc.DataCha
 	for offer := range WhipConfig.OfferChan {
 		if WhipConfig.Enabled.IsEnabled() {
 
-			offerMap := map[string]any{}
-
-			ctx, cancelCtx :=  context.WithTimeout(ctx, time.Second)
-			
-			defer cancelCtx()
-			
-			finalOffer := getFinalOffer(ctx, offer)		
+			finalOffer := getFinalMsgFromChan(ctx, WhipConfig.OfferChan, offer)		
 			
 			offerSdp := webrtc.SessionDescription{
 				Type: webrtc.SDPTypeOffer, SDP: finalOffer,
 			}
+			
+			offerMap := map[string]any{}
 
 			offerMap["offer"] = offerSdp
 			offerMap["role"] = "host"
@@ -199,14 +200,20 @@ func handleWhipOffer(ctx context.Context, streamingSignalChannel *webrtc.DataCha
 
 }
 
-func getFinalOffer(ctx context.Context, offer string) string {
-	tempOffer := offer
+func getFinalMsgFromChan(ctx context.Context, channel <-chan string, initialMsg string) string {
+	ctx, cancelCtx := context.WithTimeout(ctx, time.Second)
+	
+	defer cancelCtx()
+
+	finalMsg := initialMsg
 	for {
 		select {
-			case tempOffer = <- WhipConfig.OfferChan:
-			continue
+			case tempMsg, ok := <- channel:
+			if ok {			
+				finalMsg = tempMsg 
+			}
 			case <-ctx.Done():
-			return tempOffer
+			return finalMsg
 		}
 	}
 }
