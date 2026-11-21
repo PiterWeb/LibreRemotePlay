@@ -10,6 +10,22 @@ import (
 	"github.com/pion/webrtc/v4"
 )
 
+var keyMapRobotGo = map[string]string{
+	"Enter":      "enter",
+	"Escape":     "esc",
+	"Backspace":  "backspace",
+	"Tab":        "tab",
+	" ":          "space",
+	"ArrowUp":    "up",
+	"ArrowDown":  "down",
+	"ArrowLeft":  "left",
+	"ArrowRight": "right",
+	"Shift":      "shift",
+	"Control":    "ctrl",
+	"Alt":        "alt",
+	"CapsLock":   "capslock",
+}
+
 var KeyboardEnabled = new(devices.DeviceEnabled).Disable()
 
 func HandleKeyboard(d *webrtc.DataChannel) {
@@ -80,4 +96,22 @@ func HandleKeyboard(d *webrtc.DataChannel) {
 
 	})
 
+}
+
+func mapJSKeyToRobotGo(jsKey string) (key string, exists bool) {
+
+	// Map (F1 - F12) keys
+	if len(jsKey) > 1 && jsKey[0] == 'F' {
+		return strings.ToLower(jsKey), true // "F1" → "f1"
+	}
+
+	if val, exists := keyMapRobotGo[jsKey]; exists {
+		return val, true
+	}
+
+	if len(jsKey) == 1 {
+		return jsKey, true
+	}
+
+	return "", false
 }

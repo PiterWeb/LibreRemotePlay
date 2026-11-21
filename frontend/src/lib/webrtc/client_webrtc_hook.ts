@@ -128,7 +128,7 @@ async function CreateClientWeb(options: CreateClientWebOptions) {
 
 	const controllerChannel = peerConnection.createDataChannel(DataChannelLabel.Controller);
 	const streamingSignalChannel = peerConnection.createDataChannel(DataChannelLabel.StreamingSignal);
-	const keyboardChannel = peerConnection.createDataChannel(DataChannelLabel.Keyboard);
+	const keyboardChannel = peerConnection.createDataChannel(DataChannelLabel.Keyboard, { ordered: true });
   const mouseChannel = peerConnection.createDataChannel(DataChannelLabel.Mouse);
 
 	peerConnection.ondatachannel = (ev) => {
