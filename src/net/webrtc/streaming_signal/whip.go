@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"io"
 	"log"
+	"math/rand/v2"
 	"net"
 	"net/http"
 	"sync/atomic"
@@ -37,6 +38,13 @@ var WhipConfig = &whipConfig{
 	ICEServers: atomic.Pointer[[]webrtc.ICEServer]{},
 }
 
+func setWhipHeaders(w http.ResponseWriter) {
+	w.Header().Add("Access-Control-Allow-Origin", "*")
+	w.Header().Add("Access-Control-Allow-Methods", "POST, OPTIONS")
+	w.Header().Add("Access-Control-Allow-Headers", "*")
+	w.Header().Add("Access-Control-Allow-Headers", "Authorization")
+}
+
 func InitWhipServer(app state.App, config *whipConfig) error {
 
 	defer func() {
@@ -47,10 +55,7 @@ func InitWhipServer(app state.App, config *whipConfig) error {
 	httpServerMux := http.NewServeMux()
 
 	httpServerMux.HandleFunc("OPTIONS /whip", func(w http.ResponseWriter, r *http.Request) {
-		w.Header().Add("Access-Control-Allow-Origin", "*")
-		w.Header().Add("Access-Control-Allow-Methods", "POST")
-		w.Header().Add("Access-Control-Allow-Headers", "*")
-		w.Header().Add("Access-Control-Allow-Headers", "Authorization")
+		setWhipHeaders(w)
 	})
 	
 	httpServerMux.HandleFunc("POST /whip", func(w http.ResponseWriter, r *http.Request) {
@@ -69,10 +74,7 @@ func InitWhipServer(app state.App, config *whipConfig) error {
 			}
 		}()
 		
-		w.Header().Add("Access-Control-Allow-Origin", "*")
-		w.Header().Add("Access-Control-Allow-Methods", "POST")
-		w.Header().Add("Access-Control-Allow-Headers", "*")
-		w.Header().Add("Access-Control-Allow-Headers", "Authorization")
+		setWhipHeaders(w)
 
 		log.Println(*WhipConfig.ICEServers.Load())
 		
@@ -137,7 +139,8 @@ func InitWhipServer(app state.App, config *whipConfig) error {
 
 		w.Header().Set("Content-Type", "application/sdp")
 		w.Header().Add("Location", fmt.Sprintf("http://localhost:%d/whip", config.Port))
-
+		w.Header().Set("ETag", fmt.Sprintf("\"%d\"", rand.Int()))
+		
 		w.WriteHeader(http.StatusCreated)
 		_, err = w.Write([]byte(answerStruct.Answer.SDP))
 		if err != nil {
